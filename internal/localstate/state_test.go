@@ -35,7 +35,8 @@ func TestAtomicStateRoundTripAndPermissions(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if info.Mode().Perm()&0o077 != 0 {
+	// Windows reports ACL-backed files with synthetic POSIX permission bits.
+	if runtime.GOOS != "windows" && info.Mode().Perm()&0o077 != 0 {
 		t.Fatalf("local state is accessible beyond the user: %o", info.Mode().Perm())
 	}
 }

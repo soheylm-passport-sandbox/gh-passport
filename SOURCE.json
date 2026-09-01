@@ -1,7 +1,8 @@
 {
   "curriculum_version": "1.2.0",
   "schema_version": 1,
-  "source_commit": "8237d33a5a373a229f238f9db1d7284d859c971a",
-  "source_exact": true,
+  "deployment_owner": "soheylm-passport-sandbox",
+  "source_commit": "655f88e7956dc243ee5b2c468cb049a5cf55bc1a",
+  "source_exact": false,
   "source_repository": "IDEALLab/onboarding-IT"
 }
