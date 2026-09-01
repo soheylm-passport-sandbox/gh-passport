@@ -106,6 +106,61 @@ func TestVerifyDirectForkRefusesASameNameUnrelatedRepository(t *testing.T) {
 	}
 }
 
+type pullRequestRunner struct {
+	lookups   [][]byte
+	createErr error
+	commands  []string
+}
+
+func (runner *pullRequestRunner) Run(_ context.Context, _ string, name string, args ...string) ([]byte, error) {
+	command := strings.Join(append([]string{name}, args...), " ")
+	runner.commands = append(runner.commands, command)
+	if name == "gh" && len(args) > 0 && args[0] == "api" {
+		if len(runner.lookups) == 0 {
+			return nil, nil
+		}
+		value := runner.lookups[0]
+		runner.lookups = runner.lookups[1:]
+		return value, nil
+	}
+	if name == "gh" && len(args) > 1 && args[0] == "pr" && args[1] == "create" {
+		return nil, runner.createErr
+	}
+	return nil, errors.New("unexpected command")
+}
+
+func TestEnsurePullRequestReusesThePermanentForkPR(t *testing.T) {
+	const expected = "https://github.com/soheylm-passport-sandbox/passport-exercises/pull/7"
+	runner := &pullRequestRunner{lookups: [][]byte{[]byte(expected + "\n")}}
+	actual, err := ensurePullRequest(
+		context.Background(), runner, "Student", "onboarding/student", ".",
+	)
+	if err != nil || actual != expected {
+		t.Fatalf("existing PR = %q, %v; want %q", actual, err, expected)
+	}
+	commands := strings.Join(runner.commands, "\n")
+	if !strings.Contains(commands, "head=Student%3Aonboarding%2Fstudent") {
+		t.Fatalf("fork owner and branch were not encoded in the API query:\n%s", commands)
+	}
+	if strings.Contains(commands, "gh pr create") {
+		t.Fatalf("existing permanent PR was recreated:\n%s", commands)
+	}
+}
+
+func TestEnsurePullRequestRecoversFromAConcurrentCreate(t *testing.T) {
+	const expected = "https://github.com/soheylm-passport-sandbox/passport-exercises/pull/7"
+	runner := &pullRequestRunner{
+		lookups:   [][]byte{nil, []byte(expected + "\n")},
+		createErr: errors.New("pull request already exists"),
+	}
+	actual, err := ensurePullRequest(
+		context.Background(), runner, "Student", "onboarding/student", ".",
+	)
+	if err != nil || actual != expected {
+		t.Fatalf("concurrent PR = %q, %v; want %q", actual, err, expected)
+	}
+}
+
 func TestGitHubRepositoryAcceptsOnlyExactGitHubRepositoryURLs(t *testing.T) {
 	accepted := map[string]string{
 		"https://github.com/student/passport-exercises.git": "student/passport-exercises",

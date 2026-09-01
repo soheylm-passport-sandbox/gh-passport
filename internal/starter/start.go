@@ -575,25 +575,29 @@ func sameStrings(left, right []string) bool {
 }
 
 func ensurePullRequest(ctx context.Context, runner commandRunner, username, branch, directory string) (string, error) {
-	raw, err := runner.Run(
-		ctx, directory, "gh", "pr", "list", "--repo", sourceRepository,
-		"--state", "open", "--head", username+":"+branch, "--json", "url", "--jq", ".[0].url",
-	)
-	if err == nil && strings.TrimSpace(string(raw)) != "" {
-		return strings.TrimSpace(string(raw)), nil
+	existing, err := findPullRequest(ctx, runner, username, branch, directory)
+	if err != nil {
+		return "", fmt.Errorf("query permanent assessment pull request: %w", err)
+	}
+	if existing != "" {
+		return existing, nil
 	}
 	body := "This is my permanent public IT Passport assessment PR.\n\n" +
 		"I will submit only fictional exercise content and sanitized evidence. " +
 		"Apart from the GitHub identity already visible on this PR, I will never include credentials, " +
 		"ETH or other private identifiers, private logs, or research data.\n\n" +
 		"The automatic controller checks each pushed commit. I will not merge or close this PR.\n"
-	raw, err = runner.Run(
+	raw, err := runner.Run(
 		ctx, directory, "gh", "pr", "create", "--repo", sourceRepository,
 		"--head", username+":"+branch, "--base", "main", "--draft",
 		"--title", "chore(passport): complete "+username+" onboarding route",
 		"--body", body,
 	)
 	if err != nil {
+		// A concurrent start may have created the permanent PR after our lookup.
+		if existing, lookupErr := findPullRequest(ctx, runner, username, branch, directory); lookupErr == nil && existing != "" {
+			return existing, nil
+		}
 		return "", fmt.Errorf("create permanent assessment pull request: %w", err)
 	}
 	url := strings.TrimSpace(string(raw))
@@ -601,4 +605,21 @@ func ensurePullRequest(ctx context.Context, runner commandRunner, username, bran
 		return "", errors.New("GitHub did not return the expected central assessment pull request URL")
 	}
 	return url, nil
+}
+
+func findPullRequest(ctx context.Context, runner commandRunner, username, branch, directory string) (string, error) {
+	path := fmt.Sprintf(
+		"repos/%s/pulls?state=open&head=%s&base=main&per_page=2",
+		sourceRepository,
+		url.QueryEscape(username+":"+branch),
+	)
+	raw, err := runner.Run(ctx, directory, "gh", "api", path, "--jq", ".[0].html_url")
+	if err != nil {
+		return "", err
+	}
+	value := strings.TrimSpace(string(raw))
+	if value != "" && !strings.HasPrefix(value, "https://github.com/soheylm-passport-sandbox/passport-exercises/pull/") {
+		return "", errors.New("GitHub returned an unexpected assessment pull request URL")
+	}
+	return value, nil
 }
