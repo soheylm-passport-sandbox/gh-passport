@@ -1,0 +1,221 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Goal: connect VS Code or SSH to a Slurm compute allocation instead of doing computation on an Euler login node."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Euler Tunnel And VS Code | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.B_z1DDnN.css"></head><body data-curriculum-version="1.2.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / reference</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">reference</p><h1>Euler Tunnel And VS Code</h1><p>Goal: connect VS Code or SSH to a Slurm compute allocation instead of doing computation on an Euler login node.</p></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/8237d33a5a373a229f238f9db1d7284d859c971a/docs/reference/euler/euler-tunnel.md" rel="noreferrer">View exact source</a><a href="/passport/">Return to my dashboard</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><p><strong>Goal:</strong> connect VS Code or SSH to a Slurm compute allocation instead of doing
+computation on an Euler login node.</p>
+<p><strong>Prerequisites:</strong> the public-key-only <code>key-ok</code> test in
+<a href="/reference/euler/access-and-ssh/">Euler access</a> passes. Do not continue if Euler still needs
+the ETH password for that test.</p>
+<p><strong>Execution context:</strong> <code>euler-tunnel config/start/status/stop</code> run on an Euler
+login-node Bash prompt. SSH files and the tunnel hostname test run on the local
+computer in the explicitly labelled PowerShell or zsh/Bash block.</p>
+<h2 id="what-euler-tunnel-does">What <code>euler-tunnel</code> Does<a class="heading-anchor" href="#what-euler-tunnel-does" aria-label="Link to What euler-tunnel Does">#</a></h2><p><code>euler-tunnel start</code> submits a Slurm job containing an SSH server. Your local
+<code>Host euler-tunnel</code> entry reaches that allocated compute node through the Euler
+login service. Installing <code>.vscode-server</code> in your Euler home directory on the
+first VS Code connection is expected.</p>
+<p>Use a tunnel for interactive editing, notebooks, setup, and short debugging.
+Use <code>sbatch</code> for unattended training, sweeps, and long computation.</p>
+<h2 id="1-generate-personal-configuration">1. Generate Personal Configuration<a class="heading-anchor" href="#1-generate-personal-configuration" aria-label="Link to 1. Generate Personal Configuration">#</a></h2><p>Run on an <strong>Euler login node - Bash</strong>:</p>
+<pre><code class="language-bash">euler-tunnel config
+</code></pre>
+<p><strong>Expected output:</strong></p>
+<ul>
+<li>one <code>euler-tunnel ssh-ed25519 ...</code> known-hosts line;</li>
+<li>one <code>Host euler-tunnel</code> configuration block containing your username and a
+<code>ProxyCommand</code>.</li>
+</ul>
+<p>The generated host key is personal. Copy the output from your own account; do
+not copy another student&#39;s known-hosts line.</p>
+<h2 id="2-add-the-known-hosts-line-locally">2. Add The Known-Hosts Line Locally<a class="heading-anchor" href="#2-add-the-known-hosts-line-locally" aria-label="Link to 2. Add The Known-Hosts Line Locally">#</a></h2><p>Fetch your own generated output through the verified <code>Host euler</code> alias. The
+commands below extract only the host-key line, back up an existing file, and do
+not append a duplicate.</p>
+<h3 id="windows-laptop---powershell">Windows laptop - PowerShell<a class="heading-anchor" href="#windows-laptop---powershell" aria-label="Link to Windows laptop - PowerShell">#</a></h3><pre><code class="language-powershell">&amp; {
+    $SshDir = Join-Path $env:USERPROFILE &quot;.ssh&quot;
+    $KnownHosts = Join-Path $SshDir &quot;known_hosts&quot;
+    New-Item -ItemType Directory -Force $SshDir | Out-Null
+
+    $TunnelOutput = ssh euler &quot;euler-tunnel config&quot;
+    if ($LASTEXITCODE -ne 0) { throw &quot;Could not obtain euler-tunnel configuration&quot; }
+    $HostKeyLines = @($TunnelOutput | Where-Object { $_ -match &#39;^euler-tunnel\s+ssh-&#39; })
+    if ($HostKeyLines.Count -ne 1) { throw &quot;Expected exactly one euler-tunnel host-key line&quot; }
+
+    if (Test-Path $KnownHosts) {
+        Copy-Item $KnownHosts &quot;$KnownHosts.backup.$(Get-Date -Format yyyyMMdd-HHmmss)&quot;
+    }
+    if (-not (Test-Path $KnownHosts) -or
+        -not (Select-String -Path $KnownHosts -SimpleMatch $HostKeyLines[0] -Quiet)) {
+        if (Test-Path $KnownHosts) {
+            $Existing = [System.IO.File]::ReadAllText($KnownHosts)
+            if ($Existing.Length -gt 0 -and -not $Existing.EndsWith(&quot;`n&quot;)) {
+                [System.IO.File]::AppendAllText($KnownHosts, [Environment]::NewLine)
+            }
+        }
+        Add-Content $KnownHosts $HostKeyLines[0] -Encoding ascii
+    }
+    ssh-keygen -F euler-tunnel -f $KnownHosts
+}
+</code></pre>
+<h3 id="macos-or-linux-laptop---zshbash">macOS or Linux laptop - zsh/Bash<a class="heading-anchor" href="#macos-or-linux-laptop---zshbash" aria-label="Link to macOS or Linux laptop - zsh/Bash">#</a></h3><pre><code class="language-bash">(
+  set -eu
+  ssh_dir=&quot;$HOME/.ssh&quot;
+  known_hosts=&quot;$ssh_dir/known_hosts&quot;
+  mkdir -p &quot;$ssh_dir&quot;
+  chmod 700 &quot;$ssh_dir&quot;
+
+  tunnel_output=&quot;$(ssh euler &#39;euler-tunnel config&#39;)&quot;
+  host_key_lines=&quot;$(printf &#39;%s\n&#39; &quot;$tunnel_output&quot; | \
+    grep -E &#39;^euler-tunnel[[:space:]]+ssh-&#39;)&quot;
+  if [ &quot;$(printf &#39;%s\n&#39; &quot;$host_key_lines&quot; | sed &#39;/^$/d&#39; | wc -l | tr -d &#39; &#39;)&quot; -ne 1 ]; then
+    printf &#39;STOP: expected exactly one euler-tunnel host-key line.\n&#39; &gt;&amp;2
+    exit 1
+  fi
+
+  if [ -f &quot;$known_hosts&quot; ]; then
+    cp -p &quot;$known_hosts&quot; &quot;$known_hosts.backup.$(date +%Y%m%d-%H%M%S)&quot;
+  fi
+  touch &quot;$known_hosts&quot;
+  if ! grep -Fqx &quot;$host_key_lines&quot; &quot;$known_hosts&quot;; then
+    if [ -s &quot;$known_hosts&quot; ] &amp;&amp;
+       [ &quot;$(tail -c 1 &quot;$known_hosts&quot; | wc -l | tr -d &#39; &#39;)&quot; -eq 0 ]; then
+      printf &#39;\n&#39; &gt;&gt; &quot;$known_hosts&quot;
+    fi
+    printf &#39;%s\n&#39; &quot;$host_key_lines&quot; &gt;&gt; &quot;$known_hosts&quot;
+  fi
+  chmod 600 &quot;$known_hosts&quot;
+  ssh-keygen -F euler-tunnel -f &quot;$known_hosts&quot;
+)
+</code></pre>
+<p><strong>Expected result:</strong> <code>ssh-keygen</code> prints one <code>euler-tunnel</code> host-key entry.</p>
+<h2 id="3-add-the-tunnel-host-in-the-existing-include-directory">3. Add The Tunnel Host In The Existing Include Directory<a class="heading-anchor" href="#3-add-the-tunnel-host-in-the-existing-include-directory" aria-label="Link to 3. Add The Tunnel Host In The Existing Include Directory">#</a></h2><p>The Euler access procedure created <code>~/.ssh/config.d/</code>. Use a separate file so
+the <code>Host euler</code> block cannot be joined accidentally to the tunnel block.</p>
+<h3 id="windows-laptop---powershell-1">Windows laptop - PowerShell<a class="heading-anchor" href="#windows-laptop---powershell-1" aria-label="Link to Windows laptop - PowerShell">#</a></h3><pre><code class="language-powershell">&amp; {
+    $User = Read-Host &quot;ETH username&quot;
+    if ($User -notmatch &#39;^[A-Za-z0-9._-]+$&#39;) { throw &quot;Invalid ETH username&quot; }
+    $SshDir = Join-Path $env:USERPROFILE &quot;.ssh&quot;
+    $IncludeDir = Join-Path $SshDir &quot;config.d&quot;
+    $KeyPath = Join-Path $SshDir &quot;id_ed25519_euler&quot;
+    $TunnelConfig = Join-Path $IncludeDir &quot;euler-tunnel.conf&quot;
+    if (-not (Test-Path $KeyPath)) { throw &quot;Missing private key: $KeyPath&quot; }
+    New-Item -ItemType Directory -Force $IncludeDir | Out-Null
+    if (Test-Path $TunnelConfig) {
+        Copy-Item $TunnelConfig &quot;$TunnelConfig.backup.$(Get-Date -Format yyyyMMdd-HHmmss)&quot;
+    }
+
+    @&quot;
+Host euler-tunnel
+  User $User
+  IdentityFile ~/.ssh/id_ed25519_euler
+  IdentitiesOnly yes
+  ServerAliveInterval 10
+  ServerAliveCountMax 10
+  ProxyCommand ssh euler euler-tunnel connect
+&quot;@ | Set-Content $TunnelConfig -Encoding ascii
+
+    ssh -G euler-tunnel | Select-String &#39;^(user|identityfile|proxycommand) &#39;
+}
+</code></pre>
+<p>Do not add the generated <code>ControlMaster</code>, <code>ControlPath</code>, or <code>ControlPersist</code>
+lines on Windows; they use Unix sockets.</p>
+<h3 id="macos-or-linux-laptop---zshbash-1">macOS or Linux laptop - zsh/Bash<a class="heading-anchor" href="#macos-or-linux-laptop---zshbash-1" aria-label="Link to macOS or Linux laptop - zsh/Bash">#</a></h3><pre><code class="language-bash">(
+set -eu
+printf &#39;ETH username: &#39;
+read -r eth_user
+case &quot;$eth_user&quot; in
+  &#39;&#39;|*[!A-Za-z0-9._-]*) printf &#39;STOP: invalid ETH username\n&#39; &gt;&amp;2; exit 1 ;;
+esac
+include_dir=&quot;$HOME/.ssh/config.d&quot;
+tunnel_config=&quot;$include_dir/euler-tunnel.conf&quot;
+test -f &quot;$HOME/.ssh/id_ed25519_euler&quot;
+mkdir -p &quot;$include_dir&quot;
+if [ -f &quot;$tunnel_config&quot; ]; then
+  cp -p &quot;$tunnel_config&quot; &quot;$tunnel_config.backup.$(date +%Y%m%d-%H%M%S)&quot;
+fi
+cat &gt; &quot;$tunnel_config&quot; &lt;&lt;EOF
+Host euler-tunnel
+  User $eth_user
+  IdentityFile ~/.ssh/id_ed25519_euler
+  IdentitiesOnly yes
+  ServerAliveInterval 10
+  ServerAliveCountMax 10
+  ProxyCommand ssh euler euler-tunnel connect
+  ControlMaster auto
+  ControlPath ~/.ssh/cs-%r@%h:%p
+  ControlPersist 15
+EOF
+chmod 600 &quot;$tunnel_config&quot;
+ssh -G euler-tunnel | grep -E &#39;^(user|identityfile|proxycommand) &#39;
+)
+</code></pre>
+<h2 id="4-start-the-smallest-suitable-allocation">4. Start The Smallest Suitable Allocation<a class="heading-anchor" href="#4-start-the-smallest-suitable-allocation" aria-label="Link to 4. Start The Smallest Suitable Allocation">#</a></h2><p>Run these only on an <strong>Euler login node - Bash</strong>.</p>
+<h3 id="cpu-only-interactive-work-on-esfuge">CPU-only interactive work on <code>es_fuge</code><a class="heading-anchor" href="#cpu-only-interactive-work-on-esfuge" aria-label="Link to CPU-only interactive work on es_fuge">#</a></h3><pre><code class="language-bash">euler-tunnel start --account=es_fuge --cpus-per-task=2 --mem-per-cpu=4G --time=02:00:00
+</code></pre>
+<h3 id="cpu-only-public-share-work">CPU-only public-share work<a class="heading-anchor" href="#cpu-only-public-share-work" aria-label="Link to CPU-only public-share work">#</a></h3><pre><code class="language-bash">euler-tunnel start --account=public --cpus-per-task=2 --mem-per-cpu=4G --time=02:00:00
+</code></pre>
+<h3 id="short-rtx-4090-debugging">Short RTX 4090 debugging<a class="heading-anchor" href="#short-rtx-4090-debugging" aria-label="Link to Short RTX 4090 debugging">#</a></h3><pre><code class="language-bash">euler-tunnel start --account=es_fuge --gpus=rtx_4090:1 --cpus-per-task=4 --mem-per-cpu=4G --time=00:30:00
+</code></pre>
+<h3 id="short-rtx-3090-debugging">Short RTX 3090 debugging<a class="heading-anchor" href="#short-rtx-3090-debugging" aria-label="Link to Short RTX 3090 debugging">#</a></h3><pre><code class="language-bash">euler-tunnel start --account=es_fuge --gpus=rtx_3090:1 --cpus-per-task=4 --mem-per-cpu=4G --time=00:30:00
+</code></pre>
+<p>The smaller interactive CPU/memory profile is intentional. Use the batch
+starter profile in <a href="/reference/euler/slurm/#gpu-jobs">Slurm GPU jobs</a> for representative
+training, then right-size from measurements.</p>
+<p>RTX 4090 is the standard GPU tunnel choice. The lab also has access to two RTX
+PRO 6000 GPUs, but they require explicit <code>pro_6000</code> selection and compatible
+CUDA 13 software. Use their
+<a href="/reference/euler/slurm/#rtx-pro-6000-special-purpose-profile">special-purpose batch profile</a>
+rather than treating them as an interactive fallback.</p>
+<p>Check on the <strong>Euler login node - Bash</strong>:</p>
+<pre><code class="language-bash">euler-tunnel status
+</code></pre>
+<h2 id="5-prove-the-tunnel-before-opening-vs-code">5. Prove The Tunnel Before Opening VS Code<a class="heading-anchor" href="#5-prove-the-tunnel-before-opening-vs-code" aria-label="Link to 5. Prove The Tunnel Before Opening VS Code">#</a></h2><p>Run on your <strong>local computer</strong>:</p>
+<pre><code class="language-bash">ssh -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no euler-tunnel &quot;hostname&quot;
+</code></pre>
+<p><strong>Expected output:</strong> a compute-node hostname such as <code>eu-g5-047-2</code>. A key
+passphrase prompt is normal. An ETH password prompt means the upstream <code>Host euler</code> key setup is not working; stop and fix it.</p>
+<h2 id="6-connect-vs-code">6. Connect VS Code<a class="heading-anchor" href="#6-connect-vs-code" aria-label="Link to 6. Connect VS Code">#</a></h2><ol>
+<li>Install the Microsoft Remote - SSH extension locally.</li>
+<li>Open the Command Palette.</li>
+<li>Select <strong>Remote-SSH: Connect to Host...</strong>.</li>
+<li>Select <code>euler-tunnel</code>.</li>
+<li>Wait for VS Code Server to install or start in your Euler home directory.</li>
+<li>Open your project clone, not the whole <code>/cluster/work/fuge</code> tree.</li>
+</ol>
+<h3 id="only-if-terminal-ssh-works-but-vs-code-fails">Only If Terminal SSH Works But VS Code Fails<a class="heading-anchor" href="#only-if-terminal-ssh-works-but-vs-code-fails" aria-label="Link to Only If Terminal SSH Works But VS Code Fails">#</a></h3><p>Do not change SSH files when the local tunnel test in step 5 still fails. If
+that test succeeds but VS Code does not connect:</p>
+<ol>
+<li>In VS Code, open <strong>View &gt; Output</strong> and select <strong>Remote - SSH</strong>.</li>
+<li>Check which local SSH configuration file the log says it is using.</li>
+<li>If it is not the existing user file that contains <code>Include config.d/*</code>, open
+local <strong>User Settings</strong>, search for <strong>Remote.SSH: Config File</strong>, and enter the
+full path to that same existing file (normally <code>~/.ssh/config</code>).</li>
+<li>Retry <strong>Remote-SSH: Connect to Host... &gt; euler-tunnel</strong>.</li>
+</ol>
+<p>This setting only tells VS Code which existing file to read; it does not replace
+or regenerate the file. Do not weaken password settings or add unrelated
+Remote-SSH compatibility toggles to make the prompt disappear. A key
+passphrase is expected; an ETH password prompt is not.</p>
+<p>The terminal prompt should be a compute node. Verify in the VS Code terminal:</p>
+<pre><code class="language-bash">hostname
+echo &quot;$SLURM_JOB_ID&quot;
+</code></pre>
+<h2 id="stop-the-allocation">Stop The Allocation<a class="heading-anchor" href="#stop-the-allocation" aria-label="Link to Stop The Allocation">#</a></h2><p>Run on an <strong>Euler login node - Bash</strong> when interactive work ends:</p>
+<pre><code class="language-bash">euler-tunnel stop
+</code></pre>
+<h2 id="common-failures-and-safe-recovery">Common Failures And Safe Recovery<a class="heading-anchor" href="#common-failures-and-safe-recovery" aria-label="Link to Common Failures And Safe Recovery">#</a></h2><ul>
+<li><strong>Tunnel asks for ETH password:</strong> repeat the public-key-only <code>key-ok</code> test.</li>
+<li><strong><code>Host euler-tunnel</code> is malformed:</strong> run <code>ssh -G euler-tunnel</code>; each SSH
+keyword must be on its own line.</li>
+<li><strong>Private-key warning names <code>.pub</code>:</strong> remove <code>.pub</code> from <code>IdentityFile</code>.</li>
+<li><strong>VS Code prints download/install logs:</strong> wait for <code>listeningOn</code> and successful
+startup. This is normal on first connection.</li>
+<li><strong>Terminal tunnel works but VS Code fails:</strong> follow the config-file check in
+step 6; do not regenerate a working SSH key.</li>
+<li><strong>No tunnel job exists:</strong> start it on the Euler login node before connecting.</li>
+</ul>
+<h2 id="ask-for-help-when">Ask For Help When<a class="heading-anchor" href="#ask-for-help-when" aria-label="Link to Ask For Help When">#</a></h2><p><code>key-ok</code> succeeds and <code>euler-tunnel status</code> shows a running job, but the local
+SSH tunnel test still fails. Share sanitized <code>ssh -v euler-tunnel hostname</code>
+output, never key contents.</p>
+<h2 id="primary-source">Primary Source<a class="heading-anchor" href="#primary-source" aria-label="Link to Primary Source">#</a></h2><ul>
+<li><a href="https://docs.hpc.ethz.ch/connections/euler-tunnel/" rel="noreferrer" data-external-link>ETH HPC Euler tunnel</a></li>
+<li><a href="https://code.visualstudio.com/docs/remote/ssh" rel="noreferrer" data-external-link>VS Code Remote - SSH configuration</a></li>
+</ul>
+<p>Verified: 2026-08-04. Review by: 2026-11-04. Owner: IDEAL Lab IT.</p>
+</article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/reference/euler/">Euler Reference</a><a href="/reference/euler/access-and-ssh/">Euler Access And Safe SSH Key Setup</a><a href="/reference/euler/paraview/">ParaView 6.0.0 Client/Server On Euler</a><a href="/reference/euler/slurm/">Slurm Job Lifecycle And Resource Optimization</a><a href="/reference/euler/storage/">Euler Storage And Data Lifecycle</a><a href="/reference/euler/troubleshooting/">Euler Troubleshooting By Symptom</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current mission to practice, verify, and submit evidence.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 1.2.0 /exact source 8237d33a</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+`).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
+`).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html>

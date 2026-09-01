@@ -1,0 +1,402 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Prerequisites: your GitHub account can open the relevant repository in a browser and has accepted any organization invitation."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Git And GitHub Workflow | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.B_z1DDnN.css"></head><body data-curriculum-version="1.2.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / reference</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">reference</p><h1>Git And GitHub Workflow</h1><p>Prerequisites: your GitHub account can open the relevant repository in a browser and has accepted any organization invitation.</p></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/8237d33a5a373a229f238f9db1d7284d859c971a/onboarding_IT_guides/git_workflow.md" rel="noreferrer">View exact source</a><a href="/passport/">Return to my dashboard</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><blockquote>
+<p><strong>Goal:</strong> clone a private repository, work on a branch, verify/stage a focused
+change, write a Conventional Commit, and open a reviewable pull request.</p>
+</blockquote>
+<p><strong>Prerequisites:</strong> your GitHub account can open the relevant repository in a
+browser and has accepted any organization invitation.</p>
+<p><strong>Execution context:</strong> Git commands run on your local computer in Windows
+PowerShell/Git Bash, macOS zsh, or Linux Bash. The same commands can run on a
+remote development machine only when the project intentionally lives there.</p>
+<p>Required practice: <a href="/labs/first-safe-pr/">First Safe Pull Request</a>.</p>
+<hr>
+<h2 id="table-of-contents">Table of Contents<a class="heading-anchor" href="#table-of-contents" aria-label="Link to Table of Contents">#</a></h2><ol>
+<li><a href="#why-git">Why Git?</a>  </li>
+<li><a href="#semantic-commits">Semantic Commits (SemVer-friendly)</a>  </li>
+<li><a href="#prerequisites">Prerequisites</a>  </li>
+<li><a href="#create--upgrade-your-github-account">Create / Upgrade Your GitHub Account</a>  </li>
+<li><a href="#install-git">Install Git</a>  </li>
+<li><a href="#github-auth">Set Up GitHub Authentication</a>  </li>
+<li><a href="#configure-git-identity">Configure Git Identity</a>  </li>
+<li><a href="#connect-vscode-to-github">Connect VS Code to GitHub</a>  <ul>
+<li><a href="#option-a-oauth-1click-sign-in">Option A – OAuth (1-click sign-in)</a>  </li>
+<li><a href="#option-b-personal-access-token">Option B – Personal-Access-Token (PAT)</a></li>
+</ul>
+</li>
+<li><a href="#everyday-workflow">Everyday Workflow</a>  </li>
+<li><a href="#best-practices">Best Practices</a>  </li>
+<li><a href="#cheat-sheet">Cheat-Sheet</a>  </li>
+<li><a href="#collab-example">Collaboration Example — &quot;wing + fuselage&quot;</a></li>
+</ol>
+<hr>
+<h2 id="why-git">Why Git?<a class="heading-anchor" href="#why-git" aria-label="Link to Why Git?">#</a></h2><ul>
+<li><strong>Time-machine:</strong> Revert any file or the whole project to a previous state.</li>
+<li><strong>Collaboration:</strong> Multiple people work in parallel with <strong>branches</strong>.  </li>
+<li><strong>Traceability:</strong> Commit history shows <em>who</em> changed <em>what</em> and <em>why</em>.</li>
+</ul>
+<hr>
+<h2 id="semantic-commits">Semantic Commits (SemVer-friendly)<a class="heading-anchor" href="#semantic-commits" aria-label="Link to Semantic Commits (SemVer-friendly)">#</a></h2><p>Use <strong>Conventional Commits</strong> from day one so release tagging and versioning can be automated later.</p>
+<p>Important distinction:</p>
+<ul>
+<li><strong>Semantic Versioning (SemVer)</strong> is for release numbers (<code>MAJOR.MINOR.PATCH</code>).</li>
+<li><strong>Conventional Commits</strong> is for commit message format.</li>
+<li>Conventional Commit history can be used to compute SemVer bumps automatically.</li>
+</ul>
+<p>Commit message format:</p>
+<pre><code class="language-text">type(scope): short summary
+</code></pre>
+<p>What <code>scope</code> means (very important for beginners):</p>
+<ul>
+<li><code>scope</code> = the main area you changed (module, folder, or feature).</li>
+<li>Keep it short: usually 1 word, sometimes 2 (<code>first_steps</code>, <code>git_workflow</code>, <code>training</code>).</li>
+<li>Use lowercase and no spaces (use <code>_</code> if needed).</li>
+<li>Pick the dominant change only. If unsure, use <code>general</code>.</li>
+</ul>
+<p>Recommended <code>type</code> values:</p>
+<ul>
+<li><code>feat</code>: new functionality</li>
+<li><code>fix</code>: bug fix</li>
+<li><code>docs</code>: documentation change</li>
+<li><code>refactor</code>: code restructure without behavior change</li>
+<li><code>test</code>: tests added/updated</li>
+<li><code>chore</code>: tooling/maintenance</li>
+</ul>
+<p>Examples:</p>
+<pre><code class="language-text">feat(data): add CSV loader for tensile tests
+fix(training): handle empty validation split
+docs(onboarding): clarify Obsidian vault root
+chore(general): update dev dependencies
+</code></pre>
+<p>SemVer mapping (used when creating releases):</p>
+<ul>
+<li><code>fix:</code> -&gt; PATCH bump</li>
+<li><code>feat:</code> -&gt; MINOR bump</li>
+<li><code>feat!:</code> or <code>BREAKING CHANGE:</code> footer -&gt; MAJOR bump</li>
+</ul>
+<hr>
+<h2 id="prerequisites">Prerequisites<a class="heading-anchor" href="#prerequisites" aria-label="Link to Prerequisites">#</a></h2><div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Windows</th>
+<th>macOS / Linux</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Git CLI</strong></td>
+<td><a href="https://git-scm.com/download/win" rel="noreferrer" data-external-link>Installer</a></td>
+<td><code>brew install git</code> · <code>apt install git</code></td>
+</tr>
+<tr>
+<td><strong>VS Code</strong></td>
+<td><a href="https://code.visualstudio.com/" rel="noreferrer" data-external-link>Download</a></td>
+<td>same link (.dmg / .deb / .rpm)</td>
+</tr>
+<tr>
+<td><strong>GitHub account</strong></td>
+<td>create / sign-in (next section)</td>
+<td>—</td>
+</tr>
+</tbody></table></div>
+<blockquote>
+<p>Run <code>git --version</code> in a terminal to verify install.</p>
+</blockquote>
+<hr>
+<h2 id="create--upgrade-your-github-account">Create / Upgrade Your GitHub Account<a class="heading-anchor" href="#create--upgrade-your-github-account" aria-label="Link to Create / Upgrade Your GitHub Account">#</a></h2><ol>
+<li>Sign up at <a href="https://github.com/" rel="noreferrer" data-external-link>https://github.com/</a> or sign in.</li>
+<li>Enable MFA and store recovery codes in an approved password manager.</li>
+<li>Accept the IDEAL Lab organization/repository invitation.</li>
+<li>Confirm you can open the private repository in the browser before cloning.</li>
+</ol>
+<p>For the recommended no-cost AI-agent route, apply for or confirm GitHub
+Education after the browser-access check:</p>
+<ol start="5">
+<li>Open <a href="https://github.com/settings/education/benefits" rel="noreferrer" data-external-link>https://github.com/settings/education/benefits</a>.</li>
+<li>Add and verify your ETH email if GitHub requests it.</li>
+<li>Complete GitHub&#39;s current student-verification process.</li>
+<li>After approval, activate <strong>GitHub Copilot Student</strong> from the benefits page.</li>
+</ol>
+<p>GitHub Education is not required to read or clone an IDEAL Lab repository, but
+it is required for the no-cost Copilot Student benefit. Verification can take
+time. Continue the manual Git workflow while waiting; do not purchase Copilot
+or another AI plan merely to complete onboarding. Follow the canonical
+<a href="/reference/ai/vscode-copilot-student/">Copilot Student setup</a> only
+after the manual FirstSteps change.</p>
+<hr>
+<h2 id="install-git">Install Git<a class="heading-anchor" href="#install-git" aria-label="Link to Install Git">#</a></h2><h3 id="windows">Windows<a class="heading-anchor" href="#windows" aria-label="Link to Windows">#</a></h3><ol>
+<li>Run the <strong>Git for Windows</strong> installer.  </li>
+<li>Keep defaults — especially “Git from the command line and 3rd-party software”.  </li>
+<li>Open <strong>Git Bash</strong> or PowerShell → <code>git --version</code>.</li>
+</ol>
+<h3 id="macos-linux">macOS / Linux<a class="heading-anchor" href="#macos-linux" aria-label="Link to macOS / Linux">#</a></h3><ul>
+<li><strong>macOS:</strong> Just run <code>git --version</code> - macOS will automatically prompt you to install Xcode Command Line Tools (includes Git)</li>
+<li>Ubuntu: <code>sudo apt update &amp;&amp; sudo apt install git</code>.  </li>
+<li>Fedora: <code>sudo dnf install git</code>.</li>
+</ul>
+<hr>
+<h2 id="github-auth">Set Up GitHub Authentication<a class="heading-anchor" href="#github-auth" aria-label="Link to Set Up GitHub Authentication">#</a></h2><p><strong>Goal:</strong> authenticate without teaching unsafe token habits.</p>
+<p>Recommended order:</p>
+<ol>
+<li><strong>VS Code OAuth</strong> for beginners working mostly inside VS Code.</li>
+<li><strong>GitHub CLI</strong> for terminal users: <code>gh auth login</code>.</li>
+<li><strong>SSH keys</strong> for repeated development and remote machines.</li>
+<li><strong>Fine-grained PATs</strong> only when OAuth, CLI, or SSH are not suitable.</li>
+</ol>
+<h3 id="option-a-vs-code-oauth">Option A: VS Code OAuth<a class="heading-anchor" href="#option-a-vs-code-oauth" aria-label="Link to Option A: VS Code OAuth">#</a></h3><ol>
+<li>VS Code → <strong>Accounts</strong> icon → <strong>Sign in with GitHub</strong>.</li>
+<li>Browser opens → approve access.</li>
+<li>Clone private repositories from VS Code or the terminal.</li>
+</ol>
+<p>This is the safest beginner default because VS Code stores credentials in the
+operating-system credential store.</p>
+<h3 id="option-b-github-cli">Option B: GitHub CLI<a class="heading-anchor" href="#option-b-github-cli" aria-label="Link to Option B: GitHub CLI">#</a></h3><p>Install GitHub CLI from <a href="https://cli.github.com/" rel="noreferrer" data-external-link>https://cli.github.com/</a> and run:</p>
+<pre><code class="language-bash">gh auth login
+gh auth status
+</code></pre>
+<p>Choose GitHub.com, HTTPS or SSH, and follow the browser login. This avoids
+copying tokens into terminals, chats, or notes.</p>
+<h3 id="option-c-ssh-keys">Option C: SSH Keys<a class="heading-anchor" href="#option-c-ssh-keys" aria-label="Link to Option C: SSH Keys">#</a></h3><p>Use SSH for repeated Git operations when it fits the machine and network. Follow
+GitHub&#39;s current <a href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh" rel="noreferrer" data-external-link>SSH key procedure</a>,
+which includes checking for existing keys before generating one. Add only the
+public key to GitHub. Never share, upload, or commit the private key.</p>
+<p>Do not copy a laptop private key to Euler. Authentication from Euler requires a
+separate approved choice such as GitHub CLI on Euler or deliberately configured
+agent forwarding; ask the project owner when unsure.</p>
+<h3 id="option-d-fine-grained-pats">Option D: Fine-Grained PATs<a class="heading-anchor" href="#option-d-fine-grained-pats" aria-label="Link to Option D: Fine-Grained PATs">#</a></h3><p>Use a fine-grained personal access token only when required by a specific tool.
+Make it short-lived, repository-limited, and permission-limited. Paste it only
+into the tool&#39;s credential prompt, never into an AI chat or Markdown file.</p>
+<p>Avoid broad classic PATs unless a platform limitation truly requires one.</p>
+<hr>
+<h2 id="configure-git-identity">Configure Git Identity<a class="heading-anchor" href="#configure-git-identity" aria-label="Link to Configure Git Identity">#</a></h2><pre><code class="language-bash">git config --global user.name  &quot;Your Real Name&quot;
+git config --global user.email &quot;your-verified-email@example.org&quot;
+git config --global core.editor &quot;code --wait&quot;   # VS Code as default editor
+</code></pre>
+<hr>
+<h2 id="connect-vscode-to-github">Connect VS Code to GitHub<a class="heading-anchor" href="#connect-vscode-to-github" aria-label="Link to Connect VS Code to GitHub">#</a></h2><p>VS Code ships with the <strong>GitHub</strong> auth extension built-in.</p>
+<h3 id="option-a-oauth-1click-sign-in">Option A – OAuth (1-click sign-in)<a class="heading-anchor" href="#option-a-oauth-1click-sign-in" aria-label="Link to Option A – OAuth (1-click sign-in)">#</a></h3><ol>
+<li>VS Code → click the <strong>Accounts</strong> icon (bottom-left).  </li>
+<li>Choose <strong>Sign in with GitHub</strong>.  </li>
+<li>Browser opens → approve access → VS Code refreshes.  </li>
+<li>Token saved in OS keychain / credential manager.</li>
+</ol>
+<h3 id="option-b-personal-access-token">Option B – Personal Access Token (PAT)<a class="heading-anchor" href="#option-b-personal-access-token" aria-label="Link to Option B – Personal Access Token (PAT)">#</a></h3><ol>
+<li>GitHub → <strong>Settings → Developer settings → Personal access tokens → Fine-grained tokens</strong>.  </li>
+<li>Select only the repository or organization you need.</li>
+<li>Grant the minimum required permissions, usually <strong>Contents: read/write</strong> and
+<strong>Metadata: read</strong> for Git operations.</li>
+<li>Set an expiration date and copy the token <strong>(shown once!)</strong>.</li>
+<li>VS Code → <strong>Accounts</strong> icon → <strong>Sign in with GitHub</strong> → <strong>Paste authentication token</strong>.</li>
+</ol>
+<blockquote>
+<p>Use PATs only if OAuth, GitHub CLI, or SSH are blocked on shared / VM environments.
+Never paste a PAT into an AI chat, notebook, Markdown file, or screenshot.</p>
+</blockquote>
+<hr>
+<h2 id="everyday-workflow">Everyday Workflow<a class="heading-anchor" href="#everyday-workflow" aria-label="Link to Everyday Workflow">#</a></h2><h3 id="clone-a-repository">Clone a Repository<a class="heading-anchor" href="#clone-a-repository" aria-label="Link to Clone a Repository">#</a></h3><ol>
+<li>Copy repo URL from GitHub (<code>https://github.com/org/project.git</code>).  </li>
+<li>VS Code → <strong>⌘/Ctrl + ⇧ + P</strong> → <strong>Git: Clone</strong> → paste URL.  </li>
+<li>Choose local folder → open workspace when prompted.</li>
+</ol>
+<h3 id="create-and-switch-branches">Create &amp; Switch Branches<a class="heading-anchor" href="#create-and-switch-branches" aria-label="Link to Create &amp;amp; Switch Branches">#</a></h3><ul>
+<li>Status bar (bottom-left) shows current branch → click → <strong>Create new branch…</strong> (e.g. <code>feature/my-analysis</code>).  </li>
+<li>Pick any branch in the list to switch.</li>
+</ul>
+<h3 id="stage-commit-push">Stage → Commit → Push<a class="heading-anchor" href="#stage-commit-push" aria-label="Link to Stage → Commit → Push">#</a></h3><ol>
+<li>Change files → open <strong>Source Control</strong> (sidebar).  </li>
+<li><strong>+</strong> beside file or <strong>Stage All</strong>.  </li>
+<li>Write a Conventional Commit message (for example <code>fix(parser): handle empty rows</code>) → <strong>Commit</strong> (✓).  </li>
+<li>Click <strong>Push/Synchronize</strong> (↥) in the status bar.</li>
+</ol>
+<p>Safer command-line equivalent while learning. Replace the two example paths
+with files shown by your own <code>git status</code>:</p>
+<pre><code class="language-bash">git status --short
+git diff
+git add -- src/module.py tests/test_module.py
+git diff --cached
+git commit -m &quot;type(scope): short summary&quot;
+git push -u origin HEAD
+</code></pre>
+<h3 id="ai-commit-prompt">AI Prompt for Commit Messages<a class="heading-anchor" href="#ai-commit-prompt" aria-label="Link to AI Prompt for Commit Messages">#</a></h3><p>If you use Copilot/LLM tools, prompt like this:</p>
+<pre><code class="language-text">From my staged git diff, write exactly ONE Conventional Commit message.
+Rules: use type(scope): summary, where type is feat|fix|docs|refactor|test|chore;
+scope must be the main changed area (module/folder/feature), lowercase, no spaces,
+use general if unclear; imperative mood; max 72 chars; no trailing period;
+output only the message.
+</code></pre>
+<p>Then paste the result into:</p>
+<pre><code class="language-bash">git commit -m &quot;fix(scope): describe the verified change&quot;
+</code></pre>
+<p>Before committing, run <code>git diff --staged</code> and check that the message matches
+the actual change. Do not let an agent invent scope or tests that did not happen.</p>
+<h3 id="pull-sync-changes">Pull / Sync Changes<a class="heading-anchor" href="#pull-sync-changes" aria-label="Link to Pull / Sync Changes">#</a></h3><ul>
+<li>Click <strong>Pull</strong> (↧) or <strong>⌘/Ctrl + ⇧ + P → Git: Pull</strong>.  </li>
+<li>VS Code auto-merges or prompts on conflicts.</li>
+</ul>
+<h3 id="open-a-pull-request">Open a Pull-Request<a class="heading-anchor" href="#open-a-pull-request" aria-label="Link to Open a Pull-Request">#</a></h3><ol>
+<li>After pushing branch, VS Code shows <strong>Create Pull Request</strong>.  </li>
+<li>Fill title / description → target <code>main</code>.  </li>
+<li>Supervisor reviews &amp; merges.</li>
+</ol>
+<h3 id="ai-pr-review">AI-Assisted PR Summary and Review<a class="heading-anchor" href="#ai-pr-review" aria-label="Link to AI-Assisted PR Summary and Review">#</a></h3><p>Use agents to make review easier, not to bypass review.</p>
+<p>Good prompt:</p>
+<pre><code class="language-text">From my branch diff against main, draft a PR summary.
+Include: what changed, why, interfaces or users affected, risk areas, and
+verification I actually ran.
+Do not invent tests or claim checks passed unless they appear in my terminal output.
+</code></pre>
+<p>Good review prompt:</p>
+<pre><code class="language-text">Review this diff for bugs, missing tests, secret leaks, and over-broad changes.
+Prioritize correctness and safety over style.
+Return findings with file/line references where possible.
+</code></pre>
+<p>Human checklist before merge:</p>
+<ul>
+<li>You understand every file changed.</li>
+<li>You identified affected interfaces and downstream users, or stated <code>None</code>.</li>
+<li>You requested review from the owner of an affected interface when applicable.</li>
+<li>Generated code has tests or a smoke check.</li>
+<li>No secrets, datasets, checkpoints, or local config were added.</li>
+<li>The PR description lists real verification output.</li>
+</ul>
+<hr>
+<h2 id="best-practices">Best Practices<a class="heading-anchor" href="#best-practices" aria-label="Link to Best Practices">#</a></h2><ul>
+<li><strong>Branch per task:</strong> <code>feature/...</code>, <code>bugfix/...</code>, <code>doc/...</code>.  </li>
+<li><strong>Atomic commits:</strong> one logical change each.  </li>
+<li><strong>Use Conventional Commits always:</strong> <code>type(scope): short summary</code>.  </li>
+<li><strong>.gitignore:</strong> exclude large data &amp; secrets.  </li>
+<li><strong>Fetch and inspect shared changes:</strong> synchronize deliberately before merge.</li>
+<li><strong>Never commit directly to <code>main</code>:</strong> always PR.</li>
+<li><strong>Review AI diffs carefully:</strong> the model can be fluent and wrong.</li>
+<li><strong>Give agents constraints:</strong> files to inspect, files not to touch, checks to run.</li>
+<li><strong>Never paste secrets into prompts:</strong> use OAuth, SSH, <code>gh auth login</code>, or credential prompts.</li>
+</ul>
+<hr>
+<h2 id="cheat-sheet">Cheat-Sheet<a class="heading-anchor" href="#cheat-sheet" aria-label="Link to Cheat-Sheet">#</a></h2><div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Git CLI</th>
+<th>VS Code UI</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Clone</td>
+<td><code>git clone &lt;url&gt;</code></td>
+<td>⌘/Ctrl + ⇧ + P → <strong>Git: Clone</strong></td>
+</tr>
+<tr>
+<td>New branch</td>
+<td><code>git switch -c mybranch</code></td>
+<td>Status bar → <strong>New branch</strong></td>
+</tr>
+<tr>
+<td>Stage selected</td>
+<td><code>git add &lt;path&gt;...</code></td>
+<td><strong>+</strong> beside intended files</td>
+</tr>
+<tr>
+<td>Commit</td>
+<td><code>git commit -m &quot;type(scope): short summary&quot;</code></td>
+<td><strong>Commit</strong> (✓)</td>
+</tr>
+<tr>
+<td>Push</td>
+<td><code>git push -u origin mybranch</code></td>
+<td>↥ icon</td>
+</tr>
+<tr>
+<td>Pull</td>
+<td><code>git pull</code></td>
+<td>↧ icon</td>
+</tr>
+<tr>
+<td>Log graph</td>
+<td><code>git log --oneline --graph --all</code></td>
+<td><strong>Git: View History</strong></td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="collab-example">Collaboration Example — “wing + fuselage”<a class="heading-anchor" href="#collab-example" aria-label="Link to Collaboration Example — “wing + fuselage”">#</a></h2><h3 id="concept">🧠 Concept<a class="heading-anchor" href="#concept" aria-label="Link to 🧠 Concept">#</a></h3><ul>
+<li><strong>You</strong> develop on branch <strong><code>wing</code></strong>  </li>
+<li><strong>Colleague</strong> develops on <strong><code>fuselage</code></strong>  </li>
+<li>Integration branch <strong><code>integrate-wing-fuselage</code></strong> is where both sets of work meet for testing.  </li>
+<li>Git handles merging — no manual file copies.</li>
+</ul>
+<h3 id="step-by-step-in-vs-code">🚀 Step-by-Step in VS Code<a class="heading-anchor" href="#step-by-step-in-vs-code" aria-label="Link to 🚀 Step-by-Step in VS Code">#</a></h3><div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Task</th>
+<th>VS Code / Command</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Update local <strong>main</strong></td>
+<td>Checkout <strong>main</strong> → <strong>Pull</strong> (↧)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Create <strong>integration</strong> branch</td>
+<td>Status-bar → <strong>New branch</strong> → <code>integrate-wing-fuselage</code> → <strong>Push</strong></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Merge <strong>wing</strong> into integration</td>
+<td>Checkout <code>integrate-wing-fuselage</code> → ⌘/Ctrl + ⇧+ P → <strong>Git: Merge Branch…</strong> → select <strong>wing</strong> → resolve conflicts → <strong>Commit merge</strong> → <strong>Push</strong></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Merge <strong>fuselage</strong></td>
+<td>Repeat step 3 selecting <strong>fuselage</strong></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Test together</td>
+<td>Both developers checkout <code>integrate-wing-fuselage</code> and run tests</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Keep working</td>
+<td>Continue on <code>wing</code> / <code>fuselage</code>; periodically repeat merges</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Final PR → <strong>main</strong></td>
+<td>When integration branch is green, open PR to <strong>main</strong>, request review, merge</td>
+</tr>
+</tbody></table></div>
+<h4 id="extra-tips">💡 Extra Tips<a class="heading-anchor" href="#extra-tips" aria-label="Link to 💡 Extra Tips">#</a></h4><ul>
+<li><strong>Pull first, merge later</strong> — sync integration branch before merging feature branches.  </li>
+<li>Use VS Code conflict helpers: <em>Accept Current</em>, <em>Accept Incoming</em>, <em>Accept Both</em>.  </li>
+<li>Open <strong>draft PRs</strong> early to share progress and trigger CI.  </li>
+<li>Delete branches after they’re merged to keep the repo tidy.</li>
+</ul>
+<hr>
+<h2 id="expected-result-and-verification">Expected Result And Verification<a class="heading-anchor" href="#expected-result-and-verification" aria-label="Link to Expected Result And Verification">#</a></h2><ul>
+<li><code>git status --short --branch</code> names a task branch, not <code>main</code>.</li>
+<li><code>git diff --cached</code> contains only intended changes.</li>
+<li>The commit uses <code>type(scope): summary</code> and matches the diff.</li>
+<li>The PR lists only verification actually performed.</li>
+<li>No credential, data, checkpoint, local environment, or generated result is
+present.</li>
+</ul>
+<h2 id="common-failures-and-safe-recovery">Common Failures And Safe Recovery<a class="heading-anchor" href="#common-failures-and-safe-recovery" aria-label="Link to Common Failures And Safe Recovery">#</a></h2><ul>
+<li><strong>Private clone fails:</strong> confirm browser access and authentication; do not put
+a token in the URL.</li>
+<li><strong>Wrong file staged:</strong> run <code>git restore --staged &lt;path&gt;</code> to keep the local edit
+but remove it from the staged diff.</li>
+<li><strong>Unwanted unstaged agent edit:</strong> inspect <code>git diff</code>, then restore only the
+specific unwanted path. Do not use <code>git reset --hard</code>.</li>
+<li><strong>Secret committed:</strong> revoke it immediately, notify the repository owner, and
+coordinate any history cleanup.</li>
+<li><strong>Push rejected:</strong> fetch and inspect the remote branch; do not force-push a
+shared branch without explicit coordination.</li>
+</ul>
+<h2 id="ask-for-help-when">Ask For Help When<a class="heading-anchor" href="#ask-for-help-when" aria-label="Link to Ask For Help When">#</a></h2><p>Recovery would rewrite shared history, authentication requires a token you do
+not understand, a secret entered history, or merge conflicts include unfamiliar
+project changes.</p>
+<p>Verified: 2026-08-26. Review by: 2026-11-26. Owner: lab software maintainer.</p>
+<!-- ===================================================================== -->
+</article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/reference/guides/homebrew/">Homebrew On macOS (Optional)</a><a href="/reference/guides/hpc_euler/">Euler HPC Guide</a><a href="/reference/guides/nas_ideal/">Connect To The IDEAL Lab NAS</a><a href="/reference/guides/obsidian/">Obsidian (Optional Handbook View)</a><a href="/reference/guides/overleaf/">Overleaf &amp; LaTeX Guide</a><a href="/reference/guides/vscode/">Visual Studio Code Setup And Daily Use</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current mission to practice, verify, and submit evidence.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 1.2.0 /exact source 8237d33a</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+`).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
+`).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html>

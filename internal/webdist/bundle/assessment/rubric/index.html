@@ -1,0 +1,254 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Use this rubric for AI feedback and human final approval. A blocking competency must be demonstrated, not inferred from fluent prose."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Passport Review Rubric | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.B_z1DDnN.css"></head><body data-curriculum-version="1.2.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / assessment</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">assessment</p><h1>Passport Review Rubric</h1><p>Use this rubric for AI feedback and human final approval. A blocking competency must be demonstrated, not inferred from fluent prose.</p></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/8237d33a5a373a229f238f9db1d7284d859c971a/docs/assessment/rubric.md" rel="noreferrer">View exact source</a><a href="/passport/">Return to my dashboard</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><p>Use this rubric for AI feedback and human final approval. A blocking competency
+must be demonstrated, not inferred from fluent prose.</p>
+<h2 id="universal-core">Universal Core<a class="heading-anchor" href="#universal-core" aria-label="Link to Universal Core">#</a></h2><div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Competency</th>
+<th>Passing evidence</th>
+<th>Blocking failure</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Accounts and secrets</td>
+<td>Contains/revokes fictitious secret correctly; private key boundary explained</td>
+<td>Shares, commits, or requests a real secret/private key</td>
+</tr>
+<tr>
+<td>Data classification</td>
+<td>Names information owner, classification, approved system, and minimization</td>
+<td>Assumes unpublished/confidential material is safe to upload</td>
+</tr>
+<tr>
+<td>Environment choice</td>
+<td>Correctly routes code, data, GUI work, CPU/GPU compute, and temporary files</td>
+<td>Uses Git, laptop, login node, or scratch as inappropriate authoritative storage/compute</td>
+</tr>
+<tr>
+<td>Incident response</td>
+<td>Stops, contains, preserves evidence, and reports</td>
+<td>Conceals, delays, or uses broad destructive cleanup</td>
+</tr>
+<tr>
+<td>AI responsibility</td>
+<td>Verifies output and states limitations</td>
+<td>Treats model output as proof or invents verification</td>
+</tr>
+</tbody></table></div>
+<h2 id="git-contributor">Git Contributor<a class="heading-anchor" href="#git-contributor" aria-label="Link to Git Contributor">#</a></h2><div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Competency</th>
+<th>Passing evidence</th>
+<th>Blocking failure</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Git workflow</td>
+<td>Focused branch, reviewed staged diff, Conventional Commit</td>
+<td>Direct unsafe <code>main</code> work or unexplained broad diff</td>
+</tr>
+<tr>
+<td>Repository boundaries</td>
+<td>Source/config/tests tracked; secrets/data/generated output excluded</td>
+<td>Secret, large data, checkpoint, or environment committed</td>
+</tr>
+<tr>
+<td>PR communication</td>
+<td>Purpose, changes, verification, risk, AI assistance</td>
+<td>Reviewer cannot determine behavior or evidence</td>
+</tr>
+</tbody></table></div>
+<h2 id="reproducible-python">Reproducible Python<a class="heading-anchor" href="#reproducible-python" aria-label="Link to Reproducible Python">#</a></h2><div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Competency</th>
+<th>Passing evidence</th>
+<th>Blocking failure</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Environment</td>
+<td>Project environment is isolated and reproducible; <code>base</code> is not used as the project environment</td>
+<td>Global/base mutation or undocumented environment</td>
+</tr>
+<tr>
+<td>Behavior</td>
+<td>Relevant editable test and hidden behavior check pass</td>
+<td>Test is weakened, behavior remains wrong, or verification is invented</td>
+</tr>
+<tr>
+<td>Reproduction</td>
+<td>Dependencies, command, expected result, and limitation are recorded</td>
+<td>Another person cannot reproduce the demonstrated result</td>
+</tr>
+</tbody></table></div>
+<h2 id="ai-agent-user">AI Agent User<a class="heading-anchor" href="#ai-agent-user" aria-label="Link to AI Agent User">#</a></h2><div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Competency</th>
+<th>Passing evidence</th>
+<th>Blocking failure</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Agent workflow</td>
+<td>Manual baseline first; bounded task; reviewed diff/commands; personal checks; accepted and rejected/revised suggestion explained</td>
+<td>Agent substitutes for understanding, receives protected data, or invents verification</td>
+</tr>
+<tr>
+<td>Component model</td>
+<td>Distinguishes model, gateway/provider, agent/harness, interface, and tool protocol</td>
+<td>Treats an account, provider, or model as if it grants agent authority</td>
+</tr>
+<tr>
+<td>Cost and access</td>
+<td>Uses no-cost/offline route or accepts personal cost with explicit limit and monitoring</td>
+<td>Assumes lab reimbursement, shares a key, or treats a spend limit as data protection</td>
+</tr>
+</tbody></table></div>
+<h2 id="euler-cpu">Euler CPU<a class="heading-anchor" href="#euler-cpu" aria-label="Link to Euler CPU">#</a></h2><div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Competency</th>
+<th>Passing evidence</th>
+<th>Blocking failure</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Login/compute distinction</td>
+<td>Computation submitted through Slurm</td>
+<td>Long/heavy process run on login node</td>
+</tr>
+<tr>
+<td>Resource request</td>
+<td>Conservative and justified CPU/memory/time/account</td>
+<td>Large “just in case” request or unexplained partition constraint</td>
+</tr>
+<tr>
+<td>Job lifecycle</td>
+<td>Uses <code>sbatch</code>, <code>squeue</code>/<code>myjobs</code>, <code>scancel</code>, logs</td>
+<td>Cannot locate or stop own job</td>
+</tr>
+<tr>
+<td>Accounting</td>
+<td>Correctly interprets <code>sacct</code>, <code>seff</code>, state, exit, elapsed, <code>MaxRSS</code></td>
+<td>Increases resources without inspecting failure/usage</td>
+</tr>
+<tr>
+<td>Arrays</td>
+<td>Explicit low cap plus aggregate calculation across active submissions</td>
+<td>Uncapped array or per-array calculation that ignores overlapping jobs</td>
+</tr>
+<tr>
+<td>Storage</td>
+<td>Correct durable/temporary locations</td>
+<td>Sole important copy in scratch/<code>$TMPDIR</code></td>
+</tr>
+</tbody></table></div>
+<h2 id="euler-gpu">Euler GPU<a class="heading-anchor" href="#euler-gpu" aria-label="Link to Euler GPU">#</a></h2><div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Competency</th>
+<th>Passing evidence</th>
+<th>Blocking failure</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Account/model</td>
+<td><code>es_fuge</code>, one explicitly selected supported model and fallback plan</td>
+<td>GPU on <code>public</code> or an unverified combined-model request</td>
+</tr>
+<tr>
+<td>Baseline</td>
+<td>One GPU, bounded smoke test, monitoring</td>
+<td>Multi-GPU requested because data/model is “large” only</td>
+</tr>
+<tr>
+<td>Bottleneck reasoning</td>
+<td>Considers GPU, CPU, memory, data loading, I/O</td>
+<td>Adds GPUs without single-GPU measurement</td>
+</tr>
+<tr>
+<td>Execution mode</td>
+<td>Tunnel for short interaction, <code>sbatch</code> for unattended work</td>
+<td>Long idle interactive GPU allocation</td>
+</tr>
+<tr>
+<td>Recovery</td>
+<td>Checkpoint and wall-time plan</td>
+<td>Long run has no recovery strategy</td>
+</tr>
+</tbody></table></div>
+<h2 id="data-steward">Data Steward<a class="heading-anchor" href="#data-steward" aria-label="Link to Data Steward">#</a></h2><div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Competency</th>
+<th>Passing evidence</th>
+<th>Blocking failure</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Ownership/lifecycle</td>
+<td>Owner, classification, authoritative and temporary copies documented</td>
+<td>Ownership or only authoritative copy unclear</td>
+</tr>
+<tr>
+<td>Collaboration</td>
+<td>Specific group/setgid/default ACL design</td>
+<td>Recursive world-writable permission fix</td>
+</tr>
+<tr>
+<td>Recovery/handover</td>
+<td>Backup/purge/retention and next owner documented</td>
+<td>Temporary/personal location treated as archive</td>
+</tr>
+</tbody></table></div>
+<h2 id="blade-user">Blade User<a class="heading-anchor" href="#blade-user" aria-label="Link to Blade User">#</a></h2><div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Competency</th>
+<th>Passing evidence</th>
+<th>Blocking failure</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Workload</td>
+<td>Uses Blade for approved Windows GUI/prototyping and routes heavy compute elsewhere</td>
+<td>Treats Blade as an unattended heavy-compute server</td>
+</tr>
+<tr>
+<td>Storage</td>
+<td>Uses assigned durable <code>P:</code> project path; limits <code>D:</code> to temporary high-speed work and avoids <code>C:</code> for project data</td>
+<td>Only important copy remains on <code>C:</code>, user folders, or temporary <code>D:</code></td>
+</tr>
+</tbody></table></div>
+<h2 id="supervisor-and-staff">Supervisor And Staff<a class="heading-anchor" href="#supervisor-and-staff" aria-label="Link to Supervisor And Staff">#</a></h2><div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Competency</th>
+<th>Passing evidence</th>
+<th>Blocking failure</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Assignment</td>
+<td>Names responsibilities, information owner, storage, systems, reviewer, and exceptions</td>
+<td>Assigns a generic title-based route or leaves ownership/access ambiguous</td>
+</tr>
+<tr>
+<td>Offboarding</td>
+<td>Transfers ownership, revokes access, preserves authoritative evidence, and records lifecycle state</td>
+<td>Deletes evidence, shares an account, or leaves orphaned data/access</td>
+</tr>
+</tbody></table></div>
+<h2 id="review-outcome">Review Outcome<a class="heading-anchor" href="#review-outcome" aria-label="Link to Review Outcome">#</a></h2><ul>
+<li><strong>Pass:</strong> all selected blocking competencies demonstrated; human approves.</li>
+<li><strong>Changes requested:</strong> evidence is repairable in the current PR.</li>
+<li><strong>Supervisor review:</strong> policy exception, disputed ownership/classification, or
+repeated safety misunderstanding.</li>
+<li><strong>Incident escalation:</strong> real secret, protected data, unauthorized access, or
+harmful shared-resource action appears.</li>
+</ul>
+</article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/assessment/">GitHub-Native Passport Assessment</a><a href="/assessment/completion-record/">Passport Completion Record</a><a href="/assessment/template-spec/">Public Exercise And Assessment Specification</a><a href="/core/accounts-and-security/">Accounts And Secrets</a><a href="/experienced/">Experienced Fast-Path Diagnostic</a><a href="/maintainers/pilot-checklist/">Pilot And Human Validation Checklist</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current mission to practice, verify, and submit evidence.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 1.2.0 /exact source 8237d33a</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+`).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
+`).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html>

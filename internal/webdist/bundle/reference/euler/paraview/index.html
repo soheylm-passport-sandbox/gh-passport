@@ -1,0 +1,191 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Goal: use the ParaView GUI locally while Euler reads and processes the data inside a CPU Slurm allocation."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>ParaView 6.0.0 Client/Server On Euler | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.B_z1DDnN.css"></head><body data-curriculum-version="1.2.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / reference</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">reference</p><h1>ParaView 6.0.0 Client/Server On Euler</h1><p>Goal: use the ParaView GUI locally while Euler reads and processes the data inside a CPU Slurm allocation.</p></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/8237d33a5a373a229f238f9db1d7284d859c971a/docs/reference/euler/paraview.md" rel="noreferrer">View exact source</a><a href="/passport/">Return to my dashboard</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><p><strong>Goal:</strong> use the ParaView GUI locally while Euler reads and processes the data
+inside a CPU Slurm allocation.</p>
+<p><strong>Prerequisites:</strong> <a href="/reference/euler/access-and-ssh/">Euler access and SSH</a> works, the data is
+in an approved Euler storage location, and ParaView <strong>6.0.0</strong> is installed on
+the local computer.</p>
+<p><strong>Execution context:</strong> ParaView runs on the <strong>local computer</strong>. The ETH launcher
+opens a local terminal, connects to an <strong>Euler login node</strong>, submits <code>pvserver</code>
+through Slurm, and builds the required SSH tunnels. Do not run ParaView or
+<code>pvserver</code> directly on an Euler login node.</p>
+<h2 id="why-this-is-the-interim-gui-workflow">Why This Is The Interim GUI Workflow<a class="heading-anchor" href="#why-this-is-the-interim-gui-workflow" aria-label="Link to Why This Is The Interim GUI Workflow">#</a></h2><p>The local ParaView application provides the interface. <code>pvserver</code> on an Euler
+compute node accesses Euler files and performs processing and off-screen
+rendering. This is ParaView client/server communication through SSH tunnels,
+not forwarding the complete GUI through X11.</p>
+<p>The <code>xterm</code> or <code>cmd.exe</code> window mentioned below is only the launcher, job-status
+display, and SSH-tunnel process. Keep it open for the entire session.</p>
+<p>This page documents the currently working <strong>CPU</strong> workflow while a general
+Slurm-integrated graphical service is unavailable. GPU rendering has not been
+validated for this procedure; do not add a GPU request on your own.</p>
+<h2 id="1-install-the-exact-local-version">1. Install The Exact Local Version<a class="heading-anchor" href="#1-install-the-exact-local-version" aria-label="Link to 1. Install The Exact Local Version">#</a></h2><p>Download ParaView <strong>6.0.0</strong> for the local operating system from the
+<a href="https://www.paraview.org/download/" rel="noreferrer" data-external-link>official ParaView downloads</a>.</p>
+<p>Client and server versions must match. Do not substitute local ParaView 6.0.1
+just because <code>module avail paraview</code> currently shows 6.0.1 on Euler. ETH&#39;s
+dedicated <code>euler_600.pvsc</code> launcher uses the separately installed 6.0.0 server.</p>
+<p>Additional launcher requirements:</p>
+<ul>
+<li><strong>macOS:</strong> install XQuartz so <code>/usr/X11/bin/xterm</code> exists;</li>
+<li><strong>Linux:</strong> ensure <code>xterm</code> is installed;</li>
+<li><strong>Windows:</strong> install PuTTY and locate its <code>plink.exe</code> executable.</li>
+</ul>
+<p>Do not accept an unverified installer supplied through chat or a search advert.</p>
+<h3 id="windows-only-test-the-ssh-program-paraview-will-use">Windows only: test the SSH program ParaView will use<a class="heading-anchor" href="#windows-only-test-the-ssh-program-paraview-will-use" aria-label="Link to Windows only: test the SSH program ParaView will use">#</a></h3><p>ETH&#39;s Windows configuration calls PuTTY&#39;s <code>plink.exe</code>. Plink does <strong>not</strong>
+automatically read <code>%USERPROFILE%\.ssh\config</code> or use the private key selected
+there. Therefore, a successful <code>ssh euler</code> test does not prove that the
+ParaView launcher can authenticate.</p>
+<p>Run in <strong>Windows PowerShell</strong> before opening ParaView:</p>
+<pre><code class="language-powershell">$EthUser = Read-Host &quot;Short ETH username&quot;
+$PlinkPath = (Get-Command plink.exe -ErrorAction SilentlyContinue).Source
+if (-not $PlinkPath) {
+    $PlinkPath = Join-Path $env:ProgramFiles &quot;PuTTY\plink.exe&quot;
+}
+if (-not (Test-Path $PlinkPath)) {
+    throw &quot;plink.exe was not found. Install PuTTY from the official source.&quot;
+}
+&amp; $PlinkPath -ssh &quot;$EthUser@euler.ethz.ch&quot; &quot;echo key-ok&quot;
+$PlinkPath
+</code></pre>
+<p>On the first connection, compare the host-key fingerprint with the
+<a href="https://docs.hpc.ethz.ch/connections/host-keys/" rel="noreferrer" data-external-link>ETH host-key list</a> before
+accepting it. Authenticate with the ETH password, or with a PuTTY key/Pageant
+already configured according to the <a href="https://docs.hpc.ethz.ch/connections/putty/" rel="noreferrer" data-external-link>ETH PuTTY guide</a>.
+Do not paste a password or private key into a command.</p>
+<p><strong>Expected result:</strong> <code>key-ok</code>, followed by the absolute <code>plink.exe</code> path. Enter
+that path in ParaView later. If authentication fails, stop after one attempt
+and fix Plink access first. Do not change or delete the working OpenSSH key.</p>
+<h2 id="2-download-a-fresh-eth-configuration">2. Download A Fresh ETH Configuration<a class="heading-anchor" href="#2-download-a-fresh-eth-configuration" aria-label="Link to 2. Download A Fresh ETH Configuration">#</a></h2><p>Use the current ETH file instead of reusing one shared by another student.</p>
+<h3 id="windows-laptop---powershell">Windows laptop - PowerShell<a class="heading-anchor" href="#windows-laptop---powershell" aria-label="Link to Windows laptop - PowerShell">#</a></h3><pre><code class="language-powershell">$ConfigPath = Join-Path $env:USERPROFILE &quot;Downloads\euler_600.pvsc&quot;
+Invoke-WebRequest `
+    -Uri &quot;https://docs.hpc.ethz.ch/software/paraview/euler_600.pvsc&quot; `
+    -OutFile $ConfigPath
+Get-Item $ConfigPath
+</code></pre>
+<h3 id="macos-or-linux-laptop---zshbash">macOS or Linux laptop - zsh/Bash<a class="heading-anchor" href="#macos-or-linux-laptop---zshbash" aria-label="Link to macOS or Linux laptop - zsh/Bash">#</a></h3><pre><code class="language-bash">curl -fL \
+  https://docs.hpc.ethz.ch/software/paraview/euler_600.pvsc \
+  -o &quot;$HOME/Downloads/euler_600.pvsc&quot;
+ls -l &quot;$HOME/Downloads/euler_600.pvsc&quot;
+</code></pre>
+<p><strong>Expected result:</strong> the downloaded filename is exactly <code>euler_600.pvsc</code>, not
+<code>euler_600.pvsc.html</code>.</p>
+<h2 id="3-load-the-server-configuration">3. Load The Server Configuration<a class="heading-anchor" href="#3-load-the-server-configuration" aria-label="Link to 3. Load The Server Configuration">#</a></h2><p>On the <strong>local computer - ParaView 6.0.0</strong>:</p>
+<ol>
+<li>Open <strong>File &gt; Connect</strong>.</li>
+<li>Select <strong>Load Servers</strong>.</li>
+<li>Open the downloaded <code>euler_600.pvsc</code>.</li>
+<li>Confirm that <strong>Euler</strong> and <strong>Euler for Windows</strong> appear.</li>
+</ol>
+<p>Select <strong>Euler</strong> on macOS/Linux or <strong>Euler for Windows</strong> on Windows, then choose
+<strong>Connect</strong>.</p>
+<h2 id="4-choose-a-port-and-conservative-resources">4. Choose A Port And Conservative Resources<a class="heading-anchor" href="#4-choose-a-port-and-conservative-resources" aria-label="Link to 4. Choose A Port And Conservative Resources">#</a></h2><p>Before completing the connection form, obtain a currently unused port. Run on
+an <strong>Euler login node - Bash</strong>:</p>
+<pre><code class="language-bash">python3 -c &#39;import socket; s=socket.socket(); s.bind((&quot;&quot;,0)); print(s.getsockname()[1]); s.close()&#39;
+</code></pre>
+<p>Record the returned integer. ETH recommends a port above 10000. If the command
+returns a lower number, run it again.</p>
+<p>For a small first connection, enter:</p>
+<div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Starter value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>User name</td>
+<td>Short ETH username, not an email address</td>
+</tr>
+<tr>
+<td>Tunnel port</td>
+<td>The port obtained above</td>
+</tr>
+<tr>
+<td>Number of cores</td>
+<td><code>4</code></td>
+</tr>
+<tr>
+<td>Memory per core in MB</td>
+<td><code>2048</code></td>
+</tr>
+<tr>
+<td>Job wall time</td>
+<td><code>00:30:00</code></td>
+</tr>
+<tr>
+<td>Account</td>
+<td><code>es_fuge</code></td>
+</tr>
+</tbody></table></div>
+<p>The <code>.pvsc</code> form may display a much larger core default. That is not a lab
+recommendation. Begin with the starter values for a small representative file,
+then inspect the completed job and adjust the next request to the dataset.</p>
+<p>Platform paths:</p>
+<ul>
+<li><strong>macOS:</strong> SSH <code>/usr/bin/ssh</code>, xterm <code>/usr/X11/bin/xterm</code>;</li>
+<li><strong>Linux:</strong> normally SSH <code>/usr/bin/ssh</code>, xterm <code>/usr/bin/xterm</code>;</li>
+<li><strong>Windows:</strong> use the absolute path to <code>plink.exe</code> and
+<code>C:\WINDOWS\system32\cmd.exe</code>.</li>
+</ul>
+<h2 id="5-connect-and-work">5. Connect And Work<a class="heading-anchor" href="#5-connect-and-work" aria-label="Link to 5. Connect And Work">#</a></h2><p>Choose <strong>Connect</strong> in the parameters window.</p>
+<p><strong>Expected behavior:</strong></p>
+<ol>
+<li>A local terminal opens.</li>
+<li>macOS/Linux SSH may request the OpenSSH key passphrase. Windows Plink may
+request the ETH password or use a key loaded through PuTTY/Pageant.</li>
+<li>The launcher submits a Slurm job and displays its job ID/status.</li>
+<li>The job may remain pending until resources are available.</li>
+<li>ParaView connects when <code>pvserver</code> starts.</li>
+</ol>
+<p>Do not close the launcher terminal: that terminates the SSH tunnel. Do not
+submit a duplicate because the first session is pending.</p>
+<p>When connected, ParaView&#39;s remote file dialog browses the Euler filesystem.
+Open data from its approved Euler working location, not from the local laptop.</p>
+<h2 id="6-end-and-verify-cleanup">6. End And Verify Cleanup<a class="heading-anchor" href="#6-end-and-verify-cleanup" aria-label="Link to 6. End And Verify Cleanup">#</a></h2><p>Disconnect or close the ParaView session, then allow the launcher terminal to
+finish. Verify on an <strong>Euler login node - Bash</strong>:</p>
+<pre><code class="language-bash">squeue -u &quot;$USER&quot;
+</code></pre>
+<p><strong>Expected result:</strong> the ParaView job disappears. If it remains after the local
+client and launcher have closed, use the job ID shown by <code>squeue</code> with the
+following command template:</p>
+<pre><code class="language-text">scancel &lt;job-id&gt;
+</code></pre>
+<h2 id="common-failures-and-safe-recovery">Common Failures And Safe Recovery<a class="heading-anchor" href="#common-failures-and-safe-recovery" aria-label="Link to Common Failures And Safe Recovery">#</a></h2><ul>
+<li><strong>Version mismatch:</strong> install local ParaView 6.0.0 and re-download
+<code>euler_600.pvsc</code>; do not select the unrelated 6.0.1 module manually.</li>
+<li><strong>Configuration opens as HTML:</strong> remove the <code>.html</code> suffix or download it
+again with the command above.</li>
+<li><strong>macOS does not open a terminal:</strong> confirm XQuartz is installed and the
+xterm path is <code>/usr/X11/bin/xterm</code>.</li>
+<li><strong>Windows cannot start SSH:</strong> enter the absolute <code>plink.exe</code> path documented
+by the local PuTTY installation.</li>
+<li><strong>Windows <code>ssh euler</code> works but ParaView authentication fails:</strong> ParaView is
+using Plink, not Windows OpenSSH. Repeat the Plink preflight once and follow
+the ETH PuTTY setup; do not regenerate or remove the working OpenSSH key.</li>
+<li><strong>Connection fails or uses the wrong server:</strong> obtain another free port above
+10000 and retry once; do not submit repeated sessions blindly.</li>
+<li><strong>Job remains pending:</strong> read the status instead of increasing cores or
+submitting duplicates.</li>
+<li><strong>Terminal was closed:</strong> the tunnel and session may terminate. Check
+<code>squeue -u &quot;$USER&quot;</code> before starting another one.</li>
+<li><strong>Large dataset is slow or fails:</strong> inspect the job state, logs, memory use,
+data placement, and ParaView pipeline before requesting more resources.</li>
+</ul>
+<h2 id="verification">Verification<a class="heading-anchor" href="#verification" aria-label="Link to Verification">#</a></h2><ul>
+<li>The local client reports ParaView 6.0.0.</li>
+<li>The launcher reports a Slurm job ID and the selected <code>es_fuge</code> resources.</li>
+<li>The remote file dialog sees the intended Euler data location.</li>
+<li>No ParaView process performs computation on a login node.</li>
+<li>The Slurm job ends when the session is finished.</li>
+</ul>
+<h2 id="ask-for-help-when">Ask For Help When<a class="heading-anchor" href="#ask-for-help-when" aria-label="Link to Ask For Help When">#</a></h2><p>The fresh ETH configuration still fails, <code>plink.exe</code>/xterm cannot launch, the
+client and server report different versions, a job remains after cancellation,
+or GPU rendering is required. Share the sanitized launcher error and job ID,
+never credentials or private-key contents.</p>
+<h2 id="primary-sources">Primary Sources<a class="heading-anchor" href="#primary-sources" aria-label="Link to Primary Sources">#</a></h2><ul>
+<li><a href="https://docs.hpc.ethz.ch/software/paraview/" rel="noreferrer" data-external-link>ETH HPC ParaView</a></li>
+<li><a href="https://docs.hpc.ethz.ch/connections/putty/" rel="noreferrer" data-external-link>ETH HPC PuTTY</a></li>
+<li><a href="https://docs.paraview.org/en/latest/ReferenceManual/parallelDataVisualization.html" rel="noreferrer" data-external-link>ParaView remote and parallel visualization</a></li>
+</ul>
+<p>ETH page, configuration, and Euler 6.0.0 launchers verified: 2026-08-21.
+Review by: 2026-11-21. Owner: IDEAL Lab IT.</p>
+</article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/reference/euler/">Euler Reference</a><a href="/reference/euler/access-and-ssh/">Euler Access And Safe SSH Key Setup</a><a href="/reference/euler/euler-tunnel/">Euler Tunnel And VS Code</a><a href="/reference/euler/slurm/">Slurm Job Lifecycle And Resource Optimization</a><a href="/reference/euler/storage/">Euler Storage And Data Lifecycle</a><a href="/reference/euler/troubleshooting/">Euler Troubleshooting By Symptom</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current mission to practice, verify, and submit evidence.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 1.2.0 /exact source 8237d33a</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+`).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
+`).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html>

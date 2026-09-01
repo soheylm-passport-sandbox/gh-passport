@@ -1,0 +1,181 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The training project runs in a dedicated environment whose dependencies are declared in Git while the environment directory itself remains untracked."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Create A Reproducible Python Environment | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.B_z1DDnN.css"></head><body data-curriculum-version="1.2.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Mission / Reproducible Python</span></div><main id="main-content" class="page-shell"><header class="mission-hero"><div class="mission-kicker"><span>01 / 02</span><span>35 active minutes</span><span class="risk risk-local_change">local change</span></div><h1>Create A Reproducible Python Environment</h1><p>The training project runs in a dedicated environment whose dependencies are declared in Git while the environment directory itself remains untracked.</p><div class="machine-callout"><span>Work here</span><strong>Windows computer - Miniforge Prompt or PowerShell initialized for Conda. macOS/Linux computer - zsh or bash initialized for Conda.</strong></div></header><div class="mission-layout"><aside class="mission-aside"><nav class="mission-progress" aria-label="Reproducible Python mission sequence" data-mission-progress data-current-id="python-environment" data-base="/"><div class="progress-heading"><span data-progress-source>Curriculum preview</span><strong data-progress-title>Reproducible Python</strong></div><ol><li class="active" aria-current="step"><span>01</span><a href="/missions/python-environment/">Create A Reproducible Python Environment</a></li><li><span>02</span><a href="/missions/python-reproducible-change/">Make And Verify A Reproducible Python Change</a></li></ol><p data-progress-note>This preview shows the complete topic. Your local passport shows only the missions assigned to your route.</p></nav><script>(function(){const contextEndpoint = "/__passport/v1/context";
+const missionIndex = [{"id":"ai-agent-baseline","title":"Use A Safe Agent Loop After The Manual Baseline","route":"/missions/ai-agent-baseline/","track":"ai_agents"},{"id":"ai-tool-configuration","title":"Choose And Configure An AI Access Route","route":"/missions/ai-tool-configuration/","track":"ai_agents"},{"id":"blade-access-storage","title":"Use Blade For GUI Work Without Losing Data","route":"/missions/blade-access-storage/","track":"blade"},{"id":"core-accounts-secrets","title":"Protect Accounts And Secrets","route":"/missions/core-accounts-secrets/","track":"core"},{"id":"core-incidents-ai-responsibility","title":"Respond To Incidents And Own Automated Work","route":"/missions/core-incidents-ai-responsibility/","track":"core"},{"id":"core-orientation","title":"Start And Resume Your Passport","route":"/missions/core-orientation/","track":"core"},{"id":"core-systems-data","title":"Map Systems And Research Data","route":"/missions/core-systems-data/","track":"core"},{"id":"data-collaboration","title":"Design Safe Shared Data Collaboration","route":"/missions/data-collaboration/","track":"data_steward"},{"id":"data-handover","title":"Create A Recoverable Project Handover","route":"/missions/data-handover/","track":"data_steward"},{"id":"data-placement","title":"Place Research Data Intentionally","route":"/missions/data-placement/","track":"data_steward"},{"id":"euler-access-ssh","title":"Establish Safe Euler SSH Access","route":"/missions/euler-access-ssh/","track":"euler_cpu"},{"id":"euler-cpu-accounting","title":"Measure And Right-Size An Euler Job","route":"/missions/euler-cpu-accounting/","track":"euler_cpu"},{"id":"euler-cpu-arrays","title":"Cap And Calculate Euler Job Arrays","route":"/missions/euler-cpu-arrays/","track":"euler_cpu"},{"id":"euler-cpu-first-job","title":"Submit And Control A Tiny Euler CPU Job","route":"/missions/euler-cpu-first-job/","track":"euler_cpu"},{"id":"euler-gpu-review","title":"Review A One-GPU Euler Plan","route":"/missions/euler-gpu-review/","track":"euler_gpu"},{"id":"euler-storage-reproducibility","title":"Place Euler Data And Freeze Run Inputs","route":"/missions/euler-storage-reproducibility/","track":"euler_cpu"},{"id":"git-manual-pr","title":"Complete A Manual Pull Request Loop","route":"/missions/git-manual-pr/","track":"git"},{"id":"git-tools-auth","title":"Configure Git Identity And Your Editor","route":"/missions/git-tools-auth/","track":"git"},{"id":"python-environment","title":"Create A Reproducible Python Environment","route":"/missions/python-environment/","track":"python"},{"id":"python-reproducible-change","title":"Make And Verify A Reproducible Python Change","route":"/missions/python-reproducible-change/","track":"python"},{"id":"supervisor-offboarding","title":"Plan Handover And Offboarding","route":"/missions/supervisor-offboarding/","track":"supervisor"},{"id":"supervisor-onboarding","title":"Assign A Researcher Route And Safe Project Environment","route":"/missions/supervisor-onboarding/","track":"supervisor"}];
+
+  const progress = document.querySelector("[data-mission-progress]");
+  const loadAssignedRoute = async () => {
+    if (!progress) return;
+    try {
+      const response = await fetch(contextEndpoint, { credentials: "same-origin", headers: { Accept: "application/json" } });
+      if (!response.ok) return;
+      const context = await response.json();
+      const ids = context?.repository?.passport?.missions;
+      const currentId = progress.dataset.currentId;
+      const index = new Map(missionIndex.map((item) => [item.id, item]));
+      if (!Array.isArray(ids) || !ids.includes(currentId) || ids.some((id) => !index.has(id))) return;
+      const base = String(progress.dataset.base || "/").replace(/\/$/, "");
+      const list = progress.querySelector("ol");
+      list.replaceChildren();
+      ids.forEach((id, position) => {
+        const mission = index.get(id);
+        const row = document.createElement("li");
+        const active = id === currentId;
+        row.classList.toggle("active", active);
+        if (active) row.setAttribute("aria-current", "step");
+        const number = document.createElement("span");
+        number.textContent = String(position + 1).padStart(2, "0");
+        const link = document.createElement("a");
+        link.href = `${base}${mission.route}`;
+        link.textContent = mission.title;
+        row.append(number, link);
+        list.append(row);
+      });
+      progress.querySelector("[data-progress-source]").textContent = "Your assigned route";
+      progress.querySelector("[data-progress-title]").textContent = `${ids.length} missions`;
+      progress.querySelector("[data-progress-note]").textContent = "This route comes from your generated passport. Controller status remains authoritative for completion.";
+    } catch {
+      // The route-specific Markdown and track sequence remain usable offline.
+    }
+  };
+  loadAssignedRoute();
+})();</script><div class="authority-note" data-authority-note><strong data-authority-title>Curriculum preview only</strong><p data-authority-copy>This sample page is not assigned to you and cannot record progress.</p><a data-authority-link href="/getting-started/">How to start my passport</a></div></aside><div class="mission-content"><article class="markdown-body mission-body" data-mission-id="python-environment"><h2 id="outcome">Outcome<a class="heading-anchor" href="#outcome" aria-label="Link to Outcome">#</a></h2><p>The training project runs in a dedicated environment whose dependencies are
+declared in Git while the environment directory itself remains untracked.</p>
+<h2 id="why-this-matters">Why This Matters<a class="heading-anchor" href="#why-this-matters" aria-label="Link to Why This Matters">#</a></h2><p>Installing packages globally or into <code>base</code> makes projects interfere with one
+another and prevents collaborators from reproducing the environment.</p>
+<h2 id="before-you-start">Before You Start<a class="heading-anchor" href="#before-you-start" aria-label="Link to Before You Start">#</a></h2><p>Complete the manual Git mission. Install Miniforge using the current
+<a href="/reference/guides/python_setup/">Python setup guide</a> if <code>conda</code>
+is unavailable.</p>
+<h2 id="machine-and-shell">Machine And Shell<a class="heading-anchor" href="#machine-and-shell" aria-label="Link to Machine And Shell">#</a></h2><p><strong>Windows computer - Miniforge Prompt or PowerShell initialized for Conda.</strong></p>
+<p><strong>macOS/Linux computer - zsh or bash initialized for Conda.</strong></p>
+<h2 id="steps">Steps<a class="heading-anchor" href="#steps" aria-label="Link to Steps">#</a></h2><p>From the passport repository, create and activate the dedicated environment:</p>
+<pre><code class="language-bash">conda create -n ideal-passport python=3.11 -y
+conda activate ideal-passport
+python --version
+python -c &quot;import sys; print(sys.executable)&quot;
+</code></pre>
+<p>Open <code>workspace/python_project</code>. Install only the dependencies declared by its
+tracked project file, then select the <code>ideal-passport</code> interpreter in the
+editor. Do not commit Conda directories, <code>.venv</code>, caches, or generated output.</p>
+<h2 id="expected-result">Expected Result<a class="heading-anchor" href="#expected-result" aria-label="Link to Expected Result">#</a></h2><p>Python reports the intended environment, the fixture imports successfully, and
+<code>git status --short</code> does not show an environment directory.</p>
+<h2 id="independent-verification">Independent Verification<a class="heading-anchor" href="#independent-verification" aria-label="Link to Independent Verification">#</a></h2><p>Deactivate and reactivate the environment, then run the documented fixture
+test. Confirm that a clean clone could identify required dependencies from a
+tracked file rather than your machine state.</p>
+<h2 id="evidence-to-submit">Evidence To Submit<a class="heading-anchor" href="#evidence-to-submit" aria-label="Link to Evidence To Submit">#</a></h2><p>Complete <code>evidence/python/environment.md</code>. Sanitize home-directory components
+from interpreter paths and do not include environment exports containing
+credentials or private package indexes.</p>
+<h2 id="if-blocked">If Blocked<a class="heading-anchor" href="#if-blocked" aria-label="Link to If Blocked">#</a></h2><p>Do not repeatedly reinstall into <code>base</code>. Record <code>conda info --envs</code>, the Python
+path, and the exact error without credentials. Use the
+<a href="/labs/reproducible-python/">reproducible Python lab</a> or ask for
+help before deleting an existing environment.</p>
+<h2 id="understand-before-accepting-ai-output">Understand Before Accepting AI Output<a class="heading-anchor" href="#understand-before-accepting-ai-output" aria-label="Link to Understand Before Accepting AI Output">#</a></h2><p>An agent may suggest packages that are unnecessary, unmaintained, or fetched
+from an unapproved source. Review dependency purpose and project declarations
+before installation.</p>
+<h2 id="finish-and-continue">Finish And Continue<a class="heading-anchor" href="#finish-and-continue" aria-label="Link to Finish And Continue">#</a></h2><p>Keep <code>ideal-passport</code> active for the next bounded Python change and verification
+mission.</p>
+</article><section class="submission-card submission-preview" data-submission-card data-submission-paths="[&quot;evidence/python/environment.md&quot;]"><p class="eyebrow">Submit this mission</p><h2 data-submission-title>Preview only: submission is disabled</h2><p data-submission-copy>In your local passport, this panel names the exact evidence file, provides the bounded Git commands, and links to your permanent public assessment pull request.</p><ol><li><strong>Complete and verify</strong><span data-evidence-path>evidence/python/environment.md</span></li><li><strong>Review the exact diff</strong><span>Remove ETH or other private identifiers, real logs, research data, credentials, and private screenshots.</span></li><li><strong>Commit and push</strong><span>The controller checks only the submitted commit. Local browser progress is not evidence.</span></li><li><strong>Read the result</strong><span>Wait up to 15 minutes, then sync. The final reviewer is requested automatically when deterministic checks pass.</span></li></ol><pre><code class="language-bash" data-submit-commands>git status --short
+git diff -- PATH/TO/EVIDENCE.md
+git add -- PATH/TO/EVIDENCE.md
+git diff --cached
+git commit -m "docs(passport): submit mission evidence"
+git push</code></pre><div class="submission-actions"><a class="button primary" data-edit-evidence href="/getting-started/">Open my local passport first</a><a class="button secondary" data-open-pr hidden>Open permanent assessment PR</a><a class="button secondary" data-open-check hidden>Read automatic check</a><a class="button secondary" data-open-dashboard href="/passport/">Return to dashboard</a></div><p class="submission-status" data-submission-status>Nothing on this static preview is submitted.</p></section></div></div><nav class="mission-footer-nav" aria-label="Mission navigation" data-mission-footer><a href="#" hidden data-previous-mission><span>Previous in route</span><strong></strong></a><a class="source-link" href="https://github.com/IDEALLab/onboarding-IT/blob/8237d33a5a373a229f238f9db1d7284d859c971a/curriculum/missions/python-environment/README.md" rel="noreferrer">View exact source</a><a class="next" href="/missions/python-reproducible-change/" data-next-mission><span>Next in route</span><strong>Make And Verify A Reproducible Python Change</strong></a></nav></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 1.2.0 /exact source 8237d33a</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+`).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
+`).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html><script>(function(){const missionId = "python-environment";
+const contextEndpoint = "/__passport/v1/context";
+const stateEndpoint = "/__passport/v1/state";
+const basePath = "/";
+const missionIndex = [{"id":"ai-agent-baseline","title":"Use A Safe Agent Loop After The Manual Baseline","route":"/missions/ai-agent-baseline/"},{"id":"ai-tool-configuration","title":"Choose And Configure An AI Access Route","route":"/missions/ai-tool-configuration/"},{"id":"blade-access-storage","title":"Use Blade For GUI Work Without Losing Data","route":"/missions/blade-access-storage/"},{"id":"core-accounts-secrets","title":"Protect Accounts And Secrets","route":"/missions/core-accounts-secrets/"},{"id":"core-incidents-ai-responsibility","title":"Respond To Incidents And Own Automated Work","route":"/missions/core-incidents-ai-responsibility/"},{"id":"core-orientation","title":"Start And Resume Your Passport","route":"/missions/core-orientation/"},{"id":"core-systems-data","title":"Map Systems And Research Data","route":"/missions/core-systems-data/"},{"id":"data-collaboration","title":"Design Safe Shared Data Collaboration","route":"/missions/data-collaboration/"},{"id":"data-handover","title":"Create A Recoverable Project Handover","route":"/missions/data-handover/"},{"id":"data-placement","title":"Place Research Data Intentionally","route":"/missions/data-placement/"},{"id":"euler-access-ssh","title":"Establish Safe Euler SSH Access","route":"/missions/euler-access-ssh/"},{"id":"euler-cpu-accounting","title":"Measure And Right-Size An Euler Job","route":"/missions/euler-cpu-accounting/"},{"id":"euler-cpu-arrays","title":"Cap And Calculate Euler Job Arrays","route":"/missions/euler-cpu-arrays/"},{"id":"euler-cpu-first-job","title":"Submit And Control A Tiny Euler CPU Job","route":"/missions/euler-cpu-first-job/"},{"id":"euler-gpu-review","title":"Review A One-GPU Euler Plan","route":"/missions/euler-gpu-review/"},{"id":"euler-storage-reproducibility","title":"Place Euler Data And Freeze Run Inputs","route":"/missions/euler-storage-reproducibility/"},{"id":"git-manual-pr","title":"Complete A Manual Pull Request Loop","route":"/missions/git-manual-pr/"},{"id":"git-tools-auth","title":"Configure Git Identity And Your Editor","route":"/missions/git-tools-auth/"},{"id":"python-environment","title":"Create A Reproducible Python Environment","route":"/missions/python-environment/"},{"id":"python-reproducible-change","title":"Make And Verify A Reproducible Python Change","route":"/missions/python-reproducible-change/"},{"id":"supervisor-offboarding","title":"Plan Handover And Offboarding","route":"/missions/supervisor-offboarding/"},{"id":"supervisor-onboarding","title":"Assign A Researcher Route And Safe Project Environment","route":"/missions/supervisor-onboarding/"}];
+
+  const rememberMission = async () => {
+    try {
+      const response = await fetch(contextEndpoint, { credentials: "same-origin", headers: { Accept: "application/json" } });
+      if (!response.ok) return;
+      const context = await response.json();
+      const route = context?.repository?.passport?.missions;
+      const state = context?.local_state;
+      if (!Array.isArray(route) || !route.includes(missionId) || !state) return;
+      const safeGitHub = (value) => {
+        if (typeof value !== "string") return null;
+        try {
+          const url = new URL(value);
+          return url.protocol === "https:" && url.hostname === "github.com" ? url.href : null;
+        } catch { return null; }
+      };
+      const submission = document.querySelector("[data-submission-card]");
+      if (submission) {
+        const rawPaths = JSON.parse(submission.dataset.submissionPaths || "[]");
+        const evidence = Array.isArray(rawPaths) ? rawPaths.filter((item) => typeof item === "string" && item) : [];
+        const owner = context.repository?.owner;
+        const name = context.repository?.name;
+        const branch = context.repository?.branch;
+        if (evidence.length && typeof owner === "string" && typeof name === "string" && typeof branch === "string") {
+          const repositoryUrl = `https://github.com/${encodeURIComponent(owner)}/${encodeURIComponent(name)}`;
+          const evidencePath = evidence[0].split("/").map(encodeURIComponent).join("/");
+          const edit = submission.querySelector("[data-edit-evidence]");
+          edit.href = `${repositoryUrl}/edit/${encodeURIComponent(branch)}/${evidencePath}`;
+          edit.textContent = evidence.length === 1 ? "Edit the mission file" : "Edit the first mission file";
+          const commands = submission.querySelector("[data-submit-commands]");
+          const quotedPaths = evidence.map((path) => `"${path.replaceAll('"', '\\"')}"`).join(" ");
+          commands.textContent = `git status --short\ngit diff -- ${quotedPaths}\ngit add -- ${quotedPaths}\ngit diff --cached\ngit commit -m "docs(passport): submit ${missionId} evidence"\ngit push`;
+          submission.querySelector("[data-evidence-path]").textContent = evidence.join(", ");
+          submission.querySelector("[data-submission-title]").textContent = "Push once, then let the controller check it";
+          submission.querySelector("[data-submission-copy]").textContent = "Your answer is the committed file below. The public PR is the submission record; do not merge or close it.";
+          submission.querySelector("[data-submission-status]").textContent = context.repository.dirty
+            ? "You have local changes. Review and commit them before expecting a new check."
+            : context.repository.remote_head_sha !== context.repository.head_sha
+              ? "Your commit is local. Run git push before waiting for the controller."
+              : "The local branch matches its pushed commit. Sync from the dashboard for the latest result.";
+          submission.classList.remove("submission-preview");
+          const pr = safeGitHub(context.official?.pull_request_url || context.sync_result?.pull_request_url);
+          const prLink = submission.querySelector("[data-open-pr]");
+          const fallbackPR = `https://github.com/soheylm-passport-sandbox/passport-exercises/pulls?q=${encodeURIComponent(`is:pr is:open head:${owner}:${branch}`)}`;
+          prLink.href = pr || fallbackPR;
+          prLink.textContent = pr ? "Open permanent assessment PR" : "Find permanent assessment PR";
+          prLink.hidden = false;
+          const check = safeGitHub(context.official?.check_run_url);
+          const checkLink = submission.querySelector("[data-open-check]");
+          if (check) { checkLink.href = check; checkLink.hidden = false; }
+        }
+      }
+      const authority = document.querySelector("[data-authority-note]");
+      if (authority) {
+        authority.querySelector("[data-authority-title]").textContent = "Your submitted-work record";
+        authority.querySelector("[data-authority-copy]").textContent = "Your dashboard and permanent public draft PR show submitted work and controller status.";
+        const authorityLink = authority.querySelector("[data-authority-link]");
+        authorityLink.href = `${String(basePath || "/").replace(/\/$/, "")}/passport/`;
+        authorityLink.textContent = "Open my dashboard";
+      }
+      const index = new Map(missionIndex.map((item) => [item.id, item]));
+      if (route.some((id) => !index.has(id))) return;
+      const current = route.indexOf(missionId);
+      const base = String(basePath || "/").replace(/\/$/, "");
+      const setFooter = (selector, item, fallback) => {
+        const anchor = document.querySelector(selector);
+        if (!anchor) return;
+        if (!item) {
+          if (fallback) {
+            anchor.hidden = false;
+            anchor.href = `${base}/passport/`;
+            anchor.querySelector("span").textContent = "Route status";
+            anchor.querySelector("strong").textContent = "Return to dashboard";
+          } else anchor.hidden = true;
+          return;
+        }
+        anchor.hidden = false;
+        anchor.href = `${base}${item.route}`;
+        anchor.querySelector("strong").textContent = item.title;
+      };
+      setFooter("[data-previous-mission]", index.get(route[current - 1]), false);
+      setFooter("[data-next-mission]", index.get(route[current + 1]), true);
+      if (state.last_opened_mission === missionId) return;
+      await fetch(stateEndpoint, {
+        method: "PUT",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ ...state, last_opened_mission: missionId }),
+      });
+    } catch {
+      // Static preview and offline use remain fully readable without local state.
+    }
+  };
+  rememberMission();
+})();</script>

@@ -1,0 +1,221 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Goal: put files in a location that matches their size, lifetime, performance, sharing, and recovery requirements."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Euler Storage And Data Lifecycle | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.B_z1DDnN.css"></head><body data-curriculum-version="1.2.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / reference</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">reference</p><h1>Euler Storage And Data Lifecycle</h1><p>Goal: put files in a location that matches their size, lifetime, performance, sharing, and recovery requirements.</p></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/8237d33a5a373a229f238f9db1d7284d859c971a/docs/reference/euler/storage.md" rel="noreferrer">View exact source</a><a href="/passport/">Return to my dashboard</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><p><strong>Goal:</strong> put files in a location that matches their size, lifetime,
+performance, sharing, and recovery requirements.</p>
+<p><strong>Prerequisites:</strong> know the project&#39;s information owner and approved group
+storage path.</p>
+<p><strong>Execution context:</strong> inspection commands run on an <strong>Euler login node -
+Bash</strong>. Data processing belongs in a Slurm allocation.</p>
+<h2 id="storage-decision-table">Storage Decision Table<a class="heading-anchor" href="#storage-decision-table" aria-label="Link to Storage Decision Table">#</a></h2><div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Location</th>
+<th>Current behavior</th>
+<th>Use for</th>
+<th>Never rely on it for</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>$HOME</code></td>
+<td>50 GB; snapshots and nightly backup</td>
+<td>Small private code, configuration, environments</td>
+<td>Large datasets or heavy I/O</td>
+</tr>
+<tr>
+<td><code>/cluster/project/&lt;group&gt;</code></td>
+<td>Group-specific; snapshots and backup</td>
+<td>Critical long-term group data, when purchased</td>
+<td>Temporary high-I/O intermediates</td>
+</tr>
+<tr>
+<td><code>/cluster/work/fuge</code></td>
+<td>Shared high-performance work storage; backup, no snapshots</td>
+<td>Large shared datasets, checkpoints, logs, results</td>
+<td>Personal Git clones or instant snapshot recovery</td>
+</tr>
+<tr>
+<td><code>$SCRATCH</code></td>
+<td>2.5 TB; no backup; files deleted after about two weeks</td>
+<td>Re-creatable short-term large data</td>
+<td>The only copy of important data</td>
+</tr>
+<tr>
+<td><code>$TMPDIR</code></td>
+<td>Node-local; deleted when the Slurm job ends</td>
+<td>Fast temporary job files</td>
+<td>Anything not copied out before job exit</td>
+</tr>
+<tr>
+<td>External NAS</td>
+<td>Durable shared project storage</td>
+<td>Transfer and long-term project organization</td>
+<td>Direct high-I/O processing from Euler</td>
+</tr>
+</tbody></table></div>
+<h2 id="inspect-capacity-and-paths">Inspect Capacity And Paths<a class="heading-anchor" href="#inspect-capacity-and-paths" aria-label="Link to Inspect Capacity And Paths">#</a></h2><p>Run on an <strong>Euler login node - Bash</strong>:</p>
+<pre><code class="language-bash">printf &#39;HOME=%s\nSCRATCH=%s\n&#39; &quot;$HOME&quot; &quot;$SCRATCH&quot;
+lquota
+lquota /cluster/work/fuge
+</code></pre>
+<p><strong>Expected result:</strong> paths plus quota tables. Do not assume the old <code>1 TB</code>
+scratch value found in archived documentation; current ETH documentation states
+2.5 TB and a two-week purge policy.</p>
+<h2 id="stage-high-io-data-through-tmpdir">Stage High-I/O Data Through <code>$TMPDIR</code><a class="heading-anchor" href="#stage-high-io-data-through-tmpdir" aria-label="Link to Stage High-I/O Data Through $TMPDIR">#</a></h2><p>For I/O-intensive work, request node-local temporary space in the Slurm script:</p>
+<pre><code class="language-bash">#SBATCH --tmp=20G
+</code></pre>
+<p>Choose a measured size rather than copying this value into every job. Slurm
+creates a unique directory, exposes its path as <code>$TMPDIR</code> inside the job, and
+deletes it when the job terminates. It is not backed up.</p>
+<p>This is the safe stage-in/stage-out pattern. Adapt the input, program, and
+durable result paths in a reviewed job script before submission:</p>
+<pre><code class="language-text">set -euo pipefail
+
+source_dir=&quot;/replace/with/approved/input/path&quot;
+durable_results_root=&quot;/replace/with/approved/results/path&quot;
+durable_run_dir=&quot;$durable_results_root/$SLURM_JOB_ID&quot;
+local_input=&quot;$TMPDIR/input&quot;
+local_output=&quot;$TMPDIR/output&quot;
+
+test -d &quot;$source_dir&quot;
+mkdir -p &quot;$local_input&quot; &quot;$local_output&quot; &quot;$durable_run_dir&quot;
+rsync -a -- &quot;$source_dir/&quot; &quot;$local_input/&quot;
+
+python &quot;$SLURM_SUBMIT_DIR/process.py&quot; \
+  --input &quot;$local_input&quot; \
+  --output &quot;$local_output&quot;
+
+rsync -a -- &quot;$local_output/&quot; &quot;$durable_run_dir/&quot;
+</code></pre>
+<p>Replace both <code>/replace/...</code> values with supervisor-approved Euler paths before
+submitting; they are deliberately invalid defaults. The trailing <code>/</code> means
+&quot;copy the contents&quot; rather than nesting the source directory. Use a unique
+result directory so a failed or repeated run cannot overwrite another run. Do
+not copy the whole submission directory into and back out of <code>$TMPDIR</code>: that
+can overwrite source, configuration, or logs.</p>
+<p>The final <code>rsync</code> runs only if the program succeeds. For a long job that must
+survive timeout or node failure, write periodic checkpoints to an approved
+durable run directory as well; the final copy from <code>$TMPDIR</code> is not a backup.
+Do not process high-I/O workloads directly from external NAS storage.</p>
+<h2 id="recommended-project-layout">Recommended Project Layout<a class="heading-anchor" href="#recommended-project-layout" aria-label="Link to Recommended Project Layout">#</a></h2><p>Keep code in each person&#39;s Git clone. Use shared storage for data and artifacts:</p>
+<pre><code class="language-text">/cluster/work/fuge/&lt;project&gt;/
+  datasets/
+  checkpoints/
+  logs/
+  results/
+  nobackup/
+</code></pre>
+<p>A directory named <code>nobackup</code> and everything below it is excluded from Euler
+work-storage backups. Use it only for re-creatable data.</p>
+<h2 id="shared-permissions">Shared Permissions<a class="heading-anchor" href="#shared-permissions" aria-label="Link to Shared Permissions">#</a></h2><p>Lab IT/ETH HPC must first provision the top-level shared project directory;
+ordinary users cannot create a new child directly under <code>/cluster/work/fuge</code>.
+Only the Unix owner designated to initialize that existing project directory
+should run the ACL procedure. Confirm the exact path and Unix group with the
+supervisor or lab IT; do not guess.</p>
+<p>Run on an <strong>Euler login node - Bash</strong>. This block prompts for the exact path and
+group, validates ownership and write access, shows the intended target, and
+requires the full path a second time before creating child directories:</p>
+<pre><code class="language-bash">(
+set -euo pipefail
+read -r -p &quot;Approved project directory under /cluster/work/fuge: &quot; project_dir
+project_dir=&quot;$(realpath -m -- &quot;$project_dir&quot;)&quot;
+read -r -p &quot;Approved Unix group: &quot; project_group
+
+case &quot;$project_dir&quot; in
+  /cluster/work/fuge/?*) ;;
+  *) printf &#39;STOP: path must be below /cluster/work/fuge\n&#39; &gt;&amp;2; exit 1 ;;
+esac
+case &quot;$project_group&quot; in
+  &#39;&#39;|*[!A-Za-z0-9_.-]*) printf &#39;STOP: invalid group name\n&#39; &gt;&amp;2; exit 1 ;;
+esac
+if ! id -nG | tr &#39; &#39; &#39;\n&#39; | grep -Fqx &quot;$project_group&quot;; then
+  printf &#39;STOP: your account is not a member of %s\n&#39; &quot;$project_group&quot; &gt;&amp;2
+  exit 1
+fi
+if [ ! -d &quot;$project_dir&quot; ]; then
+  printf &#39;STOP: project root is not provisioned; ask lab IT to create it.\n&#39; &gt;&amp;2
+  exit 1
+fi
+if [ &quot;$(stat -c &#39;%U&#39; &quot;$project_dir&quot;)&quot; != &quot;$USER&quot; ]; then
+  printf &#39;STOP: only the directory owner may initialize its ACLs.\n&#39; &gt;&amp;2
+  exit 1
+fi
+if [ ! -w &quot;$project_dir&quot; ]; then
+  printf &#39;STOP: project root is not writable by your account.\n&#39; &gt;&amp;2
+  exit 1
+fi
+
+printf &#39;Directory: %s\nGroup: %s\n&#39; &quot;$project_dir&quot; &quot;$project_group&quot;
+ls -ld &quot;$project_dir&quot;
+read -r -p &quot;Type the full directory again to approve initialization: &quot; confirmation
+if [ &quot;$confirmation&quot; != &quot;$project_dir&quot; ]; then
+  printf &#39;STOP: confirmation did not match; nothing was changed.\n&#39; &gt;&amp;2
+  exit 1
+fi
+
+child_paths=(
+  &quot;$project_dir/datasets&quot;
+  &quot;$project_dir/checkpoints&quot;
+  &quot;$project_dir/logs&quot;
+  &quot;$project_dir/results&quot;
+)
+mkdir -p -- &quot;${child_paths[@]}&quot;
+project_paths=(&quot;$project_dir&quot; &quot;${child_paths[@]}&quot;)
+chgrp &quot;$project_group&quot; &quot;${project_paths[@]}&quot;
+chmod 2770 &quot;${project_paths[@]}&quot;
+setfacl -m &quot;g:${project_group}:rwx&quot; &quot;${project_paths[@]}&quot;
+setfacl -d -m &quot;g:${project_group}:rwx&quot; &quot;${project_paths[@]}&quot;
+getfacl &quot;$project_dir&quot; &quot;$project_dir/logs&quot;
+)
+</code></pre>
+<p>This uses setgid on directories and a default ACL so new content inherits group
+access even when a collaborator uses a restrictive <code>umask</code>. The default ACL is
+applied to every initialized child directory, not only the project root. The
+procedure deliberately avoids broad recursive permission changes.</p>
+<p>Each collaborator should test with their own account:</p>
+<pre><code class="language-bash">read -r -p &quot;Approved project directory: &quot; project_dir
+project_dir=&quot;$(realpath -m -- &quot;$project_dir&quot;)&quot;
+case &quot;$project_dir&quot; in
+  /cluster/work/fuge/?*) ;;
+  *) printf &#39;STOP: path must be below /cluster/work/fuge\n&#39; &gt;&amp;2; project_dir=&#39;&#39; ;;
+esac
+test_file=&quot;$project_dir/logs/$USER.write-test&quot;
+if [ -n &quot;$project_dir&quot; ]; then
+  touch &quot;$test_file&quot; &amp;&amp; ls -l &quot;$test_file&quot; &amp;&amp; rm &quot;$test_file&quot;
+fi
+</code></pre>
+<h2 id="data-lifecycle">Data Lifecycle<a class="heading-anchor" href="#data-lifecycle" aria-label="Link to Data Lifecycle">#</a></h2><ol>
+<li>Record the authoritative source and owner.</li>
+<li>Copy working data to the approved Euler location.</li>
+<li>Verify size, count, and a checksum for important transfers.</li>
+<li>Use <code>$TMPDIR</code> or <code>$SCRATCH</code> only for re-creatable intermediates.</li>
+<li>Copy final results and required checkpoints to durable project storage.</li>
+<li>Remove obsolete scratch and intermediate data.</li>
+<li>Document what another researcher must retain at handover.</li>
+</ol>
+<h2 id="verification">Verification<a class="heading-anchor" href="#verification" aria-label="Link to Verification">#</a></h2><ul>
+<li><code>lquota</code> shows expected capacity.</li>
+<li>Lab IT provisioned the top-level project root before ACL initialization.</li>
+<li>A collaborator can create and remove a harmless test file.</li>
+<li>The project README identifies authoritative, temporary, and backed-up copies.</li>
+<li>Jobs using <code>$TMPDIR</code> request it explicitly and copy required outputs to a
+unique durable run directory.</li>
+<li>No dataset or checkpoint is accidentally tracked by Git.</li>
+</ul>
+<h2 id="common-failures-and-safe-recovery">Common Failures And Safe Recovery<a class="heading-anchor" href="#common-failures-and-safe-recovery" aria-label="Link to Common Failures And Safe Recovery">#</a></h2><ul>
+<li><strong><code>Disk quota exceeded</code>:</strong> inspect both byte and file-count quotas. Remove or
+relocate known disposable files; do not delete unfamiliar project data.</li>
+<li><strong>Permission denied:</strong> inspect <code>ls -ld</code>, <code>getfacl</code>, and group membership. Do not
+use <code>chmod -R 777</code>.</li>
+<li><strong>Scratch file disappeared:</strong> scratch is intentionally unbacked and purged.
+Restore from the authoritative copy; report data loss if none exists.</li>
+<li><strong>NAS processing is slow:</strong> stage data to approved Euler storage rather than
+loading it repeatedly over the external mount.</li>
+</ul>
+<h2 id="ask-for-help-when">Ask For Help When<a class="heading-anchor" href="#ask-for-help-when" aria-label="Link to Ask For Help When">#</a></h2><p>The approved group is unknown, recursive permission repair appears necessary,
+the project root is missing/not owned by the initializer, the project has no
+authoritative copy, or a transfer is measured in terabytes.</p>
+<h2 id="primary-source">Primary Source<a class="heading-anchor" href="#primary-source" aria-label="Link to Primary Source">#</a></h2><ul>
+<li><a href="https://docs.hpc.ethz.ch/hardware/storage/" rel="noreferrer" data-external-link>ETH HPC storage</a></li>
+</ul>
+<p>Verified: 2026-08-06. Review by: 2026-11-04. Owner: IDEAL Lab IT.</p>
+</article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/reference/euler/">Euler Reference</a><a href="/reference/euler/access-and-ssh/">Euler Access And Safe SSH Key Setup</a><a href="/reference/euler/euler-tunnel/">Euler Tunnel And VS Code</a><a href="/reference/euler/paraview/">ParaView 6.0.0 Client/Server On Euler</a><a href="/reference/euler/slurm/">Slurm Job Lifecycle And Resource Optimization</a><a href="/reference/euler/troubleshooting/">Euler Troubleshooting By Symptom</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current mission to practice, verify, and submit evidence.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 1.2.0 /exact source 8237d33a</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+`).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
+`).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html>

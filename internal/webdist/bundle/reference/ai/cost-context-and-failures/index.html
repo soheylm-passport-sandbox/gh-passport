@@ -1,0 +1,127 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Goal: recognize why an apparently small agent task can consume money, forget constraints, or produce plausible but unverified work."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>AI Cost, Context, And Failure Modes | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.B_z1DDnN.css"></head><body data-curriculum-version="1.2.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / reference</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">reference</p><h1>AI Cost, Context, And Failure Modes</h1><p>Goal: recognize why an apparently small agent task can consume money, forget constraints, or produce plausible but unverified work.</p></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/8237d33a5a373a229f238f9db1d7284d859c971a/docs/reference/ai/cost-context-and-failures.md" rel="noreferrer">View exact source</a><a href="/passport/">Return to my dashboard</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><p><strong>Goal:</strong> recognize why an apparently small agent task can consume money,
+forget constraints, or produce plausible but unverified work.</p>
+<p><strong>Prerequisites:</strong> <a href="/reference/ai/agents-and-interfaces/">Agents and interfaces</a>.</p>
+<p><strong>Execution context:</strong> reading and reflection. Use account dashboards only when
+you deliberately use a paid personal service.</p>
+<h2 id="cost-is-more-than-one-prompt">Cost Is More Than One Prompt<a class="heading-anchor" href="#cost-is-more-than-one-prompt" aria-label="Link to Cost Is More Than One Prompt">#</a></h2><p>An agent may make many model requests while it searches, plans, edits, runs
+tools, reads output, and retries. Cost can depend on:</p>
+<ul>
+<li>input, cached, reasoning, and output tokens;</li>
+<li>the selected model and serving provider;</li>
+<li>repeated repository context and large terminal/tool output;</li>
+<li>parallel agents, retries, fallbacks, or a loop that does not stop;</li>
+<li>images or other separately priced inputs.</li>
+</ul>
+<p>Check the current provider price rather than copying a number from this
+handbook. For a paid personal account, disable auto-recharge, use a dedicated
+limited key, record usage before and after, and stop when observed spending does
+not match the task.</p>
+<h2 id="context-is-working-memory-not-storage">Context Is Working Memory, Not Storage<a class="heading-anchor" href="#context-is-working-memory-not-storage" aria-label="Link to Context Is Working Memory, Not Storage">#</a></h2><p>The context window contains only the information supplied to a model request.
+Long sessions can accumulate instructions, file excerpts, command output, and
+earlier mistakes. A harness may compact or summarize earlier context to
+continue, but a summary can omit constraints or details.</p>
+<p>Compaction does <strong>not</strong> reduce an account&#39;s accumulated spend or guarantee that
+the next answer remembers the original requirements.</p>
+<p>Use one session for one bounded task. Start a new session when:</p>
+<ul>
+<li>the goal changes materially;</li>
+<li>the agent repeatedly forgets a constraint;</li>
+<li>unrelated files or commands appear;</li>
+<li>large logs or tool output dominate the conversation;</li>
+<li>the agent contradicts the repository or its own verified findings.</li>
+</ul>
+<p>Restate the goal, relevant files, constraints, current Git state, and required
+verification in the new session. Do not ask the model to reconstruct missing
+facts from memory.</p>
+<h2 id="common-failure-classes">Common Failure Classes<a class="heading-anchor" href="#common-failure-classes" aria-label="Link to Common Failure Classes">#</a></h2><div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Failure</th>
+<th>Warning sign</th>
+<th>Human response</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Hallucinated state</td>
+<td>Claims a file, command, test, or job exists without evidence</td>
+<td>Inspect the repository or system directly</td>
+</tr>
+<tr>
+<td>Scope expansion</td>
+<td>Unrelated files, dependencies, refactors, or network calls</td>
+<td>Stop and reduce the task packet</td>
+</tr>
+<tr>
+<td>Permission drift</td>
+<td>Repeated requests for broad or persistent approval</td>
+<td>Deny and grant only understood one-time actions</td>
+</tr>
+<tr>
+<td>Context degradation</td>
+<td>Forgotten constraints or inconsistent explanations</td>
+<td>Start a new bounded session</td>
+</tr>
+<tr>
+<td>Runaway cost</td>
+<td>Repeated calls, retries, parallel sessions, or rising activity</td>
+<td>Stop sessions and revoke/disable the paid key</td>
+</tr>
+<tr>
+<td>Data disclosure</td>
+<td>Requests for real credentials or protected project context</td>
+<td>Stop, contain, and follow incident policy</td>
+</tr>
+<tr>
+<td>False verification</td>
+<td>Summary says checks passed but evidence is absent or stale</td>
+<td>Run the checks personally and record exact output</td>
+</tr>
+<tr>
+<td>Remote-resource misuse</td>
+<td>Agent proposes computation on an Euler login node or submits oversized jobs</td>
+<td>Keep the agent read-only and review Slurm scripts manually</td>
+</tr>
+</tbody></table></div>
+<h2 id="model-and-tool-errors">Model And Tool Errors<a class="heading-anchor" href="#model-and-tool-errors" aria-label="Link to Model And Tool Errors">#</a></h2><p>Changing to a more expensive or more permissive model is not a default recovery
+step. First identify whether the failure comes from:</p>
+<ul>
+<li>authentication or expired allowance;</li>
+<li>model entitlement or exact model identifier;</li>
+<li>provider outage, rate limit, or privacy-routing restriction;</li>
+<li>context length or unsupported tool calling;</li>
+<li>agent harness, extension, or editor configuration;</li>
+<li>the task itself being underspecified or untestable.</li>
+</ul>
+<p>Use the <a href="/help/ai-agents/">AI troubleshooting guide</a> and record
+the exact sanitized error, interface, model, and action attempted.</p>
+<h2 id="understand-before-accepting-ai-output">Understand Before Accepting AI Output<a class="heading-anchor" href="#understand-before-accepting-ai-output" aria-label="Link to Understand Before Accepting AI Output">#</a></h2><ul>
+<li><input disabled="" type="checkbox"> I know that one agent task can contain many billed model requests.</li>
+<li><input disabled="" type="checkbox"> I know that compaction is not a spending control.</li>
+<li><input disabled="" type="checkbox"> I start a new session when context becomes unreliable.</li>
+<li><input disabled="" type="checkbox"> I verify tests, Git state, remote jobs, and spending independently.</li>
+<li><input disabled="" type="checkbox"> I will not fix an unclear failure by granting broader permissions.</li>
+</ul>
+<h2 id="verification">Verification<a class="heading-anchor" href="#verification" aria-label="Link to Verification">#</a></h2><p>Explain why each statement is false:</p>
+<ol>
+<li>&quot;The prompt was short, so the complete agent task must be cheap.&quot;</li>
+<li>&quot;The thread compacted, so its earlier spending was reset.&quot;</li>
+<li>&quot;The agent said the test passed, so no terminal evidence is needed.&quot;</li>
+<li>&quot;ZDR means any unpublished research can be uploaded.&quot;</li>
+</ol>
+<h2 id="common-failure-and-safe-recovery">Common Failure And Safe Recovery<a class="heading-anchor" href="#common-failure-and-safe-recovery" aria-label="Link to Common Failure And Safe Recovery">#</a></h2><p><strong>The session is behaving inconsistently.</strong> Stop tool execution, inspect the
+working tree and any external activity, preserve useful sanitized evidence,
+then start a new session with a smaller task packet. Do not let the old session
+continue changing files while you diagnose it.</p>
+<h2 id="ask-for-help-when">Ask For Help When<a class="heading-anchor" href="#ask-for-help-when" aria-label="Link to Ask For Help When">#</a></h2><p>Usage cannot be explained, a service may have received protected information,
+an agent used an external system unexpectedly, or recovery could delete work or
+rewrite shared history.</p>
+<h2 id="primary-sources">Primary Sources<a class="heading-anchor" href="#primary-sources" aria-label="Link to Primary Sources">#</a></h2><ul>
+<li><a href="https://openrouter.ai/docs/cookbook/administration/usage-accounting" rel="noreferrer" data-external-link>OpenRouter usage accounting</a></li>
+<li><a href="https://openrouter.ai/pricing" rel="noreferrer" data-external-link>OpenRouter pricing</a></li>
+<li><a href="https://code.visualstudio.com/docs/agents/run/review-code-edits" rel="noreferrer" data-external-link>VS Code agent review</a></li>
+<li><a href="https://code.visualstudio.com/docs/agents/best-practices" rel="noreferrer" data-external-link>VS Code agent best practices</a></li>
+</ul>
+<p>Verified: 2026-08-26. Review by: 2026-11-26. Owner: lab software maintainer.</p>
+</article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/labs/manual-vs-agent/">Lab: Manual Versus Agent-Assisted Work</a><a href="/reference/ai/">AI Coding Agents</a><a href="/reference/ai/agents-and-interfaces/">Agents, Models, Providers, And Interfaces</a><a href="/reference/ai/vscode-copilot-student/">VS Code And GitHub Copilot Student</a><a href="/reference/ai/zed-openrouter/">Optional Zed And Personal OpenRouter</a><a href="/reference/euler/access-and-ssh/">Euler Access And Safe SSH Key Setup</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current mission to practice, verify, and submit evidence.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 1.2.0 /exact source 8237d33a</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+`).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
+`).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html>

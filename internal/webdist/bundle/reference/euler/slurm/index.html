@@ -1,0 +1,260 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Goal: submit, monitor, diagnose, and right-size Euler jobs without wasting shared resources."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Slurm Job Lifecycle And Resource Optimization | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.B_z1DDnN.css"></head><body data-curriculum-version="1.2.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / reference</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">reference</p><h1>Slurm Job Lifecycle And Resource Optimization</h1><p>Goal: submit, monitor, diagnose, and right-size Euler jobs without wasting shared resources.</p></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/8237d33a5a373a229f238f9db1d7284d859c971a/docs/reference/euler/slurm.md" rel="noreferrer">View exact source</a><a href="/passport/">Return to my dashboard</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><p><strong>Goal:</strong> submit, monitor, diagnose, and right-size Euler jobs without wasting
+shared resources.</p>
+<p><strong>Prerequisites:</strong> <a href="/reference/euler/access-and-ssh/">Euler access</a>, an approved storage plan,
+and the <a href="/policy/euler-share/">Euler share policy</a>.</p>
+<p><strong>Execution context:</strong> all commands on this page run on an <strong>Euler login node -
+Bash</strong>, except commands explicitly described as running inside the job.</p>
+<h2 id="the-lifecycle">The Lifecycle<a class="heading-anchor" href="#the-lifecycle" aria-label="Link to The Lifecycle">#</a></h2><pre><code class="language-text">estimate -&gt; inspect script -&gt; sbatch -&gt; squeue/myjobs -&gt; logs -&gt;
+sacct/seff -&gt; adjust next request
+</code></pre>
+<p>The login node is for editing, transfer, compilation where appropriate, and job
+management. Run computations through Slurm.</p>
+<h2 id="core-commands">Core Commands<a class="heading-anchor" href="#core-commands" aria-label="Link to Core Commands">#</a></h2><div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>sbatch job.slurm</code></td>
+<td>Submit an unattended job</td>
+</tr>
+<tr>
+<td><code>squeue -u &quot;$USER&quot;</code></td>
+<td>List your queued/running jobs</td>
+</tr>
+<tr>
+<td><code>myjobs -j &lt;job-id&gt;</code></td>
+<td>Human-readable Euler job details</td>
+</tr>
+<tr>
+<td><code>scancel &lt;job-id&gt;</code></td>
+<td>Cancel an incorrect or unwanted job</td>
+</tr>
+<tr>
+<td><code>sacct -j &lt;job-id&gt; ...</code></td>
+<td>Inspect completed-job accounting</td>
+</tr>
+<tr>
+<td><code>seff &lt;job-id&gt;</code></td>
+<td>Read a simplified efficiency summary</td>
+</tr>
+<tr>
+<td><code>sstat -j &lt;job-id&gt;.batch ...</code></td>
+<td>Sample a running batch step</td>
+</tr>
+<tr>
+<td><code>my_share_info</code></td>
+<td>Show available shareholder memberships</td>
+</tr>
+<tr>
+<td><code>get_inefficient_jobs</code></td>
+<td>Find inefficient recent jobs</td>
+</tr>
+</tbody></table></div>
+<h2 id="conservative-cpu-template">Conservative CPU Template<a class="heading-anchor" href="#conservative-cpu-template" aria-label="Link to Conservative CPU Template">#</a></h2><p>Do not specify a partition. Current ETH guidance says to let Slurm select one
+unless the workload genuinely depends on a particular resource.</p>
+<pre><code class="language-bash">#!/usr/bin/env bash
+#SBATCH --job-name=cpu-smoke
+#SBATCH --account=es_fuge
+#SBATCH --time=00:05:00
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem-per-cpu=1G
+#SBATCH --output=logs/%x_%j.out
+#SBATCH --error=logs/%x_%j.err
+
+set -euo pipefail
+echo &quot;job_id=$SLURM_JOB_ID&quot;
+echo &quot;host=$(hostname)&quot;
+echo &quot;cpus=$SLURM_CPUS_PER_TASK&quot;
+sleep 10
+</code></pre>
+<p>For eligible small CPU work, <code>--account=public</code> may replace <code>es_fuge</code>. Do not add
+a GPU request to a public job.</p>
+<p>Before submission:</p>
+<pre><code class="language-bash">mkdir -p logs
+bash -n cpu-smoke.slurm
+sed -n &#39;1,80p&#39; cpu-smoke.slurm
+</code></pre>
+<p>Then submit and record the returned ID:</p>
+<pre><code class="language-bash">sbatch cpu-smoke.slurm
+squeue -u &quot;$USER&quot;
+</code></pre>
+<p><strong>Expected result:</strong> <code>Submitted batch job &lt;job-id&gt;</code>. If the script or resources
+are wrong, cancel immediately with <code>scancel &lt;job-id&gt;</code>.</p>
+<h2 id="freeze-inputs-before-submission">Freeze Inputs Before Submission<a class="heading-anchor" href="#freeze-inputs-before-submission" aria-label="Link to Freeze Inputs Before Submission">#</a></h2><p><code>sbatch</code> transfers a copy of the batch script to the Slurm controller when you
+submit it. Editing that script later does <strong>not</strong> change the queued job. Slurm
+does not copy the other files used by the script: source code, configuration,
+datasets, and environments are opened from their paths when the job runs. A
+pending job can therefore see later edits to those external files.</p>
+<p>Before a production submission:</p>
+<ol>
+<li>Commit the reviewed source and either leave that checkout untouched or make
+an immutable, commit-specific source snapshot for the run.</li>
+<li>Copy the exact configuration into a run-specific directory and make the job
+reference that copy.</li>
+<li>Record the Git commit and a checksum or version for important inputs.</li>
+<li>Do not overwrite files referenced by pending or running jobs.</li>
+<li>If inputs must change, create a new run snapshot and submit a new job. Cancel
+the old pending job if it is no longer wanted.</li>
+</ol>
+<p>Run these inspection commands from the project clone before submission:</p>
+<pre><code class="language-bash">git status --short
+git rev-parse HEAD
+</code></pre>
+<p><code>git status --short</code> should be empty for a commit-based run. A commit hash
+records provenance but does not freeze files in a checkout that someone later
+switches or edits. If intentional uncommitted files are part of an exploratory
+run, preserve them in the run-specific directory and label the run
+non-reproducible; do not imply that a commit alone contains those changes.</p>
+<h2 id="states-pending-reasons-and-exit-codes">States, Pending Reasons, And Exit Codes<a class="heading-anchor" href="#states-pending-reasons-and-exit-codes" aria-label="Link to States, Pending Reasons, And Exit Codes">#</a></h2><p>Common states:</p>
+<ul>
+<li><code>PENDING</code>: waiting for resources, limits, priority, or another condition;</li>
+<li><code>RUNNING</code>: executing on a compute node;</li>
+<li><code>COMPLETED</code>: finished with a successful job exit;</li>
+<li><code>FAILED</code>: exited unsuccessfully;</li>
+<li><code>OUT_OF_MEMORY</code>: exceeded allocated system memory;</li>
+<li><code>TIMEOUT</code>: reached the requested wall-time limit;</li>
+<li><code>CANCELLED</code>: cancelled by a user or administrator.</li>
+</ul>
+<p>Inspect rather than repeatedly resubmitting:</p>
+<p>Replace <code>&lt;job-id&gt;</code> before using these command templates:</p>
+<pre><code class="language-text">myjobs -j &lt;job-id&gt;
+squeue -j &lt;job-id&gt; -o &#39;%.18i %.2t %.30R&#39;
+</code></pre>
+<p>The <code>REASON</code> field explains a pending job. A limit reason does not mean the
+script should be submitted again.</p>
+<h2 id="completed-job-accounting">Completed-Job Accounting<a class="heading-anchor" href="#completed-job-accounting" aria-label="Link to Completed-Job Accounting">#</a></h2><p>Replace <code>&lt;job-id&gt;</code> before using these command templates:</p>
+<pre><code class="language-text">sacct -j &lt;job-id&gt; \
+  --format=JobID,JobName%24,Account,State,ExitCode,Elapsed,AllocCPUS,ReqMem,MaxRSS
+seff &lt;job-id&gt;
+</code></pre>
+<p>Interpret the evidence:</p>
+<ul>
+<li><code>AllocCPUS</code> is the CPU allocation, not proof the program used every CPU.</li>
+<li><code>ReqMem</code> is requested system memory.</li>
+<li><code>MaxRSS</code> is the maximum recorded resident memory for a reported step.</li>
+<li><code>Elapsed</code> helps choose the next wall-time limit.</li>
+<li><code>State</code> and <code>ExitCode</code> distinguish scheduler and application outcomes.</li>
+<li><code>seff</code> summarizes CPU and memory efficiency; it does not replace application
+profiling or GPU monitoring.</li>
+</ul>
+<p>For a running batch step, use <code>sstat</code> sparingly:</p>
+<p>Replace <code>&lt;job-id&gt;</code> before using this command template:</p>
+<pre><code class="language-text">sstat -j &lt;job-id&gt;.batch --format=JobID,AveCPU,MaxRSS,AveRSS
+</code></pre>
+<p>Some metrics appear only after a step has run long enough or completed.</p>
+<h2 id="measurement-driven-optimization">Measurement-Driven Optimization<a class="heading-anchor" href="#measurement-driven-optimization" aria-label="Link to Measurement-Driven Optimization">#</a></h2><p>For each representative workload:</p>
+<ol>
+<li>Start with one task and the CPUs the program can demonstrably use.</li>
+<li>Request modest memory and a realistic short time for the first sample.</li>
+<li>Inspect logs, <code>sacct</code>, and <code>seff</code> after completion.</li>
+<li>Reduce unused CPU or memory while leaving sensible variation headroom.</li>
+<li>Increase a resource only after identifying the bottleneck.</li>
+<li>Record the measurement and chosen production request in the project.</li>
+</ol>
+<p>Examples:</p>
+<ul>
+<li>Low CPU efficiency in a single-threaded program -&gt; request one CPU.</li>
+<li><code>MaxRSS</code> far below requested memory -&gt; reduce memory next time.</li>
+<li><code>OUT_OF_MEMORY</code> with valid input -&gt; investigate growth, then increase memory.</li>
+<li>Job finishes in 12 minutes with a four-hour limit -&gt; use a shorter limit with
+appropriate headroom.</li>
+<li>High CPU use but poor throughput -&gt; profile I/O and algorithm behavior before
+requesting more cores.</li>
+</ul>
+<h2 id="job-arrays-and-mandatory-concurrency-caps">Job Arrays And Mandatory Concurrency Caps<a class="heading-anchor" href="#job-arrays-and-mandatory-concurrency-caps" aria-label="Link to Job Arrays And Mandatory Concurrency Caps">#</a></h2><p>An array represents many similar tasks. The <code>%</code> value limits simultaneous
+tasks:</p>
+<pre><code class="language-bash">#SBATCH --array=0-19%2
+</code></pre>
+<p>This defines 20 tasks but permits at most two to run concurrently. Start with
+<code>%1</code> during validation. Every beginner and assessment array must have an
+explicit cap.</p>
+<p>The cap is per array, not per user. If three active arrays each use <code>%2</code>, up to
+six array tasks may become eligible simultaneously, in addition to ordinary
+jobs. Before another submission, inspect <code>squeue -u &quot;$USER&quot;</code> and calculate the
+combined CPUs, memory, and GPUs across all active jobs and arrays.</p>
+<p>Inside the script:</p>
+<pre><code class="language-bash">config=&quot;configs/config_${SLURM_ARRAY_TASK_ID}.yaml&quot;
+python train.py --config &quot;$config&quot;
+</code></pre>
+<p>Use <code>%A</code> for the parent array ID and <code>%a</code> for the task index in log names:</p>
+<pre><code class="language-bash">#SBATCH --output=logs/%x_%A_%a.out
+#SBATCH --error=logs/%x_%A_%a.err
+</code></pre>
+<p>Choose the cap from measured per-task resources, project urgency, personal
+limits, and collective limits. Do not use the maximum merely because it is
+allowed.</p>
+<h2 id="gpu-jobs">GPU Jobs<a class="heading-anchor" href="#gpu-jobs" aria-label="Link to GPU Jobs">#</a></h2><p>GPU jobs require <code>es_fuge</code>; the public share contains no GPUs. Start with one.</p>
+<h3 id="rtx-4090-lab-starter-profile">RTX 4090 lab starter profile<a class="heading-anchor" href="#rtx-4090-lab-starter-profile" aria-label="Link to RTX 4090 lab starter profile">#</a></h3><!-- passport-snippet:euler-gpu-4090-starter -->
+<pre><code class="language-bash">#SBATCH --account=es_fuge
+#SBATCH --gpus=rtx_4090:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem-per-cpu=3G
+</code></pre>
+<!-- /passport-snippet:euler-gpu-4090-starter --><h3 id="rtx-3090-fallback">RTX 3090 fallback<a class="heading-anchor" href="#rtx-3090-fallback" aria-label="Link to RTX 3090 fallback">#</a></h3><pre><code class="language-bash">#SBATCH --account=es_fuge
+#SBATCH --gpus=rtx_3090:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem-per-cpu=3G
+</code></pre>
+<h3 id="rtx-pro-6000-special-purpose-profile">RTX PRO 6000 special-purpose profile<a class="heading-anchor" href="#rtx-pro-6000-special-purpose-profile" aria-label="Link to RTX PRO 6000 special-purpose profile">#</a></h3><p>The lab share currently includes two RTX PRO 6000 GPUs with 96 GiB GPU memory
+each. They use the Slurm identifier <code>pro_6000</code>:</p>
+<pre><code class="language-bash">#SBATCH --account=es_fuge
+#SBATCH --gpus=pro_6000:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem-per-cpu=3G
+</code></pre>
+<p>Do not use this profile merely because an RTX 4090 is pending. ETH identifies
+RTX PRO 6000 as Blackwell hardware and currently warns that programs compiled
+with CUDA 12 libraries will not run on it. Request it only when the project has
+been tested with a compatible CUDA 13 toolchain and needs its capabilities,
+such as more than 24 GiB of GPU memory. A live <code>sbatch --test-only</code> check under
+<code>es_fuge</code> accepted this profile on 2026-08-04.</p>
+<h3 id="choose-one-explicit-model">Choose one explicit model<a class="heading-anchor" href="#choose-one-explicit-model" aria-label="Link to Choose one explicit model">#</a></h3><p>Use RTX 4090 by default. If RTX 4090 capacity is not available, use RTX 3090 as
+the general fallback rather than submitting duplicate jobs. RTX PRO 6000 is a
+separate compatibility/capability choice, not a queue-avoidance fallback.</p>
+<p>Current ETH documentation shows the flexible form
+<code>--gpus=rtx_3090,rtx_4090:1</code>, but a live <code>sbatch --test-only</code> check under
+<code>es_fuge</code> rejected that expression on 2026-08-04. Do not use the combined form
+until the lab maintainer has reverified it successfully on Euler.</p>
+<p>The 16-CPU/48-GiB profile is a balanced lab starting point based on the common
+eight-GPU node layout previously inspected for this share. ETH explicitly notes
+that CPU and RAM can vary even between nodes with the same GPU model. Measure
+the actual workload and reduce or adjust the request when evidence supports it.</p>
+<p>Inside an allocated GPU job, inspect utilization during a representative phase:</p>
+<pre><code class="language-bash">nvidia-smi
+</code></pre>
+<p>Low GPU utilization with saturated CPUs may indicate data loading or
+preprocessing is the bottleneck. Low CPU and GPU use may indicate I/O, waiting,
+or incorrect device placement. A second GPU does not fix those problems.</p>
+<p>Use checkpointing before the wall-time limit. Establish throughput and scaling
+on one GPU before requesting multiple GPUs.</p>
+<h2 id="verification">Verification<a class="heading-anchor" href="#verification" aria-label="Link to Verification">#</a></h2><ul>
+<li>The script contains an explicit account, time, CPU, and memory request.</li>
+<li>No partition is specified without a documented dependency.</li>
+<li>Public jobs contain no GPU request.</li>
+<li>Arrays have a low explicit concurrency cap.</li>
+<li>The job&#39;s source revision, configuration snapshot, and important input
+version are recorded.</li>
+<li>Completed jobs have reviewed <code>sacct</code> and <code>seff</code> evidence.</li>
+<li>Resource changes cite measurements rather than convenience.</li>
+</ul>
+<h2 id="common-failures-and-safe-recovery">Common Failures And Safe Recovery<a class="heading-anchor" href="#common-failures-and-safe-recovery" aria-label="Link to Common Failures And Safe Recovery">#</a></h2><p>Use <a href="/reference/euler/troubleshooting/">Euler troubleshooting</a> for pending jobs, OOM,
+authentication, tunnel, quota, and GPU symptoms.</p>
+<h2 id="ask-for-help-when">Ask For Help When<a class="heading-anchor" href="#ask-for-help-when" aria-label="Link to Ask For Help When">#</a></h2><p>The application needs MPI, multiple nodes, unusually large memory, more than
+one GPU, a policy exception, or metrics that cannot be interpreted from a small
+representative job.</p>
+<h2 id="primary-sources">Primary Sources<a class="heading-anchor" href="#primary-sources" aria-label="Link to Primary Sources">#</a></h2><ul>
+<li><a href="https://docs.hpc.ethz.ch/batchsystem/slurm/" rel="noreferrer" data-external-link>ETH HPC Slurm</a></li>
+<li><a href="https://docs.hpc.ethz.ch/tutorials/first-job/" rel="noreferrer" data-external-link>ETH HPC first job</a></li>
+<li><a href="https://docs.hpc.ethz.ch/batchsystem/submission-line-advisor/" rel="noreferrer" data-external-link>ETH HPC submission line advisor</a></li>
+<li><a href="https://docs.hpc.ethz.ch/hardware/gpu_nodes/" rel="noreferrer" data-external-link>ETH HPC GPU nodes</a></li>
+<li><a href="https://slurm.schedmd.com/sbatch.html" rel="noreferrer" data-external-link>Slurm <code>sbatch</code> file-transfer semantics</a></li>
+</ul>
+<p>Sources verified: 2026-08-06. GPU profiles verified on Euler: 2026-08-04.
+Review by: 2026-11-04. Owner: IDEAL Lab IT.</p>
+</article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/reference/euler/">Euler Reference</a><a href="/reference/euler/access-and-ssh/">Euler Access And Safe SSH Key Setup</a><a href="/reference/euler/euler-tunnel/">Euler Tunnel And VS Code</a><a href="/reference/euler/paraview/">ParaView 6.0.0 Client/Server On Euler</a><a href="/reference/euler/storage/">Euler Storage And Data Lifecycle</a><a href="/reference/euler/troubleshooting/">Euler Troubleshooting By Symptom</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current mission to practice, verify, and submit evidence.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 1.2.0 /exact source 8237d33a</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+`).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
+`).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html>

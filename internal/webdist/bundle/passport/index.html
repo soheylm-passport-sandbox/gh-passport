@@ -1,0 +1,247 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Resume local navigation and inspect GitHub-verified passport status without exposing credentials."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Passport Dashboard | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.B_z1DDnN.css"></head><body data-curriculum-version="1.2.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Local-first passport</span></div><main id="main-content" class="page-shell wide"><section class="dashboard" data-dashboard data-context-endpoint="/__passport/v1/context" data-sync-endpoint="/__passport/v1/sync" data-base="/"><header class="dashboard-hero"><div><p class="eyebrow">Resume without pretending</p><h1>Your route.<br>One clear status.</h1><p>Local state remembers where you were. Your public draft PR records submitted work. The private controller verifies objective checks and automatically requests one final review; nobody needs to be online while you work.</p></div><div class="dashboard-sync" aria-live="polite"><span class="sync-dot sync-preview" data-sync-dot aria-hidden="true"></span><strong data-sync-state>Preview mode</strong><span data-assessed-time>No learner identity or official progress is loaded.</span><button class="sync-button" type="button" data-sync-button hidden>Sync from GitHub</button></div></header><div class="mode-banner preview-banner" role="note" data-preview-banner><strong>Preview: no learner identity, persistence, or official progress</strong><span>This static site lets you inspect the curriculum. Run <code>gh passport start</code> once, then <code>gh passport open</code> from your personal exercise fork.</span></div><div class="mode-banner offline-banner" role="status" hidden data-offline-banner><strong>GitHub could not be reached</strong><span data-offline-detail>Your local navigation is still available. No pass state is inferred while GitHub is unavailable.</span></div><div class="mode-banner" role="status" hidden data-waiting-banner><strong>Submitted to GitHub; waiting for the automatic check</strong><span>The check is scheduled every 15 minutes, and GitHub can start it later. Do not push the same change again. If nothing appears after 30 minutes, use the non-secret help link.</span></div><div class="mode-banner offline-banner" role="alert" hidden data-recovery-banner><strong>The assessment pull request needs safe recovery</strong><span>Your local work was not changed. In the terminal, run <code>gh passport start</code>; it reuses this branch and creates or finds the draft PR. If it stops or the old PR was merged, use the help link.</span></div><section class="dashboard-current" hidden data-current-panel><div class="current-label"><span data-current-kind>Current mission</span><strong data-current-position>Mission</strong></div><div class="current-copy"><p class="eyebrow" data-current-track>Current track</p><h2 data-current-title>Loading mission</h2><p data-current-summary></p><div class="current-actions"><a class="button primary" data-current-link href="/missions/core-orientation/"><span data-current-link-label>Continue current mission</span></a><a class="button secondary" data-evidence-edit-link hidden>Edit evidence on GitHub</a><a class="button secondary" data-evidence-view-link hidden>View submitted version</a></div></div><div class="current-status"><span data-current-status class="status-badge status-not_verified">Not checked</span><small data-current-source>Saved only on this computer</small></div></section><section class="dashboard-preview" data-preview-panel><p class="eyebrow">Curriculum preview</p><h2>This page is not your passport yet.</h2><p>Preview the curriculum or follow the three-command setup for your personal public exercise fork. This page cannot record completion.</p><div><a class="button primary" href="/getting-started/">How to get your passport</a><a class="button secondary" href="/start/">Preview a route</a></div></section><div class="dashboard-grid" hidden data-route-grid><section class="dashboard-route"><div class="dashboard-section-heading"><div><p class="eyebrow">Assigned route</p><h2 data-passport-name>Local passport</h2></div><span data-platform>Platform</span></div><ol data-status-list aria-label="Assigned mission status"></ol></section><aside class="dashboard-links"><p class="eyebrow">GitHub locations</p><h2>Submitted-work record</h2><a data-repository-link hidden><span>Your files</span><strong>Open personal exercise fork</strong></a><a data-pr-link hidden><span>Assessment</span><strong>Open permanent draft PR</strong></a><a data-check-link hidden><span>Automatic check</span><strong>Open submitted-version result</strong></a><a data-help-link hidden><span>Asynchronous help queue</span><strong data-help-label>Request help without posting secrets</strong><small>Submit once, then return later. Nobody needs to be online.</small></a><details><summary>Technical details</summary><dl class="status-provenance"><div><dt>Local commit</dt><dd data-local-sha>Unavailable</dd></div><div><dt>Submitted commit</dt><dd data-remote-sha>Not synced</dd></div><div><dt>Status source</dt><dd data-status-source>Local navigation only</dd></div></dl></details><div class="dashboard-help"><strong>Status unavailable?</strong><p>Never infer a pass. Run <code>gh passport doctor</code>, then inspect the permanent assessment PR.</p><a href="/help/">Open safe recovery</a></div></aside></div><section class="dashboard-error" hidden data-dashboard-error role="alert"><p class="eyebrow">Passport app error</p><h2>Your Git work is not changed.</h2><p>The passport app returned data this page could not validate. Restart with <code>gh passport open</code> and run <code>gh passport doctor</code>.</p><a class="button secondary" href="/help/">Open recovery guide</a></section></section></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 1.2.0 /exact source 8237d33a</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+`).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
+`).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html><script>(function(){const missionIndex = [{"id":"ai-agent-baseline","title":"Use A Safe Agent Loop After The Manual Baseline","route":"/missions/ai-agent-baseline/","summary":"You can bound an agent task, control context and commands, review the diff, verify the result personally, and reject a plausible but inferior suggestion.","track":"ai_agents","evidence":["evidence/ai/agent-baseline.md"]},{"id":"ai-tool-configuration","title":"Choose And Configure An AI Access Route","route":"/missions/ai-tool-configuration/","summary":"You select an available AI route without assuming the lab pays, understand the cost and data boundaries, and keep credentials out of Git and prompts.","track":"ai_agents","evidence":["evidence/ai/tool-configuration.md"]},{"id":"blade-access-storage","title":"Use Blade For GUI Work Without Losing Data","route":"/missions/blade-access-storage/","summary":"You can reach the shared Windows Blade server, use it for appropriate GUI and prototype work, place durable data under the assigned project share, use D: only temporarily, and avoid C: and personal profile folders.","track":"blade","evidence":["evidence/blade/access-storage.md"]},{"id":"core-accounts-secrets","title":"Protect Accounts And Secrets","route":"/missions/core-accounts-secrets/","summary":"You can protect GitHub and ETH access, distinguish public from private SSH-key material, and respond safely if a credential is exposed.","track":"core","evidence":["evidence/core/accounts-secrets.md"]},{"id":"core-incidents-ai-responsibility","title":"Respond To Incidents And Own Automated Work","route":"/missions/core-incidents-ai-responsibility/","summary":"You can stop unsafe activity, contain impact, preserve useful evidence, report through the correct path, and remain responsible for commands suggested by software or AI agents.","track":"core","evidence":["evidence/core/incidents-ai.md"]},{"id":"core-orientation","title":"Start And Resume Your Passport","route":"/missions/core-orientation/","summary":"You can identify your assigned route, distinguish local navigation from official assessment, submit the first evidence on the correct branch, and reopen the passport later without searching through browser history.","track":"core","evidence":["evidence/core/orientation.md"]},{"id":"core-systems-data","title":"Map Systems And Research Data","route":"/missions/core-systems-data/","summary":"You can place code, durable research data, temporary files, GUI work, and compute intentionally instead of treating every available drive or service as interchangeable.","track":"core","evidence":["evidence/core/systems-data.md"]},{"id":"data-collaboration","title":"Design Safe Shared Data Collaboration","route":"/missions/data-collaboration/","summary":"You can separate code collaboration from shared datasets, design group inheritance for approved data directories, and avoid destructive permission workarounds.","track":"data_steward","evidence":["evidence/data/collaboration.md"]},{"id":"data-handover","title":"Create A Recoverable Project Handover","route":"/missions/data-handover/","summary":"Another authorized researcher can locate the code, data, environment, decisions, results, owners, and unresolved risks without using your personal account or machine.","track":"data_steward","evidence":["evidence/data/handover.md"]},{"id":"data-placement","title":"Place Research Data Intentionally","route":"/missions/data-placement/","summary":"You can map source, authoritative, working, temporary, output, archive, and disposal locations with explicit owners, access, recovery, and retention.","track":"data_steward","evidence":["evidence/data/placement.md"]},{"id":"euler-access-ssh","title":"Establish Safe Euler SSH Access","route":"/missions/euler-access-ssh/","summary":"Password access is proven first, a dedicated passphrase-protected key is created without overwriting existing keys, only its .pub file is installed, key-only authentication succeeds, and a validated euler alias preserves unrelated SSH configuration.","track":"euler_cpu","evidence":["evidence/euler/access-ssh.md"]},{"id":"euler-cpu-accounting","title":"Measure And Right-Size An Euler Job","route":"/missions/euler-cpu-accounting/","summary":"You can interpret sacct and seff, calculate requested resources, distinguish successful from efficient, and adjust only the next request using representative evidence.","track":"euler_cpu","evidence":["evidence/euler/accounting.md"]},{"id":"euler-cpu-arrays","title":"Cap And Calculate Euler Job Arrays","route":"/missions/euler-cpu-arrays/","summary":"You can add an explicit concurrency cap, validate one representative task, calculate aggregate resources across overlapping submissions, and cancel failed or duplicate arrays.","track":"euler_cpu","evidence":["evidence/euler/arrays.md"]},{"id":"euler-cpu-first-job","title":"Submit And Control A Tiny Euler CPU Job","route":"/missions/euler-cpu-first-job/","summary":"You can distinguish login from compute nodes, submit one tiny CPU job with Slurm, inspect it, cancel it, and find its logs without computing on the login node.","track":"euler_cpu","evidence":["evidence/euler/first-job.md"]},{"id":"euler-gpu-review","title":"Review A One-GPU Euler Plan","route":"/missions/euler-gpu-review/","summary":"You can correct an unsafe GPU request, justify one explicit model, plan the smallest useful smoke test, monitor bottlenecks, and define evidence required before multi-GPU scaling.","track":"euler_gpu","evidence":["evidence/euler/gpu-review.md"]},{"id":"euler-storage-reproducibility","title":"Place Euler Data And Freeze Run Inputs","route":"/missions/euler-storage-reproducibility/","summary":"You can choose durable, working, scratch, and node-local locations, preserve production run identity, and prevent mutable files from changing under queued or running jobs.","track":"euler_cpu","evidence":["evidence/euler/storage-reproducibility.md"]},{"id":"git-manual-pr","title":"Complete A Manual Pull Request Loop","route":"/missions/git-manual-pr/","summary":"You can make one bounded change manually, inspect it, verify it, commit it with a Conventional Commit, publish it, and explain it in the passport pull request.","track":"git","evidence":["evidence/git/manual-pr.md"]},{"id":"git-tools-auth","title":"Configure Git Identity And Your Editor","route":"/missions/git-tools-auth/","summary":"Your Git commit identity is correct, a supported editor is available, and you can verify that the existing passport folder points to your personal public fork, the central exercise repository, and your assessment branch.","track":"git","evidence":["evidence/git/tools-auth.md"]},{"id":"python-environment","title":"Create A Reproducible Python Environment","route":"/missions/python-environment/","summary":"The training project runs in a dedicated environment whose dependencies are declared in Git while the environment directory itself remains untracked.","track":"python","evidence":["evidence/python/environment.md"]},{"id":"python-reproducible-change","title":"Make And Verify A Reproducible Python Change","route":"/missions/python-reproducible-change/","summary":"You can connect a small behavior change to a regression test, run the declared checks, inspect the diff, and explain how another contributor reproduces it.","track":"python","evidence":["evidence/python/reproducible-change.md"]},{"id":"supervisor-offboarding","title":"Plan Handover And Offboarding","route":"/missions/supervisor-offboarding/","summary":"Project ownership transfers to an authorized successor, required records remain recoverable, temporary copies are handled deliberately, and unnecessary access is revoked without destructive improvisation.","track":"supervisor","evidence":["evidence/supervisor/offboarding.md"]},{"id":"supervisor-onboarding","title":"Assign A Researcher Route And Safe Project Environment","route":"/missions/supervisor-onboarding/","summary":"A researcher can start without guessing about responsibilities, repositories, data ownership, storage, compute, AI services, reviewers, or exceptions.","track":"supervisor","evidence":["evidence/supervisor/onboarding-packet.md"]}];
+const trackIndex = [{"id":"core","title":"Universal Safety Core"},{"id":"git","title":"Git Contributor"},{"id":"python","title":"Reproducible Python"},{"id":"ai_agents","title":"AI Agent User"},{"id":"euler_cpu","title":"Euler CPU"},{"id":"euler_gpu","title":"Euler GPU"},{"id":"data_steward","title":"Research Data Steward"},{"id":"blade","title":"Blade User"},{"id":"supervisor","title":"Supervisor and Staff"}];
+const curriculumVersion = "1.2.0";
+
+  const controllerStatuses = new Set(["locked", "needs_work", "awaiting_human", "passed"]);
+  const syncStates = new Set(["verified", "waiting_for_controller", "assessment_recovery_required"]);
+  const statusLabels = {
+    locked: "Locked",
+    needs_work: "Needs work",
+    awaiting_human: "Awaiting human review",
+    passed: "Automatic checks passed",
+    not_verified: "Not checked",
+    local_only: "Local only",
+  };
+  const root = document.querySelector("[data-dashboard]");
+  const base = (root?.dataset.base || "/").replace(/\/$/, "");
+  const missions = new Map(missionIndex.map((item) => [item.id, item]));
+  const tracks = new Map(trackIndex.map((item) => [item.id, item.title]));
+  let currentContext = null;
+  const internal = (route) => `${base}${route}` || "/";
+  const shortSha = (value) => typeof value === "string" && /^[a-f0-9]{40}$/.test(value) ? value.slice(0, 10) : "Unavailable";
+
+  const safeGitHubLink = (value) => {
+    if (!value || typeof value !== "string") return null;
+    try {
+      const url = new URL(value);
+      return url.protocol === "https:" && url.hostname === "github.com" ? url.href : null;
+    } catch { return null; }
+  };
+
+  const setAnchor = (selector, raw) => {
+    const anchor = root?.querySelector(selector);
+    const href = safeGitHubLink(raw);
+    if (!anchor || !href) return;
+    anchor.href = href;
+    anchor.hidden = false;
+  };
+
+  const hideAnchor = (selector) => {
+    const anchor = root?.querySelector(selector);
+    if (!anchor) return;
+    anchor.hidden = true;
+    anchor.removeAttribute("href");
+  };
+
+  const validateContext = (value) => {
+    if (!value || value.mode !== "local" || !value.repository || !value.local_state) throw new Error("invalid local context");
+    const passport = value.repository.passport;
+    if (!passport || passport.schema_version !== 2 || passport.curriculum_version !== curriculumVersion || !Array.isArray(passport.missions) || passport.missions.length === 0) throw new Error("passport curriculum mismatch");
+    if (passport.source_repository !== "soheylm-passport-sandbox/passport-exercises" || passport.fork_repository?.toLowerCase() !== `${value.repository.owner}/${value.repository.name}`.toLowerCase()) throw new Error("passport repository mismatch");
+    if (value.repository.name !== "passport-exercises" || value.repository.upstream_owner !== "IDEALLab" || value.repository.upstream_name !== "passport-exercises") throw new Error("passport upstream mismatch");
+    if (passport.assessment_branch !== value.repository.branch) throw new Error("passport assessment branch mismatch");
+    if (passport.missions.some((id) => typeof id !== "string" || !missions.has(id))) throw new Error("assigned route contains an unknown mission");
+    if (value.sync_result && !syncStates.has(value.sync_result.state)) throw new Error("unknown GitHub sync state");
+    if (value.official) {
+      const status = value.official.status;
+      if (!status || status.schema_version !== 1 || status.curriculum_version !== curriculumVersion || status.head_sha !== value.official.remote_head_sha) throw new Error("official status identity mismatch");
+      if (!Array.isArray(status.missions) || status.missions.length !== passport.missions.length) throw new Error("official route mismatch");
+      status.missions.forEach((item, index) => {
+        if (!item || item.id !== passport.missions[index] || !controllerStatuses.has(item.status)) throw new Error("official mission state mismatch");
+      });
+    }
+    return value;
+  };
+
+  const render = (context) => {
+    currentContext = context;
+    root.querySelector("[data-preview-banner]").hidden = true;
+    root.querySelector("[data-preview-panel]").hidden = true;
+    root.querySelector("[data-route-grid]").hidden = false;
+    root.querySelector("[data-sync-button]").hidden = false;
+    root.querySelector("[data-dashboard-error]").hidden = true;
+    const passport = context.repository.passport;
+    const official = context.official || null;
+    const syncResult = context.sync_result || null;
+    const officialStatus = official?.status || null;
+    const statuses = officialStatus
+      ? officialStatus.missions
+      : passport.missions.map((id) => ({ id, status: "not_verified" }));
+    const hasOfficialCurrent = Boolean(officialStatus?.current_mission);
+    const currentId = hasOfficialCurrent
+      ? officialStatus.current_mission
+      : context.local_state.last_opened_mission || passport.missions[0];
+    const currentIndex = passport.missions.indexOf(currentId);
+    const list = root.querySelector("[data-status-list]");
+    list.replaceChildren();
+    statuses.forEach((item, index) => {
+      const mission = missions.get(item.id);
+      const row = document.createElement("li");
+      if (item.id === currentId) row.classList.add("current");
+      const number = document.createElement("span");
+      number.className = "route-number";
+      number.textContent = String(index + 1).padStart(2, "0");
+      const copy = document.createElement("div");
+      const track = document.createElement("small");
+      track.textContent = tracks.get(mission.track) || mission.track;
+      const link = document.createElement("a");
+      link.href = internal(mission.route);
+      link.textContent = mission.title;
+      copy.append(track, link);
+      const badge = document.createElement("span");
+      badge.className = `status-badge status-${item.status}`;
+      badge.textContent = statusLabels[item.status];
+      row.append(number, copy, badge);
+      list.append(row);
+    });
+
+    for (const selector of ["[data-evidence-edit-link]", "[data-evidence-view-link]", "[data-pr-link]", "[data-check-link]", "[data-help-link]"]) hideAnchor(selector);
+    const current = missions.get(currentId);
+    const currentPanel = root.querySelector("[data-current-panel]");
+    if (officialStatus?.stage === "complete") {
+      currentPanel.hidden = false;
+      root.querySelector("[data-current-kind]").textContent = "Passport status";
+      root.querySelector("[data-current-position]").textContent = `${passport.missions.length} missions`;
+      root.querySelector("[data-current-track]").textContent = "Assigned route";
+      root.querySelector("[data-current-title]").textContent = "Automatic checks and final review are complete";
+      root.querySelector("[data-current-summary]").textContent = "Open the assessment pull request for the recorded result and follow the handover instructions.";
+      root.querySelector("[data-current-link-label]").textContent = "Open assessment pull request";
+      setAnchor("[data-current-link]", official.pull_request_url);
+      const badge = root.querySelector("[data-current-status]");
+      badge.className = "status-badge status-passed";
+      badge.textContent = "Complete";
+      root.querySelector("[data-current-source]").textContent = `Checked ${new Date(official.status.assessed_at).toLocaleString()}`;
+    } else if (current) {
+      currentPanel.hidden = false;
+      root.querySelector("[data-current-kind]").textContent = hasOfficialCurrent ? "Current mission" : "Last page you visited";
+      root.querySelector("[data-current-position]").textContent = `Mission ${currentIndex + 1} of ${passport.missions.length}`;
+      root.querySelector("[data-current-track]").textContent = tracks.get(current.track) || current.track;
+      root.querySelector("[data-current-title]").textContent = current.title;
+      root.querySelector("[data-current-summary]").textContent = current.summary;
+      root.querySelector("[data-current-link]").href = internal(current.route);
+      root.querySelector("[data-current-link-label]").textContent = hasOfficialCurrent ? "Continue current mission" : "Return to this page";
+      const state = hasOfficialCurrent ? statuses.find((item) => item.id === currentId)?.status || "not_verified" : "local_only";
+      const badge = root.querySelector("[data-current-status]");
+      badge.className = `status-badge status-${state}`;
+      badge.textContent = statusLabels[state];
+      const localDescription = context.repository.dirty
+        ? "Local changes are not committed"
+        : context.repository.remote_head_sha && context.repository.head_sha !== context.repository.remote_head_sha
+          ? "Commit has not been pushed"
+          : "Saved only on this computer; not completion";
+      root.querySelector("[data-current-source]").textContent = hasOfficialCurrent
+        ? `Automatic check from ${new Date(official.status.assessed_at).toLocaleString()}`
+        : localDescription;
+      const evidence = current.evidence?.[0];
+      const repositoryUrl = official?.repository_url || syncResult?.repository_url || `https://github.com/${context.repository.owner}/${context.repository.name}`;
+      if (evidence) {
+        const evidencePath = evidence.split("/").map(encodeURIComponent).join("/");
+        setAnchor("[data-evidence-edit-link]", `${repositoryUrl}/edit/${encodeURIComponent(context.repository.branch)}/${evidencePath}`);
+        if (official) setAnchor("[data-evidence-view-link]", `${repositoryUrl}/blob/${official.remote_head_sha}/${evidencePath}`);
+      }
+    }
+
+    root.querySelector("[data-passport-name]").textContent = `${passport.github_user || "Learner"} / ${passport.responsibilities.length || "core"}`;
+    root.querySelector("[data-platform]").textContent = passport.platform === "macos" ? "macOS" : passport.platform;
+    root.querySelector("[data-local-sha]").textContent = shortSha(context.repository.head_sha);
+    root.querySelector("[data-remote-sha]").textContent = shortSha(official?.remote_head_sha || syncResult?.remote_head_sha || context.repository.remote_head_sha);
+    root.querySelector("[data-status-source]").textContent = official ? `Automatic check / App ${official.controller_app_id}` : "Local navigation only";
+    const repositoryUrl = official?.repository_url || syncResult?.repository_url || `https://github.com/${context.repository.owner}/${context.repository.name}`;
+    setAnchor("[data-repository-link]", repositoryUrl);
+    setAnchor("[data-pr-link]", official?.pull_request_url || syncResult?.pull_request_url);
+    setAnchor("[data-check-link]", official?.check_run_url);
+    setAnchor(
+      "[data-help-link]",
+      official?.recovery_issue_url
+        || syncResult?.recovery_issue_url
+        || "https://github.com/soheylm-passport-sandbox/passport-exercises/issues/new?template=passport-help.yml",
+    );
+
+    const offline = root.querySelector("[data-offline-banner]");
+    offline.hidden = !context.official_error;
+    if (context.official_error) root.querySelector("[data-offline-detail]").textContent = context.official_error;
+    const waiting = syncResult?.state === "waiting_for_controller";
+    const recovery = syncResult?.state === "assessment_recovery_required";
+    root.querySelector("[data-help-label]").textContent = recovery
+      ? "Request help if automatic recovery stops"
+      : "Request help without posting secrets";
+    root.querySelector("[data-waiting-banner]").hidden = !waiting;
+    root.querySelector("[data-recovery-banner]").hidden = !recovery;
+    root.querySelector("[data-sync-state]").textContent = official
+      ? "Automatic check loaded"
+      : waiting
+        ? "Waiting for automatic check"
+        : recovery
+          ? "Assessment needs recovery"
+          : "Local resume point loaded";
+    root.querySelector("[data-sync-dot]").className = `sync-dot ${official ? "sync-official" : "sync-local"}`;
+    const timestamp = official?.synced_at || syncResult?.synced_at || context.local_state.last_official_sync;
+    root.querySelector("[data-assessed-time]").textContent = timestamp
+      ? `${official ? "Checked" : "Last GitHub check"} ${new Date(timestamp).toLocaleString()}`
+      : "No automatic result has been loaded on this computer.";
+  };
+
+  const showPreview = () => {
+    root.querySelector("[data-preview-banner]").hidden = false;
+    root.querySelector("[data-preview-panel]").hidden = false;
+    root.querySelector("[data-route-grid]").hidden = true;
+    root.querySelector("[data-current-panel]").hidden = true;
+    root.querySelector("[data-sync-state]").textContent = "Preview mode";
+    root.querySelector("[data-assessed-time]").textContent = "No learner identity or official progress is loaded.";
+  };
+
+  const showLocalError = () => {
+    root.querySelector("[data-preview-banner]").hidden = true;
+    root.querySelector("[data-preview-panel]").hidden = true;
+    root.querySelector("[data-dashboard-error]").hidden = false;
+    root.querySelector("[data-sync-state]").textContent = "Passport app error";
+  };
+
+  const loadContext = async () => {
+    try {
+      const response = await fetch(root.dataset.contextEndpoint, { credentials: "same-origin", headers: { Accept: "application/json" } });
+      if (response.status === 404) return showPreview();
+      if (!response.ok) return showLocalError();
+      render(validateContext(await response.json()));
+    } catch (error) {
+      console.error("Passport dashboard initialization failed", error);
+      showLocalError();
+    }
+  };
+
+  const sync = async (automatic = false) => {
+    if (!currentContext) return;
+    const button = root.querySelector("[data-sync-button]");
+    button.disabled = true;
+    root.querySelector("[data-sync-state]").textContent = "Checking GitHub";
+    root.querySelector("[data-sync-dot]").className = "sync-dot sync-checking";
+    try {
+      const response = await fetch(root.dataset.syncEndpoint, { method: "POST", credentials: "same-origin", headers: { Accept: "application/json" } });
+      if (!response.ok) throw new Error("sync unavailable");
+      const result = await response.json();
+      render(validateContext({ ...currentContext, sync_result: result, official: result.official || null, official_error: "" }));
+    } catch {
+      root.querySelector("[data-offline-banner]").hidden = false;
+      root.querySelector("[data-offline-detail]").textContent = "GitHub could not be refreshed. Local navigation remains available, but no local file is treated as an official result.";
+      root.querySelector("[data-sync-state]").textContent = automatic ? "Local resume point loaded" : "GitHub sync unavailable";
+      root.querySelector("[data-sync-dot]").className = "sync-dot sync-local";
+    } finally { button.disabled = false; }
+  };
+
+  root?.querySelector("[data-sync-button]")?.addEventListener("click", () => sync(false));
+  loadContext().then(() => {
+    if (currentContext && navigator.onLine) sync(true);
+  });
+})();</script>

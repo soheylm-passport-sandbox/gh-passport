@@ -1,0 +1,130 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="This runbook is for the IDEAL Lab IT administrator. Do not merge the handbook overhaul to main or invite learners until the production gates at the end are green."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Four-Repository Passport Deployment | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.B_z1DDnN.css"></head><body data-curriculum-version="1.2.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / maintainers</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">maintainers</p><h1>Four-Repository Passport Deployment</h1><p>This runbook is for the IDEAL Lab IT administrator. Do not merge the handbook overhaul to main or invite learners until the production gates at the end are green.</p></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/8237d33a5a373a229f238f9db1d7284d859c971a/docs/maintainers/passport-deployment.md" rel="noreferrer">View exact source</a><a href="/passport/">Return to my dashboard</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><p>This runbook is for the IDEAL Lab IT administrator. Do not merge the handbook
+overhaul to <code>main</code> or invite learners until the production gates at the end are
+green.</p>
+<h2 id="1-export-deterministic-repositories">1. Export Deterministic Repositories<a class="heading-anchor" href="#1-export-deterministic-repositories" aria-label="Link to 1. Export Deterministic Repositories">#</a></h2><p>From a clean reviewed <code>onboarding-IT</code> commit:</p>
+<pre><code class="language-bash">python3 scripts/export_exercises_repo.py /tmp/passport-exercises
+python3 scripts/export_gh_passport.py /tmp/gh-passport
+python3 scripts/export_onboarding_control.py /tmp/onboarding-control
+</code></pre>
+<p>Diff each export against its target before pushing. The exercises and extension
+repositories are public. <code>onboarding-control</code> remains private.</p>
+<h2 id="2-protect-the-public-exercise-repository">2. Protect The Public Exercise Repository<a class="heading-anchor" href="#2-protect-the-public-exercise-repository" aria-label="Link to 2. Protect The Public Exercise Repository">#</a></h2><p><code>main</code> accepts changes only through reviewed PRs. Disable force pushes and
+deletions, require conversation resolution, and require the controller check
+once its production App is active. Public learner forks contain no organization
+secrets and no privileged workflow.</p>
+<p>Add the <code>gh-extension</code> topic to <code>gh-passport</code>. Keep
+<code>passport-exercises</code> deliberately small: fictional fixtures, empty evidence,
+generated fallback missions, and non-secret metadata only.</p>
+<h2 id="3-configure-the-controller-app">3. Configure The Controller App<a class="heading-anchor" href="#3-configure-the-controller-app" aria-label="Link to 3. Configure The Controller App">#</a></h2><p>Create one GitHub App and install it only on
+<code>soheylm-passport-sandbox/passport-exercises</code>.</p>
+<p>Minimum permissions:</p>
+<div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Permission</th>
+<th>Exercises</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Metadata</td>
+<td>read</td>
+</tr>
+<tr>
+<td>Contents</td>
+<td>read</td>
+</tr>
+<tr>
+<td>Checks</td>
+<td>read/write</td>
+</tr>
+<tr>
+<td>Issues</td>
+<td>read/write</td>
+</tr>
+<tr>
+<td>Pull requests</td>
+<td>read/write</td>
+</tr>
+</tbody></table></div>
+<p>Store the numeric App ID as repository variable <code>CONTROLLER_APP_ID</code> and the
+private key as <code>CONTROLLER_APP_PRIVATE_KEY</code> only in the private control
+repository. The control repository&#39;s own <code>GITHUB_TOKEN</code> writes bounded
+assignment and registry commits. Put the numeric App ID, never the private key,
+in the public extension repository variable used for release builds.</p>
+<p>The App never writes to personal forks and no secret reaches an untrusted
+checkout or container.</p>
+<h2 id="4-publish-a-launcher-release">4. Publish A Launcher Release<a class="heading-anchor" href="#4-publish-a-launcher-release" aria-label="Link to 4. Publish A Launcher Release">#</a></h2><p>The <code>gh-passport</code> release workflow tests Windows, macOS, and Linux, then emits
+GitHub CLI&#39;s documented asset names:</p>
+<pre><code class="language-text">gh-passport-windows-amd64.exe
+gh-passport-darwin-amd64
+gh-passport-darwin-arm64
+gh-passport-linux-amd64
+gh-passport-linux-arm64
+</code></pre>
+<p>Create and push a reviewed semantic tag such as <code>v1.2.0</code>. The workflow refuses
+to build if <code>CONTROLLER_APP_ID</code> is absent or zero. Verify a clean installation
+on each claimed platform:</p>
+<pre><code class="language-text">gh extension install soheylm-passport-sandbox/gh-passport
+gh passport version
+</code></pre>
+<p>Do not teach learners to bypass Gatekeeper, SmartScreen, antivirus, or global
+execution policy.</p>
+<h2 id="5-enroll-one-synthetic-non-admin-learner">5. Enroll One Synthetic Non-Admin Learner<a class="heading-anchor" href="#5-enroll-one-synthetic-non-admin-learner" aria-label="Link to 5. Enroll One Synthetic Non-Admin Learner">#</a></h2><p>Run <strong>Enroll one learner</strong> in private <code>onboarding-control</code>. Supply only a GitHub
+username, reviewer username, and optional due date. The workflow writes one
+minimal enrollment record; no operating system, answers, credentials, or
+research context belongs there.</p>
+<p>As that learner:</p>
+<pre><code class="language-text">gh auth login --web --git-protocol https
+gh extension install soheylm-passport-sandbox/gh-passport
+gh passport start
+</code></pre>
+<p>The scheduled control workflow must automatically:</p>
+<ol>
+<li>find exactly one central draft PR;</li>
+<li>verify author ID, fork ID/parent, source/base, branch, and route;</li>
+<li>freeze a private assignment and trusted manifest;</li>
+<li>check the exact public fork SHA without credentials or network;</li>
+<li>publish one Check Run and one upserted PR comment;</li>
+<li>request the assigned reviewer only when deterministic gates pass;</li>
+<li>append a minimal completion record after exact-SHA approval.</li>
+</ol>
+<h2 id="6-failure-and-recovery-tests">6. Failure And Recovery Tests<a class="heading-anchor" href="#6-failure-and-recovery-tests" aria-label="Link to 6. Failure And Recovery Tests">#</a></h2><p>Prove all of these before learners are invited:</p>
+<ul>
+<li>rerunning <code>gh passport start</code> reuses the fork, branch, PR, and route;</li>
+<li>a wrong existing directory or remote stops without mutation;</li>
+<li>a closed unmerged PR is replaced by rerunning <code>gh passport start</code>, without a
+replacement branch or route; a merged PR stops for private help;</li>
+<li>a forged fork, username, route, Check Run name, App ID, or stale approval is rejected;</li>
+<li>a possible secret stops before execution and before optional AI transmission;</li>
+<li>unselected or protected paths fail the editable allowlist;</li>
+<li>an interrupted controller run is retried idempotently;</li>
+<li>two authority updates persist without force-pushing or losing either record;</li>
+<li>deleting <code>.passport-local/</code> loses navigation only and sync restores official status;</li>
+<li>the public preview never claims assignment or completion state.</li>
+</ul>
+<h2 id="7-learner-cutover">7. Learner Cutover<a class="heading-anchor" href="#7-learner-cutover" aria-label="Link to 7. Learner Cutover">#</a></h2><p>Only after qualification:</p>
+<ol>
+<li>merge the reviewed onboarding branch to <code>main</code>;</li>
+<li>send learners the GitHub-rendered README first-contact link;</li>
+<li>enroll identities and reviewers asynchronously;</li>
+<li>monitor scheduled failures, rate limits, PRs without trusted checks, stale
+review requests, and registry persistence;</li>
+<li>keep the Markdown workbook as the no-JavaScript fallback, not a second
+curriculum.</li>
+</ol>
+<p>Rollback pins a previously reviewed matching curriculum, launcher, exercises,
+and controller release. It never deletes public evidence or private completion
+history.</p>
+<h2 id="production-gates">Production Gates<a class="heading-anchor" href="#production-gates" aria-label="Link to Production Gates">#</a></h2><ul>
+<li><input disabled="" type="checkbox"> <code>passport-exercises</code> is public and protected.</li>
+<li><input disabled="" type="checkbox"> <code>gh-passport</code> is public, tagged, and installable on clean machines.</li>
+<li><input disabled="" type="checkbox"> <code>onboarding-control</code> is private with App variable/key configured.</li>
+<li><input disabled="" type="checkbox"> Scheduled registration and exact-SHA assessment succeed live.</li>
+<li><input disabled="" type="checkbox"> One synthetic non-admin learner completes the public-PR loop.</li>
+<li><input disabled="" type="checkbox"> Windows, macOS, and Linux launcher journeys pass.</li>
+<li><input disabled="" type="checkbox"> No privileged key appears in a public repository, workflow, artifact, or log.</li>
+<li><input disabled="" type="checkbox"> The overhaul PR is reviewed; it is not self-merged during deployment work.</li>
+</ul>
+</article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/maintainers/automated-validation/">Automated Validation And Residual Risk</a><a href="/maintainers/content-ownership/">Content Ownership</a><a href="/maintainers/freshness/">Freshness And Source Policy</a><a href="/maintainers/passport-architecture/">Passport System Architecture</a><a href="/maintainers/pilot-checklist/">Pilot And Human Validation Checklist</a><a href="/maintainers/release-process/">Passport Release Process</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current mission to practice, verify, and submit evidence.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 1.2.0 /exact source 8237d33a</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+`).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
+`).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html>
