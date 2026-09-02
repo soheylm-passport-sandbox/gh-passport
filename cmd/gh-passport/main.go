@@ -15,6 +15,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/soheylm-passport-sandbox/gh-passport/internal/deployment"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/githubstatus"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/localserver"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/localstate"
@@ -24,7 +25,7 @@ import (
 
 var (
 	version           = "0.1.0-dev"
-	controllerAppID   = "0"
+	controllerAppID   = deployment.ControllerAppID
 	curriculumVersion = "1.2.0"
 )
 
@@ -63,10 +64,18 @@ func main() {
 }
 
 func run(arguments []string) error {
+	if len(arguments) == 1 && (arguments[0] == "--help" || arguments[0] == "-h") {
+		usage()
+		return nil
+	}
 	command := "open"
 	if len(arguments) > 0 && !strings.HasPrefix(arguments[0], "-") {
 		command = arguments[0]
 		arguments = arguments[1:]
+	}
+	if len(arguments) == 1 && (arguments[0] == "--help" || arguments[0] == "-h") {
+		usage()
+		return nil
 	}
 	switch command {
 	case "start":

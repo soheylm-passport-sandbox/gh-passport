@@ -32,16 +32,16 @@ func (runner repositoryRunner) Run(_ context.Context, _ string, _ string, args .
 
 func TestParseGitHubRemote(t *testing.T) {
 	values := []string{
-		"https://github.com/soheylm-passport-sandbox/passport-student.git",
-		"git@github.com:soheylm-passport-sandbox/passport-student.git",
-		"ssh://git@github.com/soheylm-passport-sandbox/passport-student",
+		"https://github.com/IDEALLab/passport-student.git",
+		"git@github.com:IDEALLab/passport-student.git",
+		"ssh://git@github.com/IDEALLab/passport-student",
 	}
 	for _, value := range values {
 		owner, name, err := parseGitHubRemote(value)
 		if err != nil {
 			t.Fatalf("%s: %v", value, err)
 		}
-		if owner != "soheylm-passport-sandbox" || name != "passport-student" {
+		if owner != "IDEALLab" || name != "passport-student" {
 			t.Fatalf("unexpected parse for %s: %s/%s", value, owner, name)
 		}
 	}
@@ -101,8 +101,8 @@ func TestFindAcceptsOnlyTheAssignedAssessmentBranch(t *testing.T) {
 
 func TestParseGitHubRemoteRejectsOtherHostsAndExtraPath(t *testing.T) {
 	for _, value := range []string{
-		"https://evil.example/soheylm-passport-sandbox/passport-student.git",
-		"https://github.com/soheylm-passport-sandbox/passport-student/extra",
+		"https://evil.example/IDEALLab/passport-student.git",
+		"https://github.com/IDEALLab/passport-student/extra",
 		"file:///tmp/passport",
 	} {
 		if _, _, err := parseGitHubRemote(value); err == nil {
