@@ -13,13 +13,15 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/soheylm-passport-sandbox/gh-passport/internal/deployment"
 )
 
 const maxPassportBytes = 1 << 20
 
 const (
-	SourceOwner = "soheylm-passport-sandbox"
-	SourceName  = "passport-exercises"
+	SourceOwner = deployment.ExerciseOwner
+	SourceName  = deployment.ExerciseName
 )
 
 var (
@@ -100,7 +102,7 @@ func Find(start string, runner CommandRunner) (Repository, error) {
 	}
 	upstreamOwner, upstreamName, err := parseGitHubRemote(upstream)
 	if err != nil || upstreamOwner != SourceOwner || upstreamName != SourceName {
-		return Repository{}, errors.New("passport upstream must be soheylm-passport-sandbox/passport-exercises")
+		return Repository{}, fmt.Errorf("passport upstream must be %s", deployment.ExerciseRepository)
 	}
 	branch, err := runTrimmed(ctx, runner, root, "git", "branch", "--show-current")
 	if err != nil || branch == "" {

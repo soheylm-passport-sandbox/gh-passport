@@ -16,9 +16,11 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/soheylm-passport-sandbox/gh-passport/internal/deployment"
 )
 
-const sourceRepository = "soheylm-passport-sandbox/passport-exercises"
+const sourceRepository = deployment.ExerciseRepository
 
 const (
 	commandTimeout      = 2 * time.Minute
@@ -199,7 +201,7 @@ func run(options Options, runner commandRunner) (Result, error) {
 		CurriculumVersion: catalogValue.CurriculumVersion,
 		GitHubUser:        username,
 		SourceRepository:  sourceRepository,
-		ForkRepository:    username + "/passport-exercises",
+		ForkRepository:    username + "/" + deployment.ExerciseName,
 		AssessmentBranch:  branch,
 		Platform:          platform,
 		Responsibilities:  responsibilities,
@@ -256,7 +258,7 @@ func ensureForkAndClone(ctx context.Context, runner commandRunner, username, dir
 		return fmt.Errorf("inspect passport destination: %w", err)
 	}
 	forkCreated := false
-	if _, err := runner.Run(ctx, "", "gh", "repo", "view", username+"/passport-exercises", "--json", "nameWithOwner"); err != nil {
+	if _, err := runner.Run(ctx, "", "gh", "repo", "view", username+"/"+deployment.ExerciseName, "--json", "nameWithOwner"); err != nil {
 		if _, err := runner.Run(ctx, "", "gh", "repo", "fork", sourceRepository, "--clone=false"); err != nil {
 			return fmt.Errorf("create personal exercise fork: %w", err)
 		}
@@ -267,7 +269,7 @@ func ensureForkAndClone(ctx context.Context, runner commandRunner, username, dir
 	if forkCreated {
 		var availableErr error
 		for attempt := 0; attempt < forkReadyAttempts; attempt++ {
-			if _, availableErr = runner.Run(ctx, "", "gh", "repo", "view", username+"/passport-exercises", "--json", "nameWithOwner"); availableErr == nil {
+			if _, availableErr = runner.Run(ctx, "", "gh", "repo", "view", username+"/"+deployment.ExerciseName, "--json", "nameWithOwner"); availableErr == nil {
 				break
 			}
 			if attempt+1 < forkReadyAttempts {
@@ -288,7 +290,7 @@ func ensureForkAndClone(ctx context.Context, runner commandRunner, username, dir
 	if err := os.MkdirAll(filepath.Dir(directory), 0o755); err != nil {
 		return fmt.Errorf("create passport parent folder: %w", err)
 	}
-	if _, err := runner.Run(ctx, "", "git", "clone", "https://github.com/"+username+"/passport-exercises.git", directory); err != nil {
+	if _, err := runner.Run(ctx, "", "git", "clone", "https://github.com/"+username+"/"+deployment.ExerciseName+".git", directory); err != nil {
 		return fmt.Errorf("clone personal exercise fork: %w", err)
 	}
 	return nil
@@ -300,7 +302,7 @@ func verifyDirectFork(ctx context.Context, runner commandRunner, username string
 		"",
 		"gh",
 		"api",
-		"repos/"+username+"/passport-exercises",
+		"repos/"+username+"/"+deployment.ExerciseName,
 		"--jq",
 		`[.fork, .parent.full_name] | @tsv`,
 	)
@@ -308,7 +310,7 @@ func verifyDirectFork(ctx context.Context, runner commandRunner, username string
 		return fmt.Errorf("verify personal exercise fork: %w", err)
 	}
 	if strings.TrimSpace(string(raw)) != "true\t"+sourceRepository {
-		return errors.New("username/passport-exercises already exists but is not the official direct fork; it was left unchanged, request safe help")
+		return fmt.Errorf("username/%s already exists but is not the official direct fork; it was left unchanged, request safe help", deployment.ExerciseName)
 	}
 	return nil
 }
@@ -316,8 +318,8 @@ func verifyDirectFork(ctx context.Context, runner commandRunner, username string
 func ensureRemotes(ctx context.Context, runner commandRunner, username, directory string) error {
 	originRaw, err := runner.Run(ctx, directory, "git", "remote", "get-url", "origin")
 	originRepository, validOrigin := githubRepository(string(originRaw))
-	if err != nil || !validOrigin || !strings.EqualFold(originRepository, username+"/passport-exercises") {
-		return errors.New("existing folder does not use the expected personal passport-exercises fork as origin")
+	if err != nil || !validOrigin || !strings.EqualFold(originRepository, username+"/"+deployment.ExerciseName) {
+		return fmt.Errorf("existing folder does not use the expected personal %s fork as origin", deployment.ExerciseName)
 	}
 	upstreamURL := "https://github.com/" + sourceRepository + ".git"
 	if _, err := runner.Run(ctx, directory, "git", "remote", "get-url", "upstream"); err != nil {
@@ -543,7 +545,7 @@ func loadExistingPassport(path string, value catalog, username, branch string) (
 	}
 	if existing.SchemaVersion != 2 || existing.CurriculumVersion != value.CurriculumVersion ||
 		!strings.EqualFold(existing.GitHubUser, username) || existing.SourceRepository != sourceRepository ||
-		!strings.EqualFold(existing.ForkRepository, username+"/passport-exercises") ||
+		!strings.EqualFold(existing.ForkRepository, username+"/"+deployment.ExerciseName) ||
 		existing.AssessmentBranch != branch {
 		return nil, errors.New("existing passport.json belongs to a different identity, release, or branch; do not overwrite it")
 	}
@@ -601,7 +603,7 @@ func ensurePullRequest(ctx context.Context, runner commandRunner, username, bran
 		return "", fmt.Errorf("create permanent assessment pull request: %w", err)
 	}
 	url := strings.TrimSpace(string(raw))
-	if !strings.HasPrefix(url, "https://github.com/soheylm-passport-sandbox/passport-exercises/pull/") {
+	if !strings.HasPrefix(url, deployment.PullURLPrefix) {
 		return "", errors.New("GitHub did not return the expected central assessment pull request URL")
 	}
 	return url, nil
@@ -618,7 +620,7 @@ func findPullRequest(ctx context.Context, runner commandRunner, username, branch
 		return "", err
 	}
 	value := strings.TrimSpace(string(raw))
-	if value != "" && !strings.HasPrefix(value, "https://github.com/soheylm-passport-sandbox/passport-exercises/pull/") {
+	if value != "" && !strings.HasPrefix(value, deployment.PullURLPrefix) {
 		return "", errors.New("GitHub returned an unexpected assessment pull request URL")
 	}
 	return value, nil
