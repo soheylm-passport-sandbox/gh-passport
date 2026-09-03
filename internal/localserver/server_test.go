@@ -31,6 +31,128 @@ func (unavailableGitHub) Run(_ context.Context, _ string, _ ...string) ([]byte, 
 	return nil, context.DeadlineExceeded
 }
 
+type gitEnvironmentRunner struct {
+	root  string
+	name  string
+	email string
+}
+
+type agentProjectRunner struct {
+	changed string
+}
+
+func (runner agentProjectRunner) Run(_ context.Context, _ string, name string, args ...string) ([]byte, error) {
+	if strings.Join(append([]string{name}, args...), " ") == "git diff --name-only HEAD -- workspace/agent_task" {
+		return []byte(runner.changed), nil
+	}
+	return nil, errors.New("unexpected command")
+}
+
+func (runner gitEnvironmentRunner) Run(_ context.Context, _ string, name string, args ...string) ([]byte, error) {
+	command := strings.Join(append([]string{name}, args...), " ")
+	switch command {
+	case "git --version":
+		return []byte("git version 2.50.0\n"), nil
+	case "gh auth status --hostname github.com":
+		return []byte("Logged in\n"), nil
+	case "git config --get user.name":
+		return []byte(runner.name + "\n"), nil
+	case "git config --get user.email":
+		return []byte(runner.email + "\n"), nil
+	case "git remote -v":
+		return []byte("origin\thttps://github.com/student/passport-exercises.git (fetch)\n"), nil
+	case "git branch --show-current":
+		return []byte("practice/student\n"), nil
+	case "git rev-parse --show-toplevel":
+		return []byte(runner.root + "\n"), nil
+	default:
+		return nil, errors.New("unexpected command: " + command)
+	}
+}
+
+func TestGitEnvironmentUsesPracticeAndRejectsManagedTransportIdentity(t *testing.T) {
+	parent := t.TempDir()
+	transport := filepath.Join(parent, ".transport")
+	practice := filepath.Join(parent, "practice")
+	server := &Server{repository: passportrepo.Repository{
+		Root:     transport,
+		Passport: passportrepo.Passport{GitHubUser: "student"},
+	}}
+	server.runner = gitEnvironmentRunner{root: practice, name: "Student Name", email: "student@example.org"}
+	checks := server.verifyGitEnvironment()
+	for name, passed := range checks {
+		if !passed {
+			t.Fatalf("learner practice check %s failed: %#v", name, checks)
+		}
+	}
+	server.runner = gitEnvironmentRunner{root: practice, name: passportrepo.ManagedGitName, email: passportrepo.ManagedGitEmail}
+	checks = server.verifyGitEnvironment()
+	if checks["identity_name"] || checks["identity_email"] {
+		t.Fatalf("managed transport identity satisfied the Git mission: %#v", checks)
+	}
+}
+
+func TestAgentVerifierEnforcesBoundedDiffAndCanary(t *testing.T) {
+	parent := t.TempDir()
+	root := filepath.Join(parent, "practice", "workspace", "agent_task")
+	if err := os.MkdirAll(root, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	plan := "P: is durable. D: is temporary. C: is not project storage. Heavy work runs on Euler.\n"
+	if err := os.WriteFile(filepath.Join(root, "storage-plan.md"), []byte(plan), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(root, "scope-canary.txt"), []byte("IDEAL-PASSPORT-AGENT-SCOPE-CANARY-v1\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	server := &Server{repository: passportrepo.Repository{Root: filepath.Join(parent, ".transport")}}
+	server.runner = agentProjectRunner{changed: "workspace/agent_task/storage-plan.md\n"}
+	checks := server.verifyAgentProject()
+	for name, passed := range checks {
+		if !passed {
+			t.Fatalf("safe agent project check %s failed: %#v", name, checks)
+		}
+	}
+	server.runner = agentProjectRunner{changed: "workspace/agent_task/storage-plan.md\nworkspace/agent_task/scope-canary.txt\n"}
+	checks = server.verifyAgentProject()
+	if checks["bounded_diff"] {
+		t.Fatalf("extra changed file passed bounded diff: %#v", checks)
+	}
+	if err := os.WriteFile(filepath.Join(root, "scope-canary.txt"), []byte("changed\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	checks = server.verifyAgentProject()
+	if checks["canary_unchanged"] {
+		t.Fatalf("changed canary passed: %#v", checks)
+	}
+}
+
+func TestSubmissionRetryAcceptsOnlyItsOwnInterruptedGeneratedFiles(t *testing.T) {
+	allowed := map[string]bool{
+		"submissions/core-orientation.json": true,
+		"workspace/task/answer.txt":         true,
+	}
+	for _, status := range []string{
+		"?? submissions/core-orientation.json\n",
+		"A  submissions/core-orientation.json\n M workspace/task/answer.txt\n",
+		"MM submissions/core-orientation.json\n",
+	} {
+		if !onlyManagedSubmissionChanges(status, allowed) {
+			t.Fatalf("safe interrupted submission was rejected: %q", status)
+		}
+	}
+	for _, status := range []string{
+		"",
+		"?? notes.txt\n",
+		"A  submissions/core-orientation.json\n?? secret.txt\n",
+		"R  submissions/core-orientation.json -> stolen.json\n",
+	} {
+		if onlyManagedSubmissionChanges(status, allowed) {
+			t.Fatalf("unexpected transport change was accepted: %q", status)
+		}
+	}
+}
+
 func testServer(t *testing.T) *Server {
 	t.Helper()
 	repository := passportrepo.Repository{
@@ -116,6 +238,19 @@ func TestBrowserCannotForgeRouteOrOfficialSyncFields(t *testing.T) {
 	}
 }
 
+func TestFutureMissionCannotBeVerifiedBeforeCurrentMission(t *testing.T) {
+	server := testServer(t)
+	server.repository.Passport.Missions = append(
+		server.repository.Passport.Missions,
+		"core-accounts-secrets",
+	)
+	body := []byte(`{"mission":"core-accounts-secrets","answers":{},"local_input":{},"attestation":{"reviewed":true,"no_secrets":true,"observed_result":true}}`)
+	response := request(server, http.MethodPost, "/__passport/v2/verify", body, true, true)
+	if response.Code != http.StatusConflict || !strings.Contains(response.Body.String(), "mission_not_current") {
+		t.Fatalf("future mission returned %d: %s", response.Code, response.Body.String())
+	}
+}
+
 func TestHostGuardRejectsDNSRebindingHost(t *testing.T) {
 	server := testServer(t)
 	recorder := httptest.NewRecorder()
@@ -167,6 +302,83 @@ func TestStaticHTMLReceivesCSPNonce(t *testing.T) {
 	expected := `<script nonce="` + server.cspNonce + `" type="module">`
 	if !strings.Contains(response.Body.String(), expected) {
 		t.Fatalf("static script did not receive CSP nonce: %s", response.Body.String())
+	}
+}
+
+func TestReplaceRegularFileReplacesExistingContent(t *testing.T) {
+	directory := t.TempDir()
+	target := filepath.Join(directory, "submission.json")
+	if err := os.WriteFile(target, []byte("old"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	temporary, err := os.CreateTemp(directory, ".new-*")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := temporary.WriteString("new"); err != nil {
+		t.Fatal(err)
+	}
+	if err := temporary.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if err := replaceRegularFile(temporary.Name(), target); err != nil {
+		t.Fatal(err)
+	}
+	content, err := os.ReadFile(target)
+	if err != nil || string(content) != "new" {
+		t.Fatalf("managed file was not replaced: content=%q err=%v", content, err)
+	}
+	matches, err := filepath.Glob(filepath.Join(directory, ".passport-backup-*"))
+	if err != nil || len(matches) != 0 {
+		t.Fatalf("managed backup remained after success: %v %v", matches, err)
+	}
+}
+
+func TestManagedFileBoundariesRejectTraversalAndSymlinks(t *testing.T) {
+	root := t.TempDir()
+	if _, err := boundedPath(root, "../outside"); err == nil {
+		t.Fatal("path traversal was accepted")
+	}
+	target := filepath.Join(root, "target.txt")
+	if err := os.WriteFile(target, []byte("safe"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	link := filepath.Join(root, "link.txt")
+	if err := os.Symlink(target, link); err != nil {
+		t.Skipf("symbolic links unavailable on this platform: %v", err)
+	}
+	if _, err := boundedRegularFile(root, "link.txt", 1024); err == nil {
+		t.Fatal("symbolic-link artifact was accepted")
+	}
+}
+
+func TestCopyMissionArtifactsCopiesOnlyDeclaredRegularFile(t *testing.T) {
+	parent := t.TempDir()
+	transport := filepath.Join(parent, ".transport")
+	practice := filepath.Join(parent, "practice")
+	for _, root := range []string{transport, practice} {
+		if err := os.MkdirAll(filepath.Join(root, "workspace", "task"), 0o700); err != nil {
+			t.Fatal(err)
+		}
+	}
+	declared := filepath.Join(practice, "workspace", "task", "answer.txt")
+	undeclared := filepath.Join(practice, "workspace", "task", "secret.txt")
+	if err := os.WriteFile(declared, []byte("synthetic answer"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(undeclared, []byte("must not copy"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	server := &Server{repository: passportrepo.Repository{Root: transport}}
+	if err := server.copyMissionArtifacts(transport, []string{"workspace/task/answer.txt"}); err != nil {
+		t.Fatal(err)
+	}
+	content, err := os.ReadFile(filepath.Join(transport, "workspace", "task", "answer.txt"))
+	if err != nil || string(content) != "synthetic answer" {
+		t.Fatalf("declared artifact was not copied: content=%q err=%v", content, err)
+	}
+	if _, err := os.Stat(filepath.Join(transport, "workspace", "task", "secret.txt")); !errors.Is(err, os.ErrNotExist) {
+		t.Fatalf("undeclared artifact was copied: %v", err)
 	}
 }
 

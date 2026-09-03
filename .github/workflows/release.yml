@@ -58,12 +58,10 @@ jobs:
           GOARCH: ${{ matrix.goarch }}
           CGO_ENABLED: "0"
           VERSION: ${{ github.ref_name }}
-          CONTROLLER_APP_ID: ${{ vars.CONTROLLER_APP_ID }}
         run: |
           set -euo pipefail
-          test "$CONTROLLER_APP_ID" -gt 0
           go build -trimpath \
-            -ldflags "-s -w -X main.version=$VERSION -X main.controllerAppID=$CONTROLLER_APP_ID -X main.curriculumVersion=1.2.0" \
+            -ldflags "-s -w -X main.version=$VERSION" \
             -o "${{ matrix.asset }}" ./cmd/gh-passport
       - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4
         with:

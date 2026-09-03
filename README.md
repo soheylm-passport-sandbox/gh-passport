@@ -9,21 +9,21 @@ First install [GitHub CLI](https://cli.github.com/) and authenticate:
 
 ```text
 gh auth login --web --git-protocol https
-gh extension install soheylm-passport-sandbox/gh-passport
+gh extension install soheylm-passport-sandbox/gh-passport --force --pin v0.3.0
 ```
 
-Then start or resume the complete local-first journey:
+Then start the local setup wizard:
 
 ```text
 gh passport start
 ```
 
-The command creates or reuses your personal public fork of
-`soheylm-passport-sandbox/passport-exercises`, creates one permanent assessment branch and
-draft pull request, then opens the local browser interface. It never deletes a
-folder, force-pushes, merges a PR, or rewrites an existing route.
+No public record is created until you choose your work, read the public-content
+notice, and confirm it in the browser. The launcher then creates or safely
+reuses its managed files and opens your first mission. It never deletes an
+unrelated folder, force-pushes, merges a PR, or rewrites an existing route.
 
-From the local exercise folder, use:
+Later, run these from any folder:
 
 ```text
 gh passport open
@@ -32,16 +32,17 @@ gh passport sync
 gh passport doctor
 ```
 
-Local browser state remembers navigation only. Git commits and the public
-assessment PR hold submitted exercise evidence. The private lab controller is
-the only source accepted for automatic completion status.
+Local browser state remembers navigation and drafts only. The generated public
+learning record holds sanitized submissions. The trusted lab controller is the
+only source accepted for completion status. Git transport remains in the
+background until the Git mission teaches it explicitly.
 
 ## Public Evidence Safety
 
-The assessment PR is public. Your GitHub username is necessarily visible
-through the fork. Submit only the fictional and sanitized values requested by
-the exercise. Never add credentials, ETH or other private identifiers, private
-logs, screenshots with private information, research data, or confidential
+The learning record is public. Your GitHub username is necessarily visible.
+Submit only the fictional and sanitized values requested by the exercise.
+Never add credentials, ETH or other private identifiers, local paths, job IDs,
+private logs, screenshots, AI transcripts, research data, or confidential
 project details.
 
 ## Supported Releases

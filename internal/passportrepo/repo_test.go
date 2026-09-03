@@ -2,11 +2,47 @@ package passportrepo
 
 import (
 	"context"
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 )
+
+type managedIdentityRunner struct {
+	values map[string]string
+}
+
+func (runner *managedIdentityRunner) Run(_ context.Context, _ string, name string, args ...string) ([]byte, error) {
+	if name != "git" || len(args) < 4 || args[0] != "config" || args[1] != "--local" {
+		return nil, errors.New("unexpected command")
+	}
+	if args[2] == "--get" {
+		value, ok := runner.values[args[3]]
+		if !ok {
+			return nil, errors.New("missing setting")
+		}
+		return []byte(value + "\n"), nil
+	}
+	runner.values[args[2]] = args[3]
+	return nil, nil
+}
+
+func TestConfigureManagedIdentityUsesRepositoryLocalSyntheticValues(t *testing.T) {
+	runner := &managedIdentityRunner{values: map[string]string{}}
+	if err := ConfigureManagedIdentity(context.Background(), "/managed/transport", runner); err != nil {
+		t.Fatal(err)
+	}
+	if runner.values["user.name"] != ManagedGitName || runner.values["user.email"] != ManagedGitEmail {
+		t.Fatalf("unexpected managed identity: %#v", runner.values)
+	}
+	if !IsManagedIdentity(ManagedGitName, "student@example.org") || !IsManagedIdentity("Student", ManagedGitEmail) {
+		t.Fatal("managed identity was not recognized")
+	}
+	if IsManagedIdentity("Student", "student@example.org") {
+		t.Fatal("learner identity was mistaken for the managed identity")
+	}
+}
 
 type repositoryRunner struct {
 	branch string
@@ -32,16 +68,16 @@ func (runner repositoryRunner) Run(_ context.Context, _ string, _ string, args .
 
 func TestParseGitHubRemote(t *testing.T) {
 	values := []string{
-		"https://github.com/soheylm-passport-sandbox/passport-student.git",
-		"git@github.com:soheylm-passport-sandbox/passport-student.git",
-		"ssh://git@github.com/soheylm-passport-sandbox/passport-student",
+		"https://github.com/IDEALLab/passport-student.git",
+		"git@github.com:IDEALLab/passport-student.git",
+		"ssh://git@github.com/IDEALLab/passport-student",
 	}
 	for _, value := range values {
 		owner, name, err := parseGitHubRemote(value)
 		if err != nil {
 			t.Fatalf("%s: %v", value, err)
 		}
-		if owner != "soheylm-passport-sandbox" || name != "passport-student" {
+		if owner != "IDEALLab" || name != "passport-student" {
 			t.Fatalf("unexpected parse for %s: %s/%s", value, owner, name)
 		}
 	}
@@ -101,8 +137,8 @@ func TestFindAcceptsOnlyTheAssignedAssessmentBranch(t *testing.T) {
 
 func TestParseGitHubRemoteRejectsOtherHostsAndExtraPath(t *testing.T) {
 	for _, value := range []string{
-		"https://evil.example/soheylm-passport-sandbox/passport-student.git",
-		"https://github.com/soheylm-passport-sandbox/passport-student/extra",
+		"https://evil.example/IDEALLab/passport-student.git",
+		"https://github.com/IDEALLab/passport-student/extra",
 		"file:///tmp/passport",
 	} {
 		if _, _, err := parseGitHubRemote(value); err == nil {

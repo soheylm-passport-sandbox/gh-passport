@@ -16,9 +16,12 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/soheylm-passport-sandbox/gh-passport/internal/deployment"
+	"github.com/soheylm-passport-sandbox/gh-passport/internal/passportrepo"
 )
 
-const sourceRepository = "soheylm-passport-sandbox/passport-exercises"
+const sourceRepository = deployment.ExerciseRepository
 
 const (
 	commandTimeout      = 2 * time.Minute
@@ -87,10 +90,12 @@ type track struct {
 }
 
 type mission struct {
-	Track             string   `json:"track"`
-	Evidence          []string `json:"evidence"`
-	EditableArtifacts []string `json:"editable_artifacts"`
-	HumanGate         bool     `json:"human_gate"`
+	Track        string          `json:"track"`
+	Title        string          `json:"title"`
+	Activity     json.RawMessage `json:"activity"`
+	Verification json.RawMessage `json:"verification"`
+	Submission   json.RawMessage `json:"submission"`
+	ReviewPolicy string          `json:"review_policy"`
 }
 
 type passport struct {
@@ -103,6 +108,7 @@ type passport struct {
 	Platform          string   `json:"platform"`
 	Responsibilities  []string `json:"responsibilities"`
 	Missions          []string `json:"missions"`
+	SetupComplete     bool     `json:"setup_complete"`
 }
 
 func Run(options Options) (Result, error) {
@@ -146,11 +152,14 @@ func run(options Options, runner commandRunner) (Result, error) {
 	if err := ensureRemotes(ctx, runner, username, directory); err != nil {
 		return Result{}, err
 	}
+	if err := passportrepo.ConfigureManagedIdentity(ctx, directory, runner); err != nil {
+		return Result{}, fmt.Errorf("prepare the isolated Passport transport: %w", err)
+	}
 	status, err := runner.Run(ctx, directory, "git", "status", "--porcelain=v1", "--untracked-files=normal")
 	if err != nil {
 		return Result{}, fmt.Errorf("inspect passport working tree: %w", err)
 	}
-	if strings.TrimSpace(string(status)) != "" {
+	if strings.TrimSpace(string(status)) != "" && !onlyGeneratedPassportChange(string(status)) {
 		return Result{}, errors.New("passport folder has local changes; keep them safe, then run `gh passport open` instead of restarting")
 	}
 
@@ -171,6 +180,7 @@ func run(options Options, runner commandRunner) (Result, error) {
 	platform := ""
 	responsibilities := []string(nil)
 	missions := []string(nil)
+	setupComplete := false
 	existing, err := loadExistingPassport(filepath.Join(directory, "passport.json"), catalogValue, username, branch)
 	if err != nil {
 		return Result{}, err
@@ -179,15 +189,19 @@ func run(options Options, runner commandRunner) (Result, error) {
 		platform = existing.Platform
 		responsibilities = existing.Responsibilities
 		missions = existing.Missions
+		setupComplete = existing.SetupComplete
 		fmt.Fprintln(options.Output, "Reusing the existing passport route in this folder.")
 	} else {
 		platform, err = choosePlatform(options.Platform, options.Input, options.Output)
 		if err != nil {
 			return Result{}, err
 		}
-		responsibilities, err = chooseResponsibilities(catalogValue, options, options.Input, options.Output)
-		if err != nil {
-			return Result{}, err
+		if len(options.Responsibilities) > 0 || options.AssumeYes {
+			responsibilities, err = chooseResponsibilities(catalogValue, options, options.Input, options.Output)
+			if err != nil {
+				return Result{}, err
+			}
+			setupComplete = true
 		}
 		missions, err = resolveMissions(catalogValue, responsibilities)
 		if err != nil {
@@ -199,19 +213,30 @@ func run(options Options, runner commandRunner) (Result, error) {
 		CurriculumVersion: catalogValue.CurriculumVersion,
 		GitHubUser:        username,
 		SourceRepository:  sourceRepository,
-		ForkRepository:    username + "/passport-exercises",
+		ForkRepository:    username + "/" + deployment.ExerciseName,
 		AssessmentBranch:  branch,
 		Platform:          platform,
 		Responsibilities:  responsibilities,
 		Missions:          missions,
+		SetupComplete:     setupComplete,
 	}
-	changed, err := writePassport(filepath.Join(directory, "passport.json"), value)
+	_, err = writePassport(filepath.Join(directory, "passport.json"), value)
 	if err != nil {
 		return Result{}, err
 	}
-	if changed {
+	status, err = runner.Run(ctx, directory, "git", "status", "--porcelain=v1", "--untracked-files=normal")
+	if err != nil {
+		return Result{}, fmt.Errorf("inspect generated route before commit: %w", err)
+	}
+	if strings.TrimSpace(string(status)) != "" {
+		if !onlyGeneratedPassportChange(string(status)) {
+			return Result{}, errors.New("passport folder changed while the route was prepared; no files were staged")
+		}
 		if _, err := runner.Run(ctx, directory, "git", "add", "--", "passport.json"); err != nil {
 			return Result{}, err
+		}
+		if _, err := runner.Run(ctx, directory, "git", "diff", "--cached", "--check"); err != nil {
+			return Result{}, fmt.Errorf("validate generated route: %w", err)
 		}
 		if _, err := runner.Run(ctx, directory, "git", "commit", "-m", "chore(passport): start assigned learning route"); err != nil {
 			return Result{}, err
@@ -224,8 +249,17 @@ func run(options Options, runner commandRunner) (Result, error) {
 	if err != nil {
 		return Result{}, err
 	}
-	fmt.Fprintf(options.Output, "\nPassport ready.\nFolder: %s\nAssessment PR: %s\n", directory, prURL)
+	fmt.Fprintf(options.Output, "\nPassport ready.\nManaged local files: %s\nYour public learning record was created in the background.\n", directory)
 	return Result{Directory: directory, PullRequestURL: prURL}, nil
+}
+
+func onlyGeneratedPassportChange(output string) bool {
+	lines := strings.Split(strings.TrimRight(output, "\r\n"), "\n")
+	if len(lines) != 1 || len(lines[0]) < 4 || lines[0][2] != ' ' {
+		return false
+	}
+	allowed := map[string]bool{"??": true, " M": true, "M ": true, "A ": true, "AM": true, "MM": true}
+	return allowed[lines[0][:2]] && lines[0][3:] == "passport.json"
 }
 
 func destination(raw string) (string, error) {
@@ -239,6 +273,9 @@ func destination(raw string) (string, error) {
 	value, err := filepath.Abs(raw)
 	if err != nil {
 		return "", fmt.Errorf("resolve passport folder: %w", err)
+	}
+	if filepath.Base(value) != ".transport" {
+		value = filepath.Join(value, ".transport")
 	}
 	return value, nil
 }
@@ -256,7 +293,7 @@ func ensureForkAndClone(ctx context.Context, runner commandRunner, username, dir
 		return fmt.Errorf("inspect passport destination: %w", err)
 	}
 	forkCreated := false
-	if _, err := runner.Run(ctx, "", "gh", "repo", "view", username+"/passport-exercises", "--json", "nameWithOwner"); err != nil {
+	if _, err := runner.Run(ctx, "", "gh", "repo", "view", username+"/"+deployment.ExerciseName, "--json", "nameWithOwner"); err != nil {
 		if _, err := runner.Run(ctx, "", "gh", "repo", "fork", sourceRepository, "--clone=false"); err != nil {
 			return fmt.Errorf("create personal exercise fork: %w", err)
 		}
@@ -267,7 +304,7 @@ func ensureForkAndClone(ctx context.Context, runner commandRunner, username, dir
 	if forkCreated {
 		var availableErr error
 		for attempt := 0; attempt < forkReadyAttempts; attempt++ {
-			if _, availableErr = runner.Run(ctx, "", "gh", "repo", "view", username+"/passport-exercises", "--json", "nameWithOwner"); availableErr == nil {
+			if _, availableErr = runner.Run(ctx, "", "gh", "repo", "view", username+"/"+deployment.ExerciseName, "--json", "nameWithOwner"); availableErr == nil {
 				break
 			}
 			if attempt+1 < forkReadyAttempts {
@@ -288,7 +325,7 @@ func ensureForkAndClone(ctx context.Context, runner commandRunner, username, dir
 	if err := os.MkdirAll(filepath.Dir(directory), 0o755); err != nil {
 		return fmt.Errorf("create passport parent folder: %w", err)
 	}
-	if _, err := runner.Run(ctx, "", "git", "clone", "https://github.com/"+username+"/passport-exercises.git", directory); err != nil {
+	if _, err := runner.Run(ctx, "", "git", "clone", "https://github.com/"+username+"/"+deployment.ExerciseName+".git", directory); err != nil {
 		return fmt.Errorf("clone personal exercise fork: %w", err)
 	}
 	return nil
@@ -300,7 +337,7 @@ func verifyDirectFork(ctx context.Context, runner commandRunner, username string
 		"",
 		"gh",
 		"api",
-		"repos/"+username+"/passport-exercises",
+		"repos/"+username+"/"+deployment.ExerciseName,
 		"--jq",
 		`[.fork, .parent.full_name] | @tsv`,
 	)
@@ -308,7 +345,7 @@ func verifyDirectFork(ctx context.Context, runner commandRunner, username string
 		return fmt.Errorf("verify personal exercise fork: %w", err)
 	}
 	if strings.TrimSpace(string(raw)) != "true\t"+sourceRepository {
-		return errors.New("username/passport-exercises already exists but is not the official direct fork; it was left unchanged, request safe help")
+		return fmt.Errorf("username/%s already exists but is not the official direct fork; it was left unchanged, request safe help", deployment.ExerciseName)
 	}
 	return nil
 }
@@ -316,8 +353,8 @@ func verifyDirectFork(ctx context.Context, runner commandRunner, username string
 func ensureRemotes(ctx context.Context, runner commandRunner, username, directory string) error {
 	originRaw, err := runner.Run(ctx, directory, "git", "remote", "get-url", "origin")
 	originRepository, validOrigin := githubRepository(string(originRaw))
-	if err != nil || !validOrigin || !strings.EqualFold(originRepository, username+"/passport-exercises") {
-		return errors.New("existing folder does not use the expected personal passport-exercises fork as origin")
+	if err != nil || !validOrigin || !strings.EqualFold(originRepository, username+"/"+deployment.ExerciseName) {
+		return fmt.Errorf("existing folder does not use the expected personal %s fork as origin", deployment.ExerciseName)
 	}
 	upstreamURL := "https://github.com/" + sourceRepository + ".git"
 	if _, err := runner.Run(ctx, directory, "git", "remote", "get-url", "upstream"); err != nil {
@@ -469,7 +506,7 @@ func decodeCatalog(raw []byte) (catalog, error) {
 	if err := decoder.Decode(&value); err != nil {
 		return catalog{}, fmt.Errorf("parse passport curriculum catalogue: %w", err)
 	}
-	if value.SchemaVersion != 1 || value.SourceRepository != sourceRepository || value.CurriculumVersion == "" {
+	if value.SchemaVersion != 2 || value.SourceRepository != sourceRepository || value.CurriculumVersion == "" {
 		return catalog{}, errors.New("passport curriculum catalogue has an unsupported identity")
 	}
 	return value, nil
@@ -543,7 +580,7 @@ func loadExistingPassport(path string, value catalog, username, branch string) (
 	}
 	if existing.SchemaVersion != 2 || existing.CurriculumVersion != value.CurriculumVersion ||
 		!strings.EqualFold(existing.GitHubUser, username) || existing.SourceRepository != sourceRepository ||
-		!strings.EqualFold(existing.ForkRepository, username+"/passport-exercises") ||
+		!strings.EqualFold(existing.ForkRepository, username+"/"+deployment.ExerciseName) ||
 		existing.AssessmentBranch != branch {
 		return nil, errors.New("existing passport.json belongs to a different identity, release, or branch; do not overwrite it")
 	}
@@ -577,16 +614,17 @@ func sameStrings(left, right []string) bool {
 func ensurePullRequest(ctx context.Context, runner commandRunner, username, branch, directory string) (string, error) {
 	existing, err := findPullRequest(ctx, runner, username, branch, directory)
 	if err != nil {
-		return "", fmt.Errorf("query permanent assessment pull request: %w", err)
+		return "", fmt.Errorf("query public learning record: %w", err)
 	}
 	if existing != "" {
 		return existing, nil
 	}
-	body := "This is my permanent public IT Passport assessment PR.\n\n" +
-		"I will submit only fictional exercise content and sanitized evidence. " +
+	body := "This draft PR is the managed public transport for my IT Passport.\n\n" +
+		"The launcher will submit only structured fictional exercise receipts. " +
 		"Apart from the GitHub identity already visible on this PR, I will never include credentials, " +
 		"ETH or other private identifiers, private logs, or research data.\n\n" +
-		"The automatic controller checks each pushed commit. I will not merge or close this PR.\n"
+		"The automatic controller checks each pushed commit. I will not edit, merge, or close this transport PR. " +
+		"A separate practice PR is introduced during the Git mission.\n"
 	raw, err := runner.Run(
 		ctx, directory, "gh", "pr", "create", "--repo", sourceRepository,
 		"--head", username+":"+branch, "--base", "main", "--draft",
@@ -598,10 +636,10 @@ func ensurePullRequest(ctx context.Context, runner commandRunner, username, bran
 		if existing, lookupErr := findPullRequest(ctx, runner, username, branch, directory); lookupErr == nil && existing != "" {
 			return existing, nil
 		}
-		return "", fmt.Errorf("create permanent assessment pull request: %w", err)
+		return "", fmt.Errorf("create public learning record: %w", err)
 	}
 	url := strings.TrimSpace(string(raw))
-	if !strings.HasPrefix(url, "https://github.com/soheylm-passport-sandbox/passport-exercises/pull/") {
+	if !strings.HasPrefix(url, deployment.PullURLPrefix) {
 		return "", errors.New("GitHub did not return the expected central assessment pull request URL")
 	}
 	return url, nil
@@ -618,7 +656,7 @@ func findPullRequest(ctx context.Context, runner commandRunner, username, branch
 		return "", err
 	}
 	value := strings.TrimSpace(string(raw))
-	if value != "" && !strings.HasPrefix(value, "https://github.com/soheylm-passport-sandbox/passport-exercises/pull/") {
+	if value != "" && !strings.HasPrefix(value, deployment.PullURLPrefix) {
 		return "", errors.New("GitHub returned an unexpected assessment pull request URL")
 	}
 	return value, nil

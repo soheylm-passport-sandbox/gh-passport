@@ -15,7 +15,9 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/soheylm-passport-sandbox/gh-passport/internal/deployment"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/githubstatus"
+	"github.com/soheylm-passport-sandbox/gh-passport/internal/installregistry"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/localserver"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/localstate"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/passportrepo"
@@ -24,8 +26,8 @@ import (
 
 var (
 	version           = "0.1.0-dev"
-	controllerAppID   = "0"
-	curriculumVersion = "1.2.0"
+	controllerAppID   = deployment.ControllerAppID
+	curriculumVersion = "2.0.0"
 )
 
 type doctorCheck struct {
@@ -63,10 +65,18 @@ func main() {
 }
 
 func run(arguments []string) error {
+	if len(arguments) == 1 && (arguments[0] == "--help" || arguments[0] == "-h") {
+		usage()
+		return nil
+	}
 	command := "open"
 	if len(arguments) > 0 && !strings.HasPrefix(arguments[0], "-") {
 		command = arguments[0]
 		arguments = arguments[1:]
+	}
+	if len(arguments) == 1 && (arguments[0] == "--help" || arguments[0] == "-h") {
+		usage()
+		return nil
 	}
 	switch command {
 	case "start":
@@ -118,9 +128,18 @@ func start(arguments []string) error {
 			return fmt.Errorf("unknown start option %q", arguments[index])
 		}
 	}
+	if noBrowser && !options.AssumeYes {
+		return errors.New("--no-browser is for automated qualification and requires --yes")
+	}
+	if !options.AssumeYes && !noBrowser {
+		return startBrowserWizard(options)
+	}
 	result, err := starter.Run(options)
 	if err != nil {
 		return err
+	}
+	if err := installregistry.Save(result.Directory); err != nil {
+		return fmt.Errorf("remember local passport location: %w", err)
 	}
 	if err := os.Chdir(result.Directory); err != nil {
 		return fmt.Errorf("enter passport folder: %w", err)
@@ -130,6 +149,56 @@ func start(arguments []string) error {
 		return nil
 	}
 	return open(nil)
+}
+
+func startBrowserWizard(options starter.Options) error {
+	var passportServer *localserver.Server
+	bootstrap, err := localserver.NewBootstrap(func(_ context.Context, selection localserver.BootstrapSelection) (string, error) {
+		options.Platform = selection.Platform
+		options.Responsibilities = selection.Responsibilities
+		options.AssumeYes = true
+		result, err := starter.Run(options)
+		if err != nil {
+			return "", err
+		}
+		if err := installregistry.Save(result.Directory); err != nil {
+			return "", fmt.Errorf("remember local passport location: %w", err)
+		}
+		repository, appID, err := contextForDirectory(result.Directory)
+		if err != nil {
+			return "", err
+		}
+		passportServer, err = localserver.New(repository, appID, githubstatus.GHRunner{}, passportrepo.ExecRunner{})
+		if err != nil {
+			return "", err
+		}
+		target, _, err := passportServer.Start()
+		return target, err
+	})
+	if err != nil {
+		return err
+	}
+	target, err := bootstrap.Start()
+	if err != nil {
+		return err
+	}
+	fmt.Println("Local setup wizard:", target)
+	fmt.Println("No fork or public record is created until you confirm in the browser.")
+	if os.Getenv("PASSPORT_NO_BROWSER") != "1" {
+		if err := localserver.OpenBrowser(target); err != nil {
+			_ = bootstrap.Close(context.Background())
+			return err
+		}
+	}
+	signals := make(chan os.Signal, 1)
+	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
+	<-signals
+	shutdown, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if passportServer != nil {
+		_ = passportServer.Close(shutdown)
+	}
+	return bootstrap.Close(shutdown)
 }
 
 func open(arguments []string) error {
@@ -254,17 +323,17 @@ func syncStatus(arguments []string) error {
 		fmt.Printf("Official stage: %s\n", official.Status.Stage)
 		fmt.Printf("Verified head: %s\n", official.RemoteHeadSHA)
 		fmt.Printf("Source: controller App %d, Check Run %d\n", official.ControllerAppID, official.CheckRunID)
-		fmt.Printf("Assessment PR: %s\n", official.PullRequestURL)
+		fmt.Printf("Public learning record: %s\n", official.PullRequestURL)
 	case githubstatus.StateWaitingForController:
-		fmt.Println("Submitted to GitHub; waiting for the scheduled automatic check.")
+		fmt.Println("Submitted to GitHub; waiting for the automatic check.")
 		fmt.Println("Do not push the same change again. Sync again later.")
 		fmt.Println("If no check appears after 30 minutes, submit one public, non-secret help request:")
 		fmt.Println(result.RecoveryIssueURL)
-		fmt.Printf("Assessment PR: %s\n", result.PullRequestURL)
+		fmt.Printf("Public learning record: %s\n", result.PullRequestURL)
 	case githubstatus.StateRecoveryRequired:
-		fmt.Println("The permanent assessment pull request is not open. Your Git work was not changed.")
-		fmt.Println("From this clean passport folder, run `gh passport start` to create or find the draft PR.")
-		fmt.Printf("If that stops or the PR was merged, request safe recovery: %s\n", result.RecoveryIssueURL)
+		fmt.Println("The public learning record needs recovery. Your local work was not changed.")
+		fmt.Println("Run `gh passport start` from any folder; it safely reuses the existing route when possible.")
+		fmt.Printf("If that stops, request safe recovery: %s\n", result.RecoveryIssueURL)
 	default:
 		return fmt.Errorf("unsupported sync state %q", result.State)
 	}
@@ -432,19 +501,41 @@ func writeDiagnosticBundle(repositoryRoot string, checks []doctorCheck) (string,
 }
 
 func contextForCurrentDirectory() (passportrepo.Repository, int64, error) {
-	workingDirectory, err := os.Getwd()
-	if err != nil {
-		return passportrepo.Repository{}, 0, err
+	return contextForDirectory("")
+}
+
+func contextForDirectory(workingDirectory string) (passportrepo.Repository, int64, error) {
+	useRegistry := workingDirectory == ""
+	if useRegistry {
+		var err error
+		workingDirectory, err = os.Getwd()
+		if err != nil {
+			return passportrepo.Repository{}, 0, err
+		}
 	}
-	repository, err := passportrepo.Find(workingDirectory, passportrepo.ExecRunner{})
-	if err != nil {
-		return passportrepo.Repository{}, 0, err
+	repository, findErr := passportrepo.Find(workingDirectory, passportrepo.ExecRunner{})
+	if findErr != nil && useRegistry {
+		record, registryErr := installregistry.Load()
+		if registryErr != nil {
+			return passportrepo.Repository{}, 0, errors.New("no local passport is registered; run `gh passport start` once")
+		}
+		repository, findErr = passportrepo.Find(record.TransportRoot, passportrepo.ExecRunner{})
+		if findErr != nil {
+			return passportrepo.Repository{}, 0, errors.New("the registered passport cannot be opened safely; run `gh passport doctor`")
+		}
+	} else if findErr != nil {
+		return passportrepo.Repository{}, 0, findErr
 	}
 	if repository.Passport.CurriculumVersion != curriculumVersion {
 		return passportrepo.Repository{}, 0, fmt.Errorf(
 			"passport curriculum %s requires a compatible launcher; this launcher embeds %s",
 			repository.Passport.CurriculumVersion, curriculumVersion,
 		)
+	}
+	identityContext, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := passportrepo.ConfigureManagedIdentity(identityContext, repository.Root, passportrepo.ExecRunner{}); err != nil {
+		return passportrepo.Repository{}, 0, fmt.Errorf("prepare the isolated Passport transport: %w", err)
 	}
 	appID, err := strconv.ParseInt(controllerAppID, 10, 64)
 	if err != nil || appID < 0 {
