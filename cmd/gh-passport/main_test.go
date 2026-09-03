@@ -68,3 +68,11 @@ func TestParseDoctorOptions(t *testing.T) {
 		t.Fatal("duplicate --bundle should fail")
 	}
 }
+
+func TestSubcommandHelpDoesNotExecuteCommand(t *testing.T) {
+	for _, command := range []string{"start", "open", "status", "sync", "doctor"} {
+		if err := run([]string{command, "--help"}); err != nil {
+			t.Fatalf("%s --help returned %v", command, err)
+		}
+	}
+}

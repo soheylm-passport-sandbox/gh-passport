@@ -1,192 +1,120 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Goal: prove the passport works for a person without maintainer privileges, not only for the author or CI."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Pilot And Human Validation Checklist | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.B_z1DDnN.css"></head><body data-curriculum-version="1.2.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / maintainers</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">maintainers</p><h1>Pilot And Human Validation Checklist</h1><p>Goal: prove the passport works for a person without maintainer privileges, not only for the author or CI.</p></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/8237d33a5a373a229f238f9db1d7284d859c971a/docs/maintainers/pilot-checklist.md" rel="noreferrer">View exact source</a><a href="/passport/">Return to my dashboard</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><p><strong>Goal:</strong> prove the passport works for a person without maintainer privileges,
-not only for the author or CI.</p>
-<p>No learner cohort is currently available. The automated and synthetic release
-gate is recorded in <a href="/maintainers/automated-validation/">Automated Validation</a>; unchecked
-items here remain future human-only evidence and do not block implementation.
-Run this checklist before claiming measured learner usability, after material
-authentication or Euler changes, and after recurring confusion. Use fictional
-or harmless content. Never record credentials, private keys, confidential data,
-or unnecessarily broad student logs.</p>
-<h2 id="1-github-front-door-and-first-pull-request">1. GitHub Front Door And First Pull Request<a class="heading-anchor" href="#1-github-front-door-and-first-pull-request" aria-label="Link to 1. GitHub Front Door And First Pull Request">#</a></h2><p>Test with a non-admin lab member who has not configured the repository before:</p>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Use this checklist before sharing the Passport with students. Automated tests prove deterministic contracts; they do not prove current GitHub credentials, Cloudflare wiring, institutional systems, or novice comprehension. Never record credentials, private keys, broad logs, real research data, or unnecessary personal information."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Production And Learner Pilot Checklist | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.BhM0eQ4y.css"></head><body data-curriculum-version="2.0.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / maintainers</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">maintainers</p><h1>Production And Learner Pilot Checklist</h1><p>Use this checklist before sharing the Passport with students. Automated tests prove deterministic contracts; they do not prove current GitHub credentials, Cloudflare wiring, institutional systems, or novice comprehension. Never record credentials, private keys, broad logs, real research data, or unnecessary personal information.</p></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/395057426112aa55991016a603ec4222237ba55f/docs/maintainers/pilot-checklist.md" rel="noreferrer">View exact source</a><a href="/passport/">Return to my dashboard</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><p>Use this checklist before sharing the Passport with students. Automated tests
+prove deterministic contracts; they do not prove current GitHub credentials,
+Cloudflare wiring, institutional systems, or novice comprehension. Never record
+credentials, private keys, broad logs, real research data, or unnecessary
+personal information.</p>
+<h2 id="1-fresh-computer-first-contact">1. Fresh-Computer First Contact<a class="heading-anchor" href="#1-fresh-computer-first-contact" aria-label="Link to 1. Fresh-Computer First Contact">#</a></h2><p>Repeat on a clean Windows 11 account, macOS account, and Ubuntu user:</p>
 <ul>
-<li><input disabled="" type="checkbox"> The public README is readable before Git, Python, an editor, Obsidian, or
-organization membership is required.</li>
-<li><input disabled="" type="checkbox"> From that page, the learner installs only Git and GitHub CLI, then runs
-the documented <code>gh auth login</code>, extension install, and <code>gh passport start</code>
-commands one at a time.</li>
-<li><input disabled="" type="checkbox"> <code>gh passport start</code> creates or reuses the learner-owned public fork,
-<code>onboarding/&lt;username&gt;</code> branch, canonical route, and one central draft PR.</li>
-<li><input disabled="" type="checkbox"> Responsibility questions resolve dependencies rather than using a degree
-or job title, and the learner sees the route before starting the first task.</li>
-<li><input disabled="" type="checkbox"> The learner understands that the fork and PR are public and submits only
-fictional, sanitized exercise content.</li>
-<li><input disabled="" type="checkbox"> After a break, <code>gh passport open</code> resumes local navigation and the latest
-controller-verified <strong>IDEAL Lab IT Passport</strong> Check Run reconstructs
-official progress.</li>
-<li><input disabled="" type="checkbox"> Deleting <code>.passport-local/</code> or using a fresh clone loses preferences only;
-an explicit sync reconstructs the official current mission.</li>
-<li><input disabled="" type="checkbox"> Windows/macOS platform branches, expected results, blocked paths, and
-checkpoint evidence work without maintainer translation.</li>
-<li><input disabled="" type="checkbox"> Mission Markdown remains a complete no-launcher fallback;
-no browser page claims to save official evidence or completion locally.</li>
-<li><input disabled="" type="checkbox"> The selected platform preflight reports missing tools and malformed SSH
-configuration without changing files.</li>
-<li><input disabled="" type="checkbox"> Git installation/authentication precedes automatic fork/clone and PR work;
-Python setup occurs only for a Python responsibility.</li>
-<li><input disabled="" type="checkbox"> GitHub CLI browser authentication and HTTPS clone work without a PAT or
-an SSH key; editor installation is taught only when the route needs it.</li>
-<li><input disabled="" type="checkbox"> The launcher-created <code>onboarding/&lt;username&gt;</code> branch receives learner commits;
-the learner does not merge or close the assessment PR.</li>
-<li><input disabled="" type="checkbox"> Opening the clone from <code>main</code> stops with one safe <code>git switch</code> command;
-it never silently displays or submits work from the wrong branch.</li>
-<li><input disabled="" type="checkbox"> The documented local checks and GitHub Actions run as described.</li>
-<li><input disabled="" type="checkbox"> They use a Conventional Commit, push to the existing draft PR, and do not
-open, merge, or close a second assessment PR.</li>
-<li><input disabled="" type="checkbox"> Before the controller reports, the dashboard says <code>Waiting for automatic check</code>, shows <code>Not checked</code>, and tells the learner not to push again.</li>
-<li><input disabled="" type="checkbox"> If an unmerged PR is closed accidentally, rerunning <code>gh passport start</code>
-preserves the route and branch and creates one replacement draft PR.</li>
-<li><input disabled="" type="checkbox"> A merged PR stops automatic recovery and directs the learner to private
-asynchronous help; public <code>main</code> protection prevents this in normal use.</li>
+<li><input disabled="" type="checkbox"> <code>/getting-started/</code> opens without GitHub authentication.</li>
+<li><input disabled="" type="checkbox"> The learner identifies the correct OS tab and runs one command at a time.</li>
+<li><input disabled="" type="checkbox"> Missing Git/GitHub CLI recovery works without changing security policy.</li>
+<li><input disabled="" type="checkbox"> <code>gh auth login --web --git-protocol https</code> uses the intended personal account.</li>
+<li><input disabled="" type="checkbox"> The pinned extension installs and <code>gh passport start</code> opens localhost.</li>
+<li><input disabled="" type="checkbox"> No fork or public record exists before the public-content confirmation.</li>
+<li><input disabled="" type="checkbox"> The learner can explain what is public before consenting.</li>
+<li><input disabled="" type="checkbox"> The route uses responsibilities, not degree or job title.</li>
+<li><input disabled="" type="checkbox"> The dashboard gives one current mission and one next action.</li>
+<li><input disabled="" type="checkbox"> Closing browser/terminal and running <code>gh passport open</code> from an unrelated
+folder resumes without reinstalling, cloning, or <code>cd</code>.</li>
+<li><input disabled="" type="checkbox"> Deleting local state loses drafts/navigation only; trusted GitHub status
+reconstructs submitted completion.</li>
 </ul>
-<p>Current deployment facts:</p>
+<h2 id="2-mission-and-practice-ux">2. Mission And Practice UX<a class="heading-anchor" href="#2-mission-and-practice-ux" aria-label="Link to 2. Mission And Practice UX">#</a></h2><p>Use one genuine beginner and one experienced non-admin tester:</p>
 <ul>
-<li>Public <code>passport-exercises</code> permits protected <code>main</code> on GitHub Free. Verify
-the live ruleset, required checks, disabled force pushes/deletions, and the
-learner&#39;s inability to merge before inviting a cohort.</li>
-<li>The system does not depend on mutable <code>FirstSteps</code>; route-specific
-fixtures and hidden behavior checks are versioned with the curriculum.</li>
+<li><input disabled="" type="checkbox"> Both can distinguish preview, local draft, submitted, needs work, passed,
+awaiting operational approval, and complete.</li>
+<li><input disabled="" type="checkbox"> Each page answers Outcome, Concept, Example, Trap, Action, Expected result,
+Check, Recovery, and Continue without maintainer translation.</li>
+<li><input disabled="" type="checkbox"> Failed critical answers explain the misconception, clear the old answers,
+and present the same skills in a different question and option order.</li>
+<li><input disabled="" type="checkbox"> <strong>Submit mission</strong> commits only generated submission and declared synthetic
+artifacts; unrelated staged or local files are untouched.</li>
+<li><input disabled="" type="checkbox"> Python fixtures run without PyPI/network and fail on the intended defect.</li>
+<li><input disabled="" type="checkbox"> Git practice uses the separate visible folder; the learner creates one
+non-interactive draft practice PR and understands it is not transport.</li>
+<li><input disabled="" type="checkbox"> GitHub rejects a wrong author, fork, branch, SHA, file, commit message, or
+non-draft practice PR.</li>
+<li><input disabled="" type="checkbox"> AI practice leaves canaries unchanged, shows the diff, and runs real tests.</li>
+<li><input disabled="" type="checkbox"> No mission requires free-form Markdown unless writing that document is the
+assessed competency.</li>
 </ul>
-<h2 id="2-fresh-windows-ssh-and-vs-code-pilot">2. Fresh Windows SSH And VS Code Pilot<a class="heading-anchor" href="#2-fresh-windows-ssh-and-vs-code-pilot" aria-label="Link to 2. Fresh Windows SSH And VS Code Pilot">#</a></h2><p>Use a Windows 10/11 computer with OpenSSH and VS Code. Include one pilot with an
-existing unrelated SSH host so preservation is tested:</p>
+<p>Record each confusing step, expected behavior, observed behavior, severity, and
+resulting issue. Do not mark learner usability as measured without these pilots.</p>
+<h2 id="3-signed-githubcloudflare-transaction">3. Signed GitHub/Cloudflare Transaction<a class="heading-anchor" href="#3-signed-githubcloudflare-transaction" aria-label="Link to 3. Signed GitHub/Cloudflare Transaction">#</a></h2><ul>
+<li><input disabled="" type="checkbox"> Controller App is installed only on <code>passport-exercises</code> with reviewed
+least privilege and Pull request subscription.</li>
+<li><input disabled="" type="checkbox"> Dispatch App is installed only on <code>onboarding-control</code> with Actions write.</li>
+<li><input disabled="" type="checkbox"> Worker secrets exist only in Cloudflare; controller key exists only in the
+private control repository.</li>
+<li><input disabled="" type="checkbox"> GitHub webhook delivery shows valid signature and <code>202</code> response.</li>
+<li><input disabled="" type="checkbox"> One learner push starts one targeted private workflow for the exact PR/SHA.</li>
+<li><input disabled="" type="checkbox"> Wrong signature, installation, repository, base, branch, draft state, and
+malformed/oversized bodies start no workflow.</li>
+<li><input disabled="" type="checkbox"> Untrusted checkout contains no persisted token and runs with no network.</li>
+<li><input disabled="" type="checkbox"> Secret detection stops before parsing, execution, or optional AI use.</li>
+<li><input disabled="" type="checkbox"> Redelivery and controller retry are idempotent by exact SHA.</li>
+<li><input disabled="" type="checkbox"> Five synthetic learners remain within the projected Actions budget.</li>
+<li><input disabled="" type="checkbox"> Completion writes one private record and closes the transport PR unmerged.</li>
+<li><input disabled="" type="checkbox"> A completed learner can reopen the dashboard from that closed PR.</li>
+</ul>
+<h2 id="4-windows-ssh-and-vs-code">4. Windows SSH And VS Code<a class="heading-anchor" href="#4-windows-ssh-and-vs-code" aria-label="Link to 4. Windows SSH And VS Code">#</a></h2><p>Use an account with an unrelated SSH host already configured:</p>
 <ul>
-<li><input disabled="" type="checkbox"> Password login to Euler works before key generation.</li>
-<li><input disabled="" type="checkbox"> The dedicated-key block creates <code>id_ed25519_euler</code> without overwriting
-another key.</li>
-<li><input disabled="" type="checkbox"> Rerunning key generation prints <code>STOP</code> and changes no key file.</li>
-<li><input disabled="" type="checkbox"> Windows ACL commands leave the private key accepted by OpenSSH.</li>
-<li><input disabled="" type="checkbox"> Public-key installation sends only the <code>.pub</code> file.</li>
-<li><input disabled="" type="checkbox"> The key-only test prints <code>key-ok</code> and never asks for the ETH password.</li>
-<li><input disabled="" type="checkbox"> The <code>Host euler</code> include validates and the unrelated host still resolves
-to its original settings.</li>
-<li><input disabled="" type="checkbox"> The generated tunnel host key and host block validate after a reboot/new
-PowerShell session; no earlier shell variables are required.</li>
-<li><input disabled="" type="checkbox"> The local tunnel hostname test works before VS Code is opened.</li>
-<li><input disabled="" type="checkbox"> VS Code installs/starts <code>.vscode-server</code>, opens the intended project, and
-reports a compute-node hostname plus <code>SLURM_JOB_ID</code>.</li>
-<li><input disabled="" type="checkbox"> Stopping the tunnel removes the allocation.</li>
+<li><input disabled="" type="checkbox"> Password login works before key setup.</li>
+<li><input disabled="" type="checkbox"> Dedicated key creation never overwrites an existing private key.</li>
+<li><input disabled="" type="checkbox"> Public-key installation sends only <code>.pub</code>; <code>IdentityFile</code> names the private key.</li>
+<li><input disabled="" type="checkbox"> ACLs are accepted by Windows OpenSSH.</li>
+<li><input disabled="" type="checkbox"> Key-only login prints <code>key-ok</code> without an ETH password prompt.</li>
+<li><input disabled="" type="checkbox"> Existing SSH hosts remain unchanged and <code>ssh -G</code> parses the new aliases.</li>
+<li><input disabled="" type="checkbox"> Euler tunnel login succeeds before VS Code is opened.</li>
+<li><input disabled="" type="checkbox"> VS Code installs its server, opens the compute node, and shows
+<code>SLURM_JOB_ID</code>; stopping the tunnel releases the allocation.</li>
 </ul>
-<p>This Windows execution cannot be proven from macOS CI. A Windows CI runner
-proves parsing and launcher behavior, while this checklist remains the evidence
-needed before claiming measured Windows learner usability.</p>
-<h2 id="3-macos-or-linux-ssh-pilot">3. macOS Or Linux SSH Pilot<a class="heading-anchor" href="#3-macos-or-linux-ssh-pilot" aria-label="Link to 3. macOS Or Linux SSH Pilot">#</a></h2><ul>
-<li><input disabled="" type="checkbox"> Repeat the dedicated-key, key-only, include-preservation, tunnel, and
-cleanup checks in a fresh local account or disposable SSH directory.</li>
-<li><input disabled="" type="checkbox"> Confirm every generated private/config file has restrictive permissions.</li>
-<li><input disabled="" type="checkbox"> Confirm malformed existing SSH configuration causes a stop before edits.</li>
-</ul>
-<h2 id="4-euler-low-cost-operational-pilot">4. Euler Low-Cost Operational Pilot<a class="heading-anchor" href="#4-euler-low-cost-operational-pilot" aria-label="Link to 4. Euler Low-Cost Operational Pilot">#</a></h2><p>Do not start a GPU job merely to release documentation.</p>
+<h2 id="5-euler">5. Euler<a class="heading-anchor" href="#5-euler" aria-label="Link to 5. Euler">#</a></h2><p>Use harmless bounded jobs; do not allocate a GPU merely to validate prose:</p>
 <ul>
-<li><input disabled="" type="checkbox"> <code>my_share_info</code> shows the expected lab share for the test account.</li>
-<li><input disabled="" type="checkbox"> <code>sbatch --test-only</code> accepts the tiny CPU, capped-array, explicit RTX 4090,
-explicit RTX 3090, and explicit RTX PRO 6000 (<code>pro_6000</code>) profiles.</li>
-<li><input disabled="" type="checkbox"> The lab inventory still includes two RTX PRO 6000 GPUs, and current ETH
-CUDA compatibility guidance is reflected in the student warning.</li>
-<li><input disabled="" type="checkbox"> The flexible <code>rtx_3090,rtx_4090</code> request remains absent until a live test
-succeeds; it failed on 2026-08-04 despite appearing in ETH documentation.</li>
-<li><input disabled="" type="checkbox"> With approval, one tiny CPU job completes and produces logs, <code>sacct</code>, and
-<code>seff</code> fields matching the lab.</li>
-<li><input disabled="" type="checkbox"> A pilot can read a pending reason and cancel their own harmless test job.</li>
-<li><input disabled="" type="checkbox"> Array evidence counts aggregate concurrency across every active array and
-ordinary job, not only one <code>%</code> cap.</li>
-<li><input disabled="" type="checkbox"> <code>$HOME</code>, <code>$SCRATCH</code>, <code>/cluster/work/fuge</code>, module names, and quota commands
-still match current ETH documentation and read-only system checks.</li>
-<li><input disabled="" type="checkbox"> Lab IT provisions a disposable shared project root before the owner tests
-child-directory setgid/default ACL inheritance with two accounts.</li>
-<li><input disabled="" type="checkbox"> Local ParaView 6.0.0 loads a fresh ETH <code>euler_600.pvsc</code>, submits the
-documented conservative CPU allocation, opens harmless remote data, and
-releases the job when the client and launcher close.</li>
-<li><input disabled="" type="checkbox"> The pilot does not infer GPU-rendering support from the CPU ParaView test.</li>
+<li><input disabled="" type="checkbox"> <code>my_share_info</code> confirms the expected share.</li>
+<li><input disabled="" type="checkbox"> <code>sbatch --test-only</code> accepts CPU, capped-array, RTX 4090, RTX 3090, and
+<code>pro_6000</code> profiles under current Euler identifiers.</li>
+<li><input disabled="" type="checkbox"> One tiny CPU job is observed with <code>squeue</code>, completes, and produces expected
+<code>sacct</code> and <code>seff</code> fields.</li>
+<li><input disabled="" type="checkbox"> The local verifier confirms account, user, state, exit code, CPU, memory,
+elapsed time, and expected output without publishing job ID or logs.</li>
+<li><input disabled="" type="checkbox"> Array fixture enforces <code>%N</code> and aggregate concurrency reasoning.</li>
+<li><input disabled="" type="checkbox"> GPU smoke allocation remains optional; a busy queue cannot block training.</li>
+<li><input disabled="" type="checkbox"> Storage/checksum exercise uses only approved synthetic paths and content.</li>
 </ul>
-<h2 id="5-nas-and-blade-pilot">5. NAS And Blade Pilot<a class="heading-anchor" href="#5-nas-and-blade-pilot" aria-label="Link to 5. NAS And Blade Pilot">#</a></h2><ul>
-<li><input disabled="" type="checkbox"> On ETH network/VPN, Windows resolves
-<code>\\d.ethz.ch\groups\mavt\ide\Projects\&lt;SupervisorFirstName&gt;</code>.</li>
-<li><input disabled="" type="checkbox"> macOS resolves the corresponding <code>smb://d.ethz.ch/...</code> path.</li>
-<li><input disabled="" type="checkbox"> A new member can write only in the supervisor-approved username folder.</li>
-<li><input disabled="" type="checkbox"> On Blade, <code>P:</code> maps to durable project storage and the documented
-supervisor/username folder exists.</li>
-<li><input disabled="" type="checkbox"> A harmless file copied from temporary <code>D:</code> to <code>P:</code> remains after sign-out.</li>
-<li><input disabled="" type="checkbox"> The pilot understands that <code>C:</code>, Desktop, Documents, Downloads, and <code>D:</code>
-are not the only durable copy.</li>
-<li><input disabled="" type="checkbox"> Current installed Blade software and hardware claims are rechecked.</li>
+<h2 id="6-nas-and-blade">6. NAS And Blade<a class="heading-anchor" href="#6-nas-and-blade" aria-label="Link to 6. NAS And Blade">#</a></h2><ul>
+<li><input disabled="" type="checkbox"> On ETH network/VPN, Windows and macOS resolve the approved supervisor
+Projects share.</li>
+<li><input disabled="" type="checkbox"> The learner creates only the approved username folder, writes/reads one
+nonce file, removes it, and publishes only a one-way digest.</li>
+<li><input disabled="" type="checkbox"> <code>C:</code>, <code>G:</code>, <code>H:</code>, and <code>T:</code> are rejected as project locations.</li>
+<li><input disabled="" type="checkbox"> Blade reports the intended host; <code>D:</code> is temporary and <code>P:</code> is durable.</li>
+<li><input disabled="" type="checkbox"> One harmless file is copied from <code>D:</code> to <code>P:</code>, read back, and removed from
+<code>D:</code> without publishing its path.</li>
+<li><input disabled="" type="checkbox"> Installed Blade software/hardware claims are rechecked before release.</li>
 </ul>
-<h2 id="6-external-assessment-security-pilot">6. External Assessment Security Pilot<a class="heading-anchor" href="#6-external-assessment-security-pilot" aria-label="Link to 6. External Assessment Security Pilot">#</a></h2><p>The local implementation and mocks do not prove production GitHub App wiring.
-Before issuing assignments:</p>
-<ul>
-<li><input disabled="" type="checkbox"> Confirm exactly four active IDEALLab repositories: private
-<code>onboarding-IT</code>, public <code>passport-exercises</code>, public <code>gh-passport</code>, and
-private <code>onboarding-control</code>.</li>
-<li><input disabled="" type="checkbox"> Confirm the controller App is installed only on <code>passport-exercises</code> with
-read-only Contents and write Checks/Issues/Pull requests; its key exists
-only in <code>onboarding-control</code>.</li>
-<li><input disabled="" type="checkbox"> Confirm the control workflow uses its own bounded <code>GITHUB_TOKEN</code> for
-private assignment and registry commits.</li>
-<li><input disabled="" type="checkbox"> Freeze immutable user, reviewer, fork, parent, base, PR, route, and
-<code>passport.json</code> identities before assessment.</li>
-<li><input disabled="" type="checkbox"> Run untrusted code only in a bounded ephemeral environment with no write
-token, organization secrets, or unnecessary network access.</li>
-<li><input disabled="" type="checkbox"> Prove a possible secret blocks before any matched content reaches an AI
-reviewer.</li>
-<li><input disabled="" type="checkbox"> Prove a student cannot edit the protected rubric, reviewer prompt,
-workflow, baseline SHA, or endorsement authority.</li>
-<li><input disabled="" type="checkbox"> Prove deterministic feedback, retry behavior, human approval, and private
-completion-record storage with a fictional learner.</li>
-<li><input disabled="" type="checkbox"> Run two disjoint authority updates from stale clones and prove both are
-retained after safe fetch/rebase/push persistence.</li>
-<li><input disabled="" type="checkbox"> Complete a live synthetic non-admin transaction from fork creation through
-exact-SHA Check Run, PR feedback, reviewer approval, and private record.</li>
+<h2 id="7-cost-and-operations">7. Cost And Operations<a class="heading-anchor" href="#7-cost-and-operations" aria-label="Link to 7. Cost And Operations">#</a></h2><ul>
+<li><input disabled="" type="checkbox"> No payment method exists, or an Actions hard-stop budget is active.</li>
+<li><input disabled="" type="checkbox"> Larger runners are disabled and controller jobs retain strict timeouts.</li>
+<li><input disabled="" type="checkbox"> Recovery cron runs four times daily and unchanged assignments do not assess.</li>
+<li><input disabled="" type="checkbox"> <code>operations/needs-attention.md</code> contains only exact asynchronous exceptions
+or operational decisions, not routine mission approvals.</li>
+<li><input disabled="" type="checkbox"> Public help requests prohibit secrets, private identifiers, logs, and screenshots.</li>
+<li><input disabled="" type="checkbox"> Maintainer recovery never force-pushes or deletes public/private history.</li>
 </ul>
-<h2 id="7-learning-pilot">7. Learning Pilot<a class="heading-anchor" href="#7-learning-pilot" aria-label="Link to 7. Learning Pilot">#</a></h2><p>Run one beginner and one experienced pilot:</p>
-<ul>
-<li><input disabled="" type="checkbox"> Each selects only the tracks matching their responsibilities.</li>
-<li><input disabled="" type="checkbox"> The beginner completes tasks without the maintainer translating jargon.</li>
-<li><input disabled="" type="checkbox"> The experienced user can use the fast path without skipping lab policy.</li>
-<li><input disabled="" type="checkbox"> Both can explain their evidence without an AI agent answering for them.</li>
-<li><input disabled="" type="checkbox"> Record confusing step, expected behavior, observed behavior, severity,
-and resulting documentation issue.</li>
-</ul>
-<h2 id="8-ai-agent-learning-pilot">8. AI Agent Learning Pilot<a class="heading-anchor" href="#8-ai-agent-learning-pilot" aria-label="Link to 8. AI Agent Learning Pilot">#</a></h2><p>Use only the generated fictional fixtures and a non-admin test learner:</p>
-<ul>
-<li><input disabled="" type="checkbox"> The learner completes and commits the manual task before opening an agent.</li>
-<li><input disabled="" type="checkbox"> GitHub Education and Copilot Student activate without checkout or a
-payment method, or the learner can continue manually while verification
-is pending.</li>
-<li><input disabled="" type="checkbox"> VS Code signs into the intended personal GitHub account and a read-only
-request leaves the working tree unchanged.</li>
-<li><input disabled="" type="checkbox"> The bounded task changes only the route&#39;s editable AI-agent fixture, and
-the learner reviews every line and proposed command.</li>
-<li><input disabled="" type="checkbox"> The learner personally runs the unittest and application checks, plus
-Ruff/mypy/pre-commit only when the training repository declares their
-reproducible environment, and can explain accepted and rejected/revised
-suggestions.</li>
-<li><input disabled="" type="checkbox"> The evidence omits prompts, account screenshots, keys, and protected data.</li>
-<li><input disabled="" type="checkbox"> An optional Zed/OpenRouter pilot uses a consenting maintainer&#39;s personal
-account, disabled auto-recharge, a low dedicated key limit, fictional
-content, and immediate key revocation after testing.</li>
-<li><input disabled="" type="checkbox"> Zed keychain storage and local <code>OPENROUTER_API_KEY</code> precedence behave as
-documented.</li>
-<li><input disabled="" type="checkbox"> No student is directed to purchase credits or to use the lab-funded
-organization procedure from this repository.</li>
-</ul>
-<h2 id="sign-off">Sign-Off<a class="heading-anchor" href="#sign-off" aria-label="Link to Sign-Off">#</a></h2><pre><code class="language-text">Passport version/commit:
-Date:
-Tester roles (no unnecessary personal data):
+<h2 id="sign-off">Sign-Off<a class="heading-anchor" href="#sign-off" aria-label="Link to Sign-Off">#</a></h2><pre><code class="language-text">Passport commit and version:
+Static site URL:
+Worker deployment version:
+GitHub App IDs and repository scopes checked:
 Platforms and tracks tested:
-Passed checks:
+Automated report:
+External tests passed:
 Blocking failures/issues:
-Approved by:
-Release decision:
+Release decision and approver:
+Date:
 </code></pre>
-<p>Verified: 2026-08-28. Review by: 2026-11-28. Owner: IDEAL Lab IT administrator.</p>
-</article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/maintainers/">Maintainer Operations</a><a href="/maintainers/automated-validation/">Automated Validation And Residual Risk</a><a href="/maintainers/content-ownership/">Content Ownership</a><a href="/maintainers/freshness/">Freshness And Source Policy</a><a href="/maintainers/passport-architecture/">Passport System Architecture</a><a href="/maintainers/passport-deployment/">Four-Repository Passport Deployment</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current mission to practice, verify, and submit evidence.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 1.2.0 /exact source 8237d33a</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+<p>Verified as a checklist: 2026-09-03. Re-run before student cutover. Owner: IDEAL
+Lab IT administrator.</p>
+</article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/maintainers/">Maintainer Operations</a><a href="/maintainers/automated-validation/">Automated Validation And Residual Risk</a><a href="/maintainers/content-ownership/">Content Ownership</a><a href="/maintainers/passport-architecture/">Passport System Architecture</a><a href="/maintainers/passport-deployment/">Four-Repository Passport Deployment</a><a href="/policy/data-and-ai/">IDEAL Lab Data And AI Policy</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current mission to practice, verify, and submit evidence.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 2.0.0 /exact source 39505742</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
 `).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
 `).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html>

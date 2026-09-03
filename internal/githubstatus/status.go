@@ -27,7 +27,7 @@ const (
 	StateRecoveryRequired     = "assessment_recovery_required"
 )
 
-var markerPattern = regexp.MustCompile(`<!-- ideal-passport-status:v1:([A-Za-z0-9_-]+) -->`)
+var markerPattern = regexp.MustCompile(`<!-- ideal-passport-status:v2:([A-Za-z0-9_-]+) -->`)
 
 type Runner interface {
 	Run(ctx context.Context, directory string, args ...string) ([]byte, error)
@@ -135,7 +135,7 @@ func Sync(ctx context.Context, repository passportrepo.Repository, controllerApp
 	recoveryURL := assessmentRepositoryURL + "/issues/new?template=passport-help.yml"
 	syncedAt := time.Now().UTC().Format(time.RFC3339)
 	pullsPath := fmt.Sprintf(
-		"repos/%s/%s/pulls?state=open&head=%s&per_page=100",
+		"repos/%s/%s/pulls?state=all&head=%s&per_page=100",
 		url.PathEscape(repository.UpstreamOwner),
 		url.PathEscape(repository.UpstreamName),
 		url.QueryEscape(repository.Owner+":"+repository.Branch),
@@ -148,13 +148,28 @@ func Sync(ctx context.Context, repository passportrepo.Repository, controllerApp
 	if err := json.Unmarshal(rawPulls, &pulls); err != nil {
 		return Result{}, fmt.Errorf("parse assessment pull request: %w", err)
 	}
-	matching := make([]pullRequest, 0, 1)
+	openMatching := make([]pullRequest, 0, 1)
+	closedMatching := make([]pullRequest, 0, 1)
 	for _, pull := range pulls {
-		if pull.State == "open" && !pull.Merged && pull.Head.Ref == repository.Branch {
-			matching = append(matching, pull)
+		if pull.Merged || pull.Head.Ref != repository.Branch {
+			continue
+		}
+		if pull.State == "open" {
+			openMatching = append(openMatching, pull)
+		} else if pull.State == "closed" {
+			closedMatching = append(closedMatching, pull)
 		}
 	}
-	if len(matching) == 0 {
+	if len(openMatching) > 1 {
+		return Result{}, fmt.Errorf("expected at most one open assessment pull request, found %d", len(openMatching))
+	}
+	var pull pullRequest
+	if len(openMatching) == 1 {
+		pull = openMatching[0]
+	} else if len(closedMatching) > 0 {
+		sort.Slice(closedMatching, func(i, j int) bool { return closedMatching[i].Number > closedMatching[j].Number })
+		pull = closedMatching[0]
+	} else {
 		return Result{
 			State:            StateRecoveryRequired,
 			RepositoryURL:    repositoryURL,
@@ -162,10 +177,6 @@ func Sync(ctx context.Context, repository passportrepo.Repository, controllerApp
 			SyncedAt:         syncedAt,
 		}, nil
 	}
-	if len(matching) != 1 {
-		return Result{}, fmt.Errorf("expected one open assessment pull request, found %d", len(matching))
-	}
-	pull := matching[0]
 	if !regexp.MustCompile(`^[a-f0-9]{40}$`).MatchString(pull.Head.SHA) {
 		return Result{}, errors.New("assessment pull request has an invalid remote head SHA")
 	}
@@ -219,6 +230,17 @@ func Sync(ctx context.Context, repository passportrepo.Repository, controllerApp
 	if status.CurriculumVersion != repository.Passport.CurriculumVersion {
 		return Result{}, errors.New("controller marker curriculum differs from this passport")
 	}
+	if pull.State == "closed" && status.Stage != "complete" {
+		return Result{
+			State:             StateRecoveryRequired,
+			PullRequestNumber: pull.Number,
+			PullRequestURL:    pull.HTMLURL,
+			RepositoryURL:     repositoryURL,
+			RecoveryIssueURL:  recoveryURL,
+			RemoteHeadSHA:     pull.Head.SHA,
+			SyncedAt:          syncedAt,
+		}, nil
+	}
 	if err := validateRoute(status, repository.Passport.Missions); err != nil {
 		return Result{}, err
 	}
@@ -264,10 +286,10 @@ func parseMarker(value string) (ControllerStatus, error) {
 	if err := strictJSON(raw, &status); err != nil {
 		return ControllerStatus{}, fmt.Errorf("parse controller status marker: %w", err)
 	}
-	if status.SchemaVersion != 1 || status.CurriculumVersion == "" || !regexp.MustCompile(`^[a-f0-9]{40}$`).MatchString(status.HeadSHA) {
+	if status.SchemaVersion != 2 || status.CurriculumVersion == "" || !regexp.MustCompile(`^[a-f0-9]{40}$`).MatchString(status.HeadSHA) {
 		return ControllerStatus{}, errors.New("controller status marker has unsupported identity fields")
 	}
-	if status.Stage != "working" && status.Stage != "blocked" && status.Stage != "awaiting_human" && status.Stage != "complete" {
+	if status.Stage != "working" && status.Stage != "blocked" && status.Stage != "awaiting_operational_approval" && status.Stage != "complete" {
 		return ControllerStatus{}, errors.New("controller status marker has an invalid stage")
 	}
 	if status.ReviewState != "not_ready" && status.ReviewState != "requested" && status.ReviewState != "changes_requested" && status.ReviewState != "approved" {
@@ -288,7 +310,7 @@ func validateRoute(status ControllerStatus, assigned []string) error {
 		if mission.ID != assigned[index] {
 			return errors.New("controller status route order differs from the assigned passport")
 		}
-		if mission.Status != "locked" && mission.Status != "needs_work" && mission.Status != "awaiting_human" && mission.Status != "passed" {
+		if mission.Status != "locked" && mission.Status != "needs_work" && mission.Status != "awaiting_operational_approval" && mission.Status != "passed" {
 			return errors.New("controller status contains an invalid mission state")
 		}
 		if status.CurrentMission != nil && mission.ID == *status.CurrentMission {

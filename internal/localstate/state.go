@@ -15,18 +15,22 @@ const maxStateBytes = 64 << 10
 
 var (
 	missionPattern = regexp.MustCompile(`^[a-z0-9]+(?:-[a-z0-9]+)*$`)
+	answerPattern  = regexp.MustCompile(`^[a-z][a-z0-9_]*$`)
 	shaPattern     = regexp.MustCompile(`^[a-f0-9]{40}$`)
 )
 
 type State struct {
-	SchemaVersion     int      `json:"schema_version"`
-	PassportID        string   `json:"passport_id"`
-	CurriculumVersion string   `json:"curriculum_version"`
-	RouteDigest       string   `json:"route_digest"`
-	LastOpenedMission string   `json:"last_opened_mission"`
-	ExpandedHelp      []string `json:"expanded_help"`
-	LastOfficialSync  string   `json:"last_official_sync,omitempty"`
-	LastSeenHeadSHA   string   `json:"last_seen_head_sha,omitempty"`
+	SchemaVersion     int                            `json:"schema_version"`
+	PassportID        string                         `json:"passport_id"`
+	CurriculumVersion string                         `json:"curriculum_version"`
+	RouteDigest       string                         `json:"route_digest"`
+	LastOpenedMission string                         `json:"last_opened_mission"`
+	ExpandedHelp      []string                       `json:"expanded_help"`
+	MissionDrafts     map[string]map[string][]string `json:"mission_drafts,omitempty"`
+	AttemptCounts     map[string]int                 `json:"attempt_counts,omitempty"`
+	LaunchCount       int                            `json:"launch_count"`
+	LastOfficialSync  string                         `json:"last_official_sync,omitempty"`
+	LastSeenHeadSHA   string                         `json:"last_seen_head_sha,omitempty"`
 }
 
 type Store struct {
@@ -117,6 +121,32 @@ func (state State) Validate() error {
 	}
 	if len(state.ExpandedHelp) > 100 {
 		return errors.New("local state contains too many expanded help entries")
+	}
+	if len(state.MissionDrafts) > 50 || len(state.AttemptCounts) > 50 {
+		return errors.New("local state contains too many mission records")
+	}
+	for mission, answers := range state.MissionDrafts {
+		if !missionPattern.MatchString(mission) || len(answers) > 30 {
+			return errors.New("local state contains an invalid mission draft")
+		}
+		for question, values := range answers {
+			if !answerPattern.MatchString(question) || len(values) > 20 {
+				return errors.New("local state contains an invalid draft answer")
+			}
+			for _, value := range values {
+				if !answerPattern.MatchString(value) {
+					return errors.New("local state contains an invalid answer option")
+				}
+			}
+		}
+	}
+	for mission, count := range state.AttemptCounts {
+		if !missionPattern.MatchString(mission) || count < 0 || count > 10_000 {
+			return errors.New("local state contains an invalid attempt count")
+		}
+	}
+	if state.LaunchCount < 0 || state.LaunchCount > 10_000 {
+		return errors.New("local state has an invalid launch count")
 	}
 	if state.LastSeenHeadSHA != "" && !shaPattern.MatchString(state.LastSeenHeadSHA) {
 		return errors.New("local state has an invalid head SHA")

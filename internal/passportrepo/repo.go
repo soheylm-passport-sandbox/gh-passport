@@ -13,13 +13,20 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/soheylm-passport-sandbox/gh-passport/internal/deployment"
 )
 
 const maxPassportBytes = 1 << 20
 
 const (
-	SourceOwner = "soheylm-passport-sandbox"
-	SourceName  = "passport-exercises"
+	SourceOwner = deployment.ExerciseOwner
+	SourceName  = deployment.ExerciseName
+	// The managed transport must be able to commit before the learner reaches
+	// the Git identity mission. This repository-local identity is never used in
+	// the separate practice repository.
+	ManagedGitName  = "IDEAL Passport Launcher"
+	ManagedGitEmail = "passport-launcher@users.noreply.github.com"
 )
 
 var (
@@ -38,6 +45,7 @@ type Passport struct {
 	Platform          string   `json:"platform"`
 	Responsibilities  []string `json:"responsibilities"`
 	Missions          []string `json:"missions"`
+	SetupComplete     bool     `json:"setup_complete"`
 }
 
 type Repository struct {
@@ -64,6 +72,29 @@ func (ExecRunner) Run(ctx context.Context, directory string, name string, args .
 	command.Dir = directory
 	command.Env = append(os.Environ(), "GIT_TERMINAL_PROMPT=0")
 	return command.Output()
+}
+
+func ConfigureManagedIdentity(ctx context.Context, root string, runner CommandRunner) error {
+	for _, setting := range []struct {
+		key   string
+		value string
+	}{
+		{key: "user.name", value: ManagedGitName},
+		{key: "user.email", value: ManagedGitEmail},
+	} {
+		if _, err := runner.Run(ctx, root, "git", "config", "--local", setting.key, setting.value); err != nil {
+			return fmt.Errorf("configure managed transport %s: %w", setting.key, err)
+		}
+		actual, err := runTrimmed(ctx, runner, root, "git", "config", "--local", "--get", setting.key)
+		if err != nil || actual != setting.value {
+			return fmt.Errorf("managed transport %s was not stored exactly", setting.key)
+		}
+	}
+	return nil
+}
+
+func IsManagedIdentity(name, email string) bool {
+	return strings.TrimSpace(name) == ManagedGitName || strings.EqualFold(strings.TrimSpace(email), ManagedGitEmail)
 }
 
 func Find(start string, runner CommandRunner) (Repository, error) {
@@ -100,7 +131,7 @@ func Find(start string, runner CommandRunner) (Repository, error) {
 	}
 	upstreamOwner, upstreamName, err := parseGitHubRemote(upstream)
 	if err != nil || upstreamOwner != SourceOwner || upstreamName != SourceName {
-		return Repository{}, errors.New("passport upstream must be soheylm-passport-sandbox/passport-exercises")
+		return Repository{}, fmt.Errorf("passport upstream must be %s", deployment.ExerciseRepository)
 	}
 	branch, err := runTrimmed(ctx, runner, root, "git", "branch", "--show-current")
 	if err != nil || branch == "" {

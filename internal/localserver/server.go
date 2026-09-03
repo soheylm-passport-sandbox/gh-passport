@@ -25,6 +25,7 @@ import (
 
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/githubstatus"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/localstate"
+	"github.com/soheylm-passport-sandbox/gh-passport/internal/missionverify"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/passportrepo"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/webdist"
 )
@@ -45,6 +46,7 @@ type Server struct {
 	origin          string
 	lockPath        string
 	mu              sync.Mutex
+	statusMu        sync.RWMutex
 	official        *githubstatus.Official
 	syncResult      *githubstatus.Result
 }
@@ -116,7 +118,27 @@ func (server *Server) Start() (string, bool, error) {
 		_ = server.http.Close()
 		return existing, true, nil
 	}
+	if err := server.recordLaunch(); err != nil {
+		_ = server.http.Close()
+		server.releaseInstance()
+		return "", false, err
+	}
 	return target, false, nil
+}
+
+func (server *Server) recordLaunch() error {
+	state, err := server.store.Load()
+	if err != nil {
+		return fmt.Errorf("read local resume state: %w", err)
+	}
+	if state.SchemaVersion == 0 {
+		state = server.defaultState()
+	}
+	state.LaunchCount++
+	if err := server.store.Save(state); err != nil {
+		return fmt.Errorf("record local passport launch: %w", err)
+	}
+	return nil
 }
 
 func (server *Server) handler() http.Handler {
@@ -126,6 +148,10 @@ func (server *Server) handler() http.Handler {
 	mux.HandleFunc("GET /__passport/v1/context", server.withSession(server.context))
 	mux.HandleFunc("PUT /__passport/v1/state", server.withSession(server.updateState))
 	mux.HandleFunc("POST /__passport/v1/sync", server.withSession(server.sync))
+	mux.HandleFunc("POST /__passport/v2/verify", server.withSession(server.verifyMission))
+	mux.HandleFunc("POST /__passport/v2/submit", server.withSession(server.submitMission))
+	mux.HandleFunc("POST /__passport/v2/setup", server.withSession(server.completeSetup))
+	mux.HandleFunc("POST /__passport/v2/practice", server.withSession(server.preparePractice))
 	mux.Handle("/", server.staticHandler())
 	return server.securityHeaders(server.hostGuard(mux))
 }
@@ -299,7 +325,11 @@ func (server *Server) startSession(response http.ResponseWriter, request *http.R
 		SameSite: http.SameSiteStrictMode,
 		MaxAge:   8 * 60 * 60,
 	})
-	http.Redirect(response, request, "/passport/", http.StatusSeeOther)
+	target := "/passport/"
+	if !server.repository.Passport.SetupComplete {
+		target = "/start/"
+	}
+	http.Redirect(response, request, target, http.StatusSeeOther)
 }
 
 func (server *Server) health(response http.ResponseWriter, _ *http.Request) {
@@ -342,10 +372,10 @@ func (server *Server) context(response http.ResponseWriter, _ *http.Request) {
 		LocalState:  state,
 		StateSource: "local_navigation_only",
 	}
-	server.mu.Lock()
+	server.statusMu.RLock()
 	payload.Official = server.official
 	payload.SyncResult = server.syncResult
-	server.mu.Unlock()
+	server.statusMu.RUnlock()
 	server.writeJSON(response, http.StatusOK, payload)
 }
 
@@ -378,7 +408,9 @@ func (server *Server) updateState(response http.ResponseWriter, request *http.Re
 		server.writeError(response, http.StatusConflict, "local_state_unavailable")
 		return
 	}
-	if state.LastOfficialSync != existing.LastOfficialSync || state.LastSeenHeadSHA != existing.LastSeenHeadSHA {
+	if state.LastOfficialSync != existing.LastOfficialSync ||
+		state.LastSeenHeadSHA != existing.LastSeenHeadSHA ||
+		state.LaunchCount != existing.LaunchCount {
 		server.writeError(response, http.StatusForbidden, "official_sync_fields_are_read_only")
 		return
 	}
@@ -403,7 +435,7 @@ func (server *Server) sync(response http.ResponseWriter, request *http.Request) 
 	if err != nil {
 		server.writeJSON(response, http.StatusServiceUnavailable, map[string]string{
 			"error":  "official_status_unavailable",
-			"detail": "Run gh passport doctor, then open the permanent assessment PR if the problem continues.",
+			"detail": "Run gh passport doctor, then use the dashboard recovery link if the problem continues.",
 		})
 		return
 	}
@@ -413,8 +445,10 @@ func (server *Server) sync(response http.ResponseWriter, request *http.Request) 
 			return
 		}
 	}
+	server.statusMu.Lock()
 	server.syncResult = &result
 	server.official = result.Official
+	server.statusMu.Unlock()
 	state, _ := server.store.Load()
 	state.LastOfficialSync = result.SyncedAt
 	state.LastSeenHeadSHA = result.RemoteHeadSHA
@@ -425,6 +459,746 @@ func (server *Server) sync(response http.ResponseWriter, request *http.Request) 
 	}
 	_ = server.store.Save(state)
 	server.writeJSON(response, http.StatusOK, result)
+}
+
+func (server *Server) decodeAttempt(response http.ResponseWriter, request *http.Request) (missionverify.Catalog, missionverify.Attempt, bool) {
+	request.Body = http.MaxBytesReader(response, request.Body, 64<<10)
+	decoder := json.NewDecoder(request.Body)
+	decoder.DisallowUnknownFields()
+	var attempt missionverify.Attempt
+	if err := decoder.Decode(&attempt); err != nil {
+		server.writeError(response, http.StatusBadRequest, "invalid_mission_attempt")
+		return missionverify.Catalog{}, missionverify.Attempt{}, false
+	}
+	assigned := false
+	for _, mission := range server.repository.Passport.Missions {
+		if attempt.Mission == mission {
+			assigned = true
+			break
+		}
+	}
+	if !assigned {
+		server.writeError(response, http.StatusForbidden, "mission_outside_assigned_route")
+		return missionverify.Catalog{}, missionverify.Attempt{}, false
+	}
+	if attempt.Mission != server.activeMissionID() {
+		server.writeError(response, http.StatusConflict, "mission_not_current")
+		return missionverify.Catalog{}, missionverify.Attempt{}, false
+	}
+	catalog, err := missionverify.LoadCatalog(server.repository.Root)
+	if err != nil || catalog.CurriculumVersion != server.repository.Passport.CurriculumVersion {
+		server.writeError(response, http.StatusConflict, "mission_catalog_unavailable")
+		return missionverify.Catalog{}, missionverify.Attempt{}, false
+	}
+	return catalog, attempt, true
+}
+
+func (server *Server) activeMissionID() string {
+	server.statusMu.RLock()
+	defer server.statusMu.RUnlock()
+	if server.official != nil {
+		if server.official.Status.CurrentMission == nil {
+			return ""
+		}
+		return *server.official.Status.CurrentMission
+	}
+	if len(server.repository.Passport.Missions) == 0 {
+		return ""
+	}
+	return server.repository.Passport.Missions[0]
+}
+
+func (server *Server) verifyMission(response http.ResponseWriter, request *http.Request) {
+	catalog, attempt, ok := server.decodeAttempt(response, request)
+	if !ok {
+		return
+	}
+	mission, result, err := missionverify.Grade(catalog, attempt)
+	if err != nil {
+		server.writeError(response, http.StatusBadRequest, "mission_verification_failed")
+		return
+	}
+	receipt, err := server.localReceipt(mission, attempt.LocalInput)
+	if err != nil {
+		server.writeError(response, http.StatusConflict, "local_verifier_failed_safely")
+		return
+	}
+	result.Receipt = receipt
+	if receipt["passed"] != true {
+		result.Status = "needs_work"
+	}
+	state, _ := server.store.Load()
+	if state.AttemptCounts == nil {
+		state.AttemptCounts = map[string]int{}
+	}
+	state.AttemptCounts[attempt.Mission]++
+	result.NextVariant = state.AttemptCounts[attempt.Mission]
+	_ = server.store.Save(state)
+	server.writeJSON(response, http.StatusOK, result)
+}
+
+func (server *Server) submitMission(response http.ResponseWriter, request *http.Request) {
+	server.mu.Lock()
+	defer server.mu.Unlock()
+	catalog, attempt, ok := server.decodeAttempt(response, request)
+	if !ok {
+		return
+	}
+	mission, result, err := missionverify.Grade(catalog, attempt)
+	if err != nil {
+		server.writeError(response, http.StatusBadRequest, "mission_verification_failed")
+		return
+	}
+	receipt, err := server.localReceipt(mission, attempt.LocalInput)
+	if err != nil || result.Status != "ready_to_submit" || receipt["passed"] != true {
+		server.writeJSON(response, http.StatusUnprocessableEntity, map[string]any{
+			"error": "mission_not_ready", "result": result,
+		})
+		return
+	}
+	if !attempt.Attestation.Reviewed || !attempt.Attestation.NoSecrets || !attempt.Attestation.ObservedResult {
+		server.writeError(response, http.StatusUnprocessableEntity, "attestation_required")
+		return
+	}
+	if err := server.commitSubmission(catalog, attempt, mission, receipt); err != nil {
+		server.writeJSON(response, http.StatusConflict, map[string]string{
+			"error": "submission_not_published", "detail": err.Error(),
+		})
+		return
+	}
+	server.writeJSON(response, http.StatusCreated, map[string]any{
+		"status": "queued", "mission": attempt.Mission,
+		"message": "Submitted once. Wait for the trusted controller result.",
+	})
+}
+
+type setupRequest struct {
+	Platform            string   `json:"platform"`
+	Responsibilities    []string `json:"responsibilities"`
+	PublicRecordConsent bool     `json:"public_record_consent"`
+}
+
+func (server *Server) completeSetup(response http.ResponseWriter, request *http.Request) {
+	server.mu.Lock()
+	defer server.mu.Unlock()
+	if server.repository.Passport.SetupComplete {
+		server.writeError(response, http.StatusConflict, "passport_setup_already_complete")
+		return
+	}
+	request.Body = http.MaxBytesReader(response, request.Body, 16<<10)
+	decoder := json.NewDecoder(request.Body)
+	decoder.DisallowUnknownFields()
+	var selection setupRequest
+	if err := decoder.Decode(&selection); err != nil {
+		server.writeError(response, http.StatusBadRequest, "invalid_route_selection")
+		return
+	}
+	if selection.Platform != "windows" && selection.Platform != "macos" && selection.Platform != "linux" {
+		server.writeError(response, http.StatusBadRequest, "unsupported_platform")
+		return
+	}
+	if !selection.PublicRecordConsent {
+		server.writeError(response, http.StatusUnprocessableEntity, "public_record_consent_required")
+		return
+	}
+	catalog, err := missionverify.LoadCatalog(server.repository.Root)
+	if err != nil {
+		server.writeError(response, http.StatusConflict, "mission_catalog_unavailable")
+		return
+	}
+	missions, err := missionverify.Resolve(catalog, selection.Responsibilities)
+	if err != nil {
+		server.writeError(response, http.StatusBadRequest, "invalid_route_selection")
+		return
+	}
+	value := server.repository.Passport
+	value.Platform = selection.Platform
+	value.Responsibilities = append([]string(nil), selection.Responsibilities...)
+	value.Missions = missions
+	value.SetupComplete = true
+	encoded, err := json.MarshalIndent(value, "", "  ")
+	if err != nil {
+		server.writeError(response, http.StatusInternalServerError, "route_generation_failed")
+		return
+	}
+	encoded = append(encoded, '\n')
+	path := filepath.Join(server.repository.Root, "passport.json")
+	if err := os.WriteFile(path, encoded, 0o600); err != nil {
+		server.writeError(response, http.StatusInternalServerError, "route_write_failed")
+		return
+	}
+	ctx, cancel := context.WithTimeout(request.Context(), 2*time.Minute)
+	defer cancel()
+	if _, err := server.runner.Run(ctx, server.repository.Root, "git", "add", "--", "passport.json"); err != nil {
+		server.writeJSON(response, http.StatusConflict, map[string]string{"error": "route_publish_failed", "detail": "The route file was kept locally. Press Create my Passport once more when the connection is available."})
+		return
+	}
+	staged, err := server.runner.Run(ctx, server.repository.Root, "git", "diff", "--cached", "--name-only")
+	if err != nil || !onlyExpectedPaths(string(staged), map[string]bool{"passport.json": true}) {
+		server.writeJSON(response, http.StatusConflict, map[string]string{"error": "route_publish_failed", "detail": "The route file was kept locally, but the managed staging area was not as expected. Run gh passport doctor."})
+		return
+	}
+	if strings.TrimSpace(string(staged)) != "" {
+		if _, err := server.runner.Run(ctx, server.repository.Root, "git", "diff", "--cached", "--check"); err != nil {
+			server.writeJSON(response, http.StatusConflict, map[string]string{"error": "route_publish_failed", "detail": "The generated route did not pass its safety check. Run gh passport doctor."})
+			return
+		}
+		if _, err := server.runner.Run(ctx, server.repository.Root, "git", "commit", "-m", "chore(passport): configure learning route"); err != nil {
+			server.writeJSON(response, http.StatusConflict, map[string]string{"error": "route_publish_failed", "detail": "The route file was kept locally. Press Create my Passport once more to resume."})
+			return
+		}
+	}
+	if _, err := server.runner.Run(ctx, server.repository.Root, "git", "push", "origin", server.repository.Branch); err != nil {
+		server.writeJSON(response, http.StatusConflict, map[string]string{"error": "route_publish_failed", "detail": "The route is committed locally. Press Create my Passport once more when the connection is available; do not start over."})
+		return
+	}
+	server.repository.Passport = value
+	server.repository, _ = passportrepo.Find(server.repository.Root, server.runner)
+	if err := server.store.Save(server.defaultState()); err != nil {
+		server.writeError(response, http.StatusInternalServerError, "local_state_write_failed")
+		return
+	}
+	server.writeJSON(response, http.StatusCreated, map[string]any{"status": "ready", "missions": missions, "next": "/passport/"})
+}
+
+func (server *Server) practiceRoot() string {
+	if filepath.Base(server.repository.Root) == ".transport" {
+		return filepath.Join(filepath.Dir(server.repository.Root), "practice")
+	}
+	return filepath.Join(server.repository.Root, "practice")
+}
+
+func samePath(left, right string) bool {
+	leftAbsolute, leftErr := filepath.Abs(left)
+	rightAbsolute, rightErr := filepath.Abs(right)
+	if leftErr != nil || rightErr != nil {
+		return false
+	}
+	leftAbsolute = filepath.Clean(leftAbsolute)
+	rightAbsolute = filepath.Clean(rightAbsolute)
+	if runtime.GOOS == "windows" {
+		return strings.EqualFold(leftAbsolute, rightAbsolute)
+	}
+	return leftAbsolute == rightAbsolute
+}
+
+func (server *Server) preparePractice(response http.ResponseWriter, _ *http.Request) {
+	server.mu.Lock()
+	defer server.mu.Unlock()
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+	root := server.practiceRoot()
+	origin := "https://github.com/" + server.repository.Owner + "/" + server.repository.Name + ".git"
+	if info, err := os.Lstat(root); errors.Is(err, os.ErrNotExist) {
+		if _, err := server.runner.Run(ctx, "", "git", "clone", origin, root); err != nil {
+			server.writeError(response, http.StatusConflict, "practice_clone_failed")
+			return
+		}
+	} else if err != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		server.writeError(response, http.StatusConflict, "practice_path_not_safe")
+		return
+	}
+	remote, err := server.runner.Run(ctx, root, "git", "remote", "get-url", "origin")
+	if err != nil || !strings.EqualFold(strings.TrimSuffix(strings.TrimSpace(string(remote)), ".git"), strings.TrimSuffix(origin, ".git")) {
+		server.writeError(response, http.StatusConflict, "practice_origin_mismatch")
+		return
+	}
+	if _, err := server.runner.Run(ctx, root, "git", "fetch", "--prune", "origin"); err != nil {
+		server.writeError(response, http.StatusConflict, "practice_fetch_failed")
+		return
+	}
+	branch := "practice/" + strings.ToLower(server.repository.Passport.GitHubUser)
+	if _, err := server.runner.Run(ctx, root, "git", "show-ref", "--verify", "--quiet", "refs/heads/"+branch); err == nil {
+		_, err = server.runner.Run(ctx, root, "git", "switch", branch)
+	} else if _, remoteErr := server.runner.Run(ctx, root, "git", "show-ref", "--verify", "--quiet", "refs/remotes/origin/"+branch); remoteErr == nil {
+		_, err = server.runner.Run(ctx, root, "git", "switch", "--create", branch, "--track", "origin/"+branch)
+	} else {
+		_, err = server.runner.Run(ctx, root, "git", "switch", "--create", branch, "origin/main")
+	}
+	if err != nil {
+		server.writeError(response, http.StatusConflict, "practice_branch_failed")
+		return
+	}
+	server.writeJSON(response, http.StatusOK, map[string]string{"status": "ready", "path": root, "branch": branch})
+}
+
+func (server *Server) verifyGitEnvironment() map[string]bool {
+	root := server.practiceRoot()
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	checks := map[string]bool{
+		"git":         server.fixedCommandOK(root, 10*time.Second, "git", "--version"),
+		"github_auth": server.fixedCommandOK(root, 15*time.Second, "gh", "auth", "status", "--hostname", "github.com"),
+	}
+	name, nameErr := server.runner.Run(ctx, root, "git", "config", "--get", "user.name")
+	email, emailErr := server.runner.Run(ctx, root, "git", "config", "--get", "user.email")
+	remotes, remotesErr := server.runner.Run(ctx, root, "git", "remote", "-v")
+	branch, branchErr := server.runner.Run(ctx, root, "git", "branch", "--show-current")
+	top, topErr := server.runner.Run(ctx, root, "git", "rev-parse", "--show-toplevel")
+	identityName := strings.TrimSpace(string(name))
+	identityEmail := strings.TrimSpace(string(email))
+	expectedBranch := "practice/" + strings.ToLower(server.repository.Passport.GitHubUser)
+	checks["identity_name"] = nameErr == nil && identityName != "" && !passportrepo.IsManagedIdentity(identityName, identityEmail)
+	checks["identity_email"] = emailErr == nil && strings.Contains(identityEmail, "@") && !passportrepo.IsManagedIdentity(identityName, identityEmail)
+	checks["remote_credentials_absent"] = remotesErr == nil && remotesContainNoCredentials(string(remotes))
+	checks["practice_repository"] = topErr == nil && samePath(strings.TrimSpace(string(top)), root)
+	checks["practice_branch"] = branchErr == nil && strings.TrimSpace(string(branch)) == expectedBranch
+	return checks
+}
+
+func (server *Server) localReceipt(mission missionverify.Mission, input map[string]string) (map[string]any, error) {
+	receipt, err := missionverify.ConfirmLive(mission, input)
+	if err != nil || receipt["passed"] != true {
+		return receipt, err
+	}
+	verifier := mission.Verification.LocalVerifier
+	checks := map[string]bool{}
+	switch verifier {
+	case "route_resume":
+		state, err := server.store.Load()
+		checks["resumed_session"] = err == nil && state.LaunchCount >= 2
+	case "git_environment":
+		checks = server.verifyGitEnvironment()
+	case "git_practice":
+		var practice map[string]any
+		checks, practice = server.verifyPractice()
+		passed := len(checks) > 0
+		for _, value := range checks {
+			passed = passed && value
+		}
+		return server.validateReceiptChecks(
+			mission,
+			map[string]any{"verifier": verifier, "passed": passed, "checks": checks, "practice": practice},
+		)
+	case "python_environment":
+		checks = server.verifyPythonEnvironment()
+	case "python_project":
+		checks = server.verifyPythonProject()
+	case "ai_project":
+		checks = server.verifyAgentProject()
+	case "slurm_script":
+		checks = server.verifyTextFixture("workspace/slurm/array_job.slurm.txt", []string{"--array=0-9%1", "%A_%a"}, []string{"--array=0-99"})
+	case "gpu_script":
+		checks = server.verifyTextFixture("workspace/slurm/gpu_job.slurm.txt", []string{"--account=es_fuge", "--gpus=rtx_4090:1", "--cpus-per-task=16", "--mem-per-cpu=3G"}, []string{"--partition="})
+	case "handover_document":
+		checks = server.verifyHandover()
+	default:
+		return server.validateReceiptChecks(mission, receipt)
+	}
+	passed := len(checks) > 0
+	for _, value := range checks {
+		passed = passed && value
+	}
+	return server.validateReceiptChecks(
+		mission,
+		map[string]any{"verifier": verifier, "passed": passed, "checks": checks},
+	)
+}
+
+func (server *Server) validateReceiptChecks(mission missionverify.Mission, receipt map[string]any) (map[string]any, error) {
+	checks, ok := receipt["checks"].(map[string]bool)
+	if !ok || len(checks) != len(mission.Verification.ReceiptChecks) {
+		return receipt, errors.New("local verifier result differs from the curriculum contract")
+	}
+	for _, expected := range mission.Verification.ReceiptChecks {
+		if _, exists := checks[expected]; !exists {
+			return receipt, errors.New("local verifier result differs from the curriculum contract")
+		}
+	}
+	return receipt, nil
+}
+
+func remotesContainNoCredentials(value string) bool {
+	for _, line := range strings.Split(value, "\n") {
+		fields := strings.Fields(line)
+		if len(fields) < 2 {
+			continue
+		}
+		raw := fields[1]
+		if strings.HasPrefix(raw, "https://") || strings.HasPrefix(raw, "http://") {
+			afterScheme := strings.SplitN(raw, "://", 2)[1]
+			if authority := strings.SplitN(afterScheme, "/", 2)[0]; strings.Contains(authority, "@") {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func (server *Server) fixedCommandOK(directory string, timeout time.Duration, name string, arguments ...string) bool {
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+	_, err := server.runner.Run(ctx, directory, name, arguments...)
+	return err == nil
+}
+
+func (server *Server) verifyPractice() (map[string]bool, map[string]any) {
+	root := server.practiceRoot()
+	expectedBranch := "practice/" + strings.ToLower(server.repository.Passport.GitHubUser)
+	branch, branchErr := server.runner.Run(context.Background(), root, "git", "branch", "--show-current")
+	changed, changedErr := server.runner.Run(context.Background(), root, "git", "diff", "--name-only", "origin/main...HEAD")
+	subjects, logErr := server.runner.Run(context.Background(), root, "git", "log", "--format=%s", "origin/main..HEAD")
+	lines := strings.Fields(strings.TrimSpace(string(changed)))
+	allowed := len(lines) == 1 && lines[0] == "workspace/manual_task/project-note.md"
+	conventional := false
+	for _, subject := range strings.Split(strings.TrimSpace(string(subjects)), "\n") {
+		if regexp.MustCompile(`^(docs|feat|fix|test)\([a-z0-9._/-]+\): [^\s].+`).MatchString(subject) {
+			conventional = true
+		}
+	}
+	prQuery := fmt.Sprintf("is:pr is:open base:main head:%s", expectedBranch)
+	prOutput, prErr := server.fixedCommandOutput(root, 20*time.Second, "gh", "pr", "list", "--repo", server.repository.Owner+"/"+server.repository.Name, "--search", prQuery, "--json", "number,headRefOid,isDraft", "--jq", `if length == 1 and .[0].isDraft == true then {number: .[0].number, head_sha: .[0].headRefOid} else null end`)
+	var practice struct {
+		Number  int    `json:"number"`
+		HeadSHA string `json:"head_sha"`
+	}
+	prOK := prErr == nil && json.Unmarshal(prOutput, &practice) == nil && practice.Number > 0 && regexp.MustCompile(`^[a-f0-9]{40}$`).MatchString(practice.HeadSHA)
+	checks := map[string]bool{
+		"practice_branch":     branchErr == nil && strings.TrimSpace(string(branch)) == expectedBranch,
+		"bounded_diff":        changedErr == nil && allowed,
+		"conventional_commit": logErr == nil && conventional,
+		"draft_pr":            prOK,
+	}
+	reference := map[string]any{
+		"repository":   server.repository.Owner + "/" + server.repository.Name,
+		"branch":       expectedBranch,
+		"head_sha":     practice.HeadSHA,
+		"pull_request": practice.Number,
+	}
+	return checks, reference
+}
+
+func (server *Server) fixedCommandOutput(directory string, timeout time.Duration, name string, arguments ...string) ([]byte, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+	command := exec.CommandContext(ctx, name, arguments...)
+	command.Dir = directory
+	command.Env = append(os.Environ(), "GIT_TERMINAL_PROMPT=0", "GH_PAGER=cat", "NO_COLOR=1")
+	return command.Output()
+}
+
+func (server *Server) practicePython() (string, string) {
+	root := server.practiceRoot()
+	if runtime.GOOS == "windows" {
+		return root, filepath.Join(root, ".venv", "Scripts", "python.exe")
+	}
+	return root, filepath.Join(root, ".venv", "bin", "python")
+}
+
+func (server *Server) verifyPythonEnvironment() map[string]bool {
+	root, python := server.practicePython()
+	info, err := os.Lstat(python)
+	ignored := server.fixedCommandOK(root, 5*time.Second, "git", "check-ignore", "--quiet", ".venv")
+	interpreter := err == nil && info.Mode().IsRegular() && server.fixedCommandOK(root, 10*time.Second, python, "-I", "-c", "import sys; assert '.venv' in sys.executable")
+	return map[string]bool{"venv_exists": err == nil && info.Mode().IsRegular(), "venv_ignored": ignored, "venv_interpreter": interpreter}
+}
+
+func (server *Server) verifyPythonProject() map[string]bool {
+	root, python := server.practicePython()
+	project := filepath.Join(root, "workspace", "python_project")
+	return map[string]bool{"visible_tests": server.fixedCommandOK(project, 20*time.Second, python, "-I", "-m", "unittest", "discover", "-s", "tests", "-v")}
+}
+
+func (server *Server) verifyAgentProject() map[string]bool {
+	root := server.practiceRoot()
+	path := filepath.Join(root, "workspace", "agent_task", "storage-plan.md")
+	content, err := os.ReadFile(path)
+	text := strings.ToLower(string(content))
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	changed, changedErr := server.runner.Run(
+		ctx, root, "git", "diff", "--name-only", "HEAD", "--", "workspace/agent_task",
+	)
+	changedPaths := strings.Fields(strings.TrimSpace(string(changed)))
+	canary, canaryErr := os.ReadFile(filepath.Join(root, "workspace", "agent_task", "scope-canary.txt"))
+	return map[string]bool{
+		"bounded_file":     err == nil && len(content) < 100_000,
+		"bounded_diff":     changedErr == nil && len(changedPaths) == 1 && changedPaths[0] == "workspace/agent_task/storage-plan.md",
+		"canary_unchanged": canaryErr == nil && string(canary) == "IDEAL-PASSPORT-AGENT-SCOPE-CANARY-v1\n",
+		"durable_p":        strings.Contains(text, "p:") && strings.Contains(text, "durable"),
+		"temporary_d":      strings.Contains(text, "d:") && strings.Contains(text, "temporary"),
+		"avoid_c":          strings.Contains(text, "c:") && strings.Contains(text, "not"),
+		"heavy_compute":    strings.Contains(text, "euler") || strings.Contains(text, "approved compute"),
+	}
+}
+
+func (server *Server) verifyTextFixture(relative string, required, forbidden []string) map[string]bool {
+	content, err := os.ReadFile(filepath.Join(server.practiceRoot(), filepath.FromSlash(relative)))
+	text := string(content)
+	checks := map[string]bool{"bounded_file": err == nil && len(content) < 100_000}
+	for index, value := range required {
+		checks[fmt.Sprintf("required_%d", index+1)] = strings.Contains(text, value)
+	}
+	for index, value := range forbidden {
+		checks[fmt.Sprintf("forbidden_%d_absent", index+1)] = !strings.Contains(text, value)
+	}
+	return checks
+}
+
+func (server *Server) verifyHandover() map[string]bool {
+	content, err := os.ReadFile(filepath.Join(server.practiceRoot(), "workspace", "handover", "project-handover.md"))
+	text := string(content)
+	has := func(pattern string) bool { return regexp.MustCompile(pattern).MatchString(text) }
+	return map[string]bool{
+		"owners":          err == nil && has(`(?m)^Current owner:\s*\S.+$`) && has(`(?m)^Authorized successor:\s*\S.+$`),
+		"code_revision":   has(`(?m)^Revision:\s*[a-f0-9]{40}\s*$`),
+		"data_locations":  has(`(?m)^Authoritative location:\s*\S.+$`) && has(`(?m)^Temporary locations to remove:\s*\S.+$`),
+		"environment":     has(`(?m)^Environment definition:\s*\S.+$`),
+		"reproduction":    has(`(?m)^Verification command:\s*\S.+$`) && has(`(?m)^Expected result:\s*\S.+$`),
+		"retention":       has(`(?m)^Access owner:\s*\S.+$`) && has(`(?m)^Retention owner:\s*\S.+$`) && has(`(?m)^Temporary-copy deletion date:\s*20\d{2}-[01]\d-[0-3]\d\s*$`),
+		"no_placeholders": err == nil && !strings.Contains(text, "REPLACE_ME") && !strings.Contains(text, "REPLACE_WITH_"),
+	}
+}
+
+func (server *Server) commitSubmission(catalog missionverify.Catalog, attempt missionverify.Attempt, mission missionverify.Mission, receipt map[string]any) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+	repository, err := passportrepo.Find(server.repository.Root, server.runner)
+	if err != nil {
+		return err
+	}
+	relative := mission.Submission.Path
+	stagedPaths := []string{relative}
+	stagedPaths = append(stagedPaths, mission.Submission.ArtifactPaths...)
+	allowed := make(map[string]bool, len(stagedPaths))
+	for _, path := range stagedPaths {
+		allowed[path] = true
+	}
+	if repository.Dirty {
+		status, statusErr := server.runner.Run(ctx, repository.Root, "git", "status", "--porcelain=v1", "--untracked-files=normal")
+		if statusErr != nil || !onlyManagedSubmissionChanges(string(status), allowed) {
+			return errors.New("managed transport has unexpected local changes; no files were staged")
+		}
+	}
+	target := filepath.Join(repository.Root, filepath.FromSlash(relative))
+	cleanTarget := filepath.Clean(target)
+	expectedRoot := filepath.Clean(filepath.Join(repository.Root, "submissions")) + string(os.PathSeparator)
+	if !strings.HasPrefix(cleanTarget, expectedRoot) {
+		return errors.New("submission path escaped its managed directory")
+	}
+	payload := map[string]any{
+		"schema_version":     2,
+		"curriculum_version": catalog.CurriculumVersion,
+		"mission":            attempt.Mission,
+		"answers":            attempt.Answers,
+		"receipts":           receipt,
+		"artifacts":          mission.Submission.ArtifactPaths,
+		"attestation":        attempt.Attestation,
+	}
+	encoded, err := json.MarshalIndent(payload, "", "  ")
+	if err != nil {
+		return err
+	}
+	encoded = append(encoded, '\n')
+	if len(encoded) > 64<<10 {
+		return errors.New("generated submission exceeds the 64 KiB limit")
+	}
+	if err := os.MkdirAll(filepath.Dir(target), 0o700); err != nil {
+		return err
+	}
+	temporary, err := os.CreateTemp(filepath.Dir(target), ".passport-submission-*")
+	if err != nil {
+		return err
+	}
+	temporaryName := temporary.Name()
+	defer os.Remove(temporaryName)
+	if err := temporary.Chmod(0o600); err != nil {
+		temporary.Close()
+		return err
+	}
+	if _, err := temporary.Write(encoded); err != nil {
+		temporary.Close()
+		return err
+	}
+	if err := temporary.Sync(); err != nil {
+		temporary.Close()
+		return err
+	}
+	if err := temporary.Close(); err != nil {
+		return err
+	}
+	if err := replaceRegularFile(temporaryName, target); err != nil {
+		return err
+	}
+	if err := server.copyMissionArtifacts(repository.Root, mission.Submission.ArtifactPaths); err != nil {
+		return err
+	}
+	arguments := append([]string{"add", "--"}, stagedPaths...)
+	if _, err := server.runner.Run(ctx, repository.Root, "git", arguments...); err != nil {
+		return fmt.Errorf("stage only the generated mission files: %w", err)
+	}
+	staged, err := server.runner.Run(ctx, repository.Root, "git", "diff", "--cached", "--name-only")
+	if err != nil {
+		return errors.New("cannot inspect generated mission files; commit was stopped")
+	}
+	if !onlyExpectedPaths(string(staged), allowed) {
+		return errors.New("staged paths differ from the generated mission allowlist; commit was stopped")
+	}
+	changed := strings.Fields(strings.TrimSpace(string(staged)))
+	if len(changed) == 0 {
+		if repository.HeadSHA != repository.RemoteHeadSHA {
+			if _, err := server.runner.Run(ctx, repository.Root, "git", "push", "origin", repository.Branch); err != nil {
+				return fmt.Errorf("retry push of generated mission files: %w", err)
+			}
+		}
+		server.repository, _ = passportrepo.Find(repository.Root, server.runner)
+		return nil
+	}
+	if _, err := server.runner.Run(ctx, repository.Root, "git", "diff", "--cached", "--check"); err != nil {
+		return errors.New("generated submission failed the staged diff check")
+	}
+	message := "chore(passport): submit " + attempt.Mission
+	if _, err := server.runner.Run(ctx, repository.Root, "git", "commit", "-m", message); err != nil {
+		return fmt.Errorf("commit generated submission: %w", err)
+	}
+	if _, err := server.runner.Run(ctx, repository.Root, "git", "push", "origin", repository.Branch); err != nil {
+		return fmt.Errorf("push generated submission: %w", err)
+	}
+	server.repository, _ = passportrepo.Find(repository.Root, server.runner)
+	return nil
+}
+
+func onlyExpectedPaths(output string, allowed map[string]bool) bool {
+	for _, path := range strings.Fields(strings.TrimSpace(output)) {
+		if !allowed[path] {
+			return false
+		}
+	}
+	return true
+}
+
+func onlyManagedSubmissionChanges(output string, allowed map[string]bool) bool {
+	lines := strings.Split(strings.TrimRight(output, "\r\n"), "\n")
+	if len(lines) == 0 || (len(lines) == 1 && lines[0] == "") {
+		return false
+	}
+	allowedStatus := map[string]bool{"??": true, " M": true, "M ": true, "A ": true, "AM": true, "MM": true}
+	for _, line := range lines {
+		if len(line) < 4 || line[2] != ' ' || !allowedStatus[line[:2]] || !allowed[line[3:]] {
+			return false
+		}
+	}
+	return true
+}
+
+func (server *Server) copyMissionArtifacts(transportRoot string, artifacts []string) error {
+	practiceRoot := server.practiceRoot()
+	for _, relative := range artifacts {
+		if filepath.ToSlash(filepath.Clean(filepath.FromSlash(relative))) != relative || !strings.HasPrefix(relative, "workspace/") {
+			return errors.New("mission artifact path escaped the public workspace")
+		}
+		source, err := boundedRegularFile(practiceRoot, relative, 256<<10)
+		if err != nil {
+			return fmt.Errorf("practice artifact %s is not a bounded regular file: %w", relative, err)
+		}
+		content, err := os.ReadFile(source)
+		if err != nil {
+			return err
+		}
+		target := filepath.Join(transportRoot, filepath.FromSlash(relative))
+		if _, err := boundedPath(transportRoot, filepath.Dir(relative)); err != nil {
+			return fmt.Errorf("transport artifact parent is unsafe: %w", err)
+		}
+		temporary, err := os.CreateTemp(filepath.Dir(target), ".passport-artifact-*")
+		if err != nil {
+			return err
+		}
+		name := temporary.Name()
+		if err := temporary.Chmod(0o600); err == nil {
+			_, err = temporary.Write(content)
+		}
+		closeErr := temporary.Close()
+		if err != nil {
+			os.Remove(name)
+			return err
+		}
+		if closeErr != nil {
+			os.Remove(name)
+			return closeErr
+		}
+		if err := replaceRegularFile(name, target); err != nil {
+			os.Remove(name)
+			return err
+		}
+	}
+	return nil
+}
+
+// replaceRegularFile keeps the previous managed file available for rollback.
+// This also avoids relying on os.Rename overwriting an existing file on Windows.
+func replaceRegularFile(temporary, target string) error {
+	info, err := os.Lstat(target)
+	if errors.Is(err, os.ErrNotExist) {
+		return os.Rename(temporary, target)
+	}
+	if err != nil {
+		return err
+	}
+	if !info.Mode().IsRegular() || info.Mode()&os.ModeSymlink != 0 {
+		return errors.New("managed target is not a regular file")
+	}
+
+	backupFile, err := os.CreateTemp(filepath.Dir(target), ".passport-backup-*")
+	if err != nil {
+		return err
+	}
+	backup := backupFile.Name()
+	if err := backupFile.Close(); err != nil {
+		os.Remove(backup)
+		return err
+	}
+	if err := os.Remove(backup); err != nil {
+		return err
+	}
+	if err := os.Rename(target, backup); err != nil {
+		return err
+	}
+	if err := os.Rename(temporary, target); err != nil {
+		if rollbackErr := os.Rename(backup, target); rollbackErr != nil {
+			return fmt.Errorf("replace managed file: %w; restore previous file: %v", err, rollbackErr)
+		}
+		return err
+	}
+	if err := os.Remove(backup); err != nil {
+		return fmt.Errorf("remove managed file backup: %w", err)
+	}
+	return nil
+}
+
+func boundedRegularFile(root, relative string, maximum int64) (string, error) {
+	path, err := boundedPath(root, relative)
+	if err != nil {
+		return "", err
+	}
+	info, err := os.Lstat(path)
+	if err != nil || !info.Mode().IsRegular() || info.Mode()&os.ModeSymlink != 0 || info.Size() > maximum {
+		return "", errors.New("file type or size is not allowed")
+	}
+	return path, nil
+}
+
+func boundedPath(root, relative string) (string, error) {
+	cleanRoot := filepath.Clean(root)
+	cleanRelative := filepath.Clean(filepath.FromSlash(relative))
+	if cleanRelative == "." || filepath.IsAbs(cleanRelative) || cleanRelative == ".." || strings.HasPrefix(cleanRelative, ".."+string(os.PathSeparator)) {
+		return "", errors.New("path escapes its managed root")
+	}
+	current := cleanRoot
+	parts := strings.Split(cleanRelative, string(os.PathSeparator))
+	for index, part := range parts {
+		current = filepath.Join(current, part)
+		info, err := os.Lstat(current)
+		if errors.Is(err, os.ErrNotExist) && index == len(parts)-1 {
+			return current, nil
+		}
+		if err != nil || info.Mode()&os.ModeSymlink != 0 {
+			return "", errors.New("managed path contains a missing or symbolic-link component")
+		}
+		if index < len(parts)-1 && !info.IsDir() {
+			return "", errors.New("managed path parent is not a directory")
+		}
+	}
+	return current, nil
 }
 
 func (server *Server) defaultState() localstate.State {
@@ -440,6 +1214,8 @@ func (server *Server) defaultState() localstate.State {
 		RouteDigest:       hex.EncodeToString(routeDigest[:]),
 		LastOpenedMission: server.repository.Passport.Missions[0],
 		ExpandedHelp:      []string{},
+		MissionDrafts:     map[string]map[string][]string{},
+		AttemptCounts:     map[string]int{},
 	}
 }
 

@@ -25,15 +25,23 @@ func (runner *fakeRunner) Run(_ context.Context, _ string, args ...string) ([]by
 	return value, nil
 }
 
-func statusMarker(t *testing.T, sha string) string {
+func statusMarker(t *testing.T, sha string, completed ...bool) string {
 	t.Helper()
+	stage := "blocked"
+	missionStatus := "needs_work"
+	var currentMission any = "core-orientation"
+	if len(completed) == 1 && completed[0] {
+		stage = "complete"
+		missionStatus = "passed"
+		currentMission = nil
+	}
 	value := map[string]any{
-		"schema_version":     1,
-		"curriculum_version": "1.2.0",
+		"schema_version":     2,
+		"curriculum_version": "2.0.0",
 		"head_sha":           sha,
-		"current_mission":    "core-orientation",
-		"missions":           []map[string]string{{"id": "core-orientation", "status": "needs_work"}},
-		"stage":              "blocked",
+		"current_mission":    currentMission,
+		"missions":           []map[string]string{{"id": "core-orientation", "status": missionStatus}},
+		"stage":              stage,
 		"review_state":       "not_ready",
 		"assessed_at":        "2026-08-30T12:00:00Z",
 	}
@@ -41,7 +49,44 @@ func statusMarker(t *testing.T, sha string) string {
 	if err != nil {
 		t.Fatal(err)
 	}
-	return "<!-- ideal-passport-status:v1:" + base64.RawURLEncoding.EncodeToString(raw) + " -->"
+	return "<!-- ideal-passport-status:v2:" + base64.RawURLEncoding.EncodeToString(raw) + " -->"
+}
+
+func TestSyncAcceptsClosedUnmergedPROnlyAfterTrustedCompletion(t *testing.T) {
+	sha := "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	pulls, _ := json.Marshal([]map[string]any{{
+		"number": 7, "html_url": "https://github.com/soheylm-passport-sandbox/passport-exercises/pull/7", "state": "closed", "merged": false,
+		"head": map[string]string{"ref": "onboarding/student", "sha": sha},
+	}})
+	checks, _ := json.Marshal(map[string]any{"check_runs": []map[string]any{{
+		"id": 9, "name": checkName, "head_sha": sha, "status": "completed", "conclusion": "success",
+		"completed_at": "2026-08-30T12:00:01Z", "app": map[string]any{"id": 42},
+		"output": map[string]string{"summary": statusMarker(t, sha, true), "text": ""},
+	}}})
+	repository := passportrepo.Repository{
+		Root: ".", Owner: "student", Name: "passport-exercises", UpstreamOwner: "soheylm-passport-sandbox", UpstreamName: "passport-exercises", Branch: "onboarding/student",
+		Passport: passportrepo.Passport{CurriculumVersion: "2.0.0", Missions: []string{"core-orientation"}},
+	}
+	result, err := Sync(context.Background(), repository, 42, &fakeRunner{responses: [][]byte{pulls, checks}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.State != StateVerified || result.Official == nil || result.Official.Status.Stage != "complete" {
+		t.Fatalf("closed completed passport did not resume: %#v", result)
+	}
+
+	incompleteChecks, _ := json.Marshal(map[string]any{"check_runs": []map[string]any{{
+		"id": 10, "name": checkName, "head_sha": sha, "status": "completed", "conclusion": "action_required",
+		"completed_at": "2026-08-30T12:00:02Z", "app": map[string]any{"id": 42},
+		"output": map[string]string{"summary": statusMarker(t, sha), "text": ""},
+	}}})
+	result, err = Sync(context.Background(), repository, 42, &fakeRunner{responses: [][]byte{pulls, incompleteChecks}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.State != StateRecoveryRequired || result.Official != nil {
+		t.Fatalf("closed incomplete passport was trusted: %#v", result)
+	}
 }
 
 func TestSyncRequiresTrustedAppAndExactSHA(t *testing.T) {
@@ -60,7 +105,7 @@ func TestSyncRequiresTrustedAppAndExactSHA(t *testing.T) {
 	runner := &fakeRunner{responses: [][]byte{pulls, checks}}
 	repository := passportrepo.Repository{
 		Root: ".", Owner: "student", Name: "passport-exercises", UpstreamOwner: "soheylm-passport-sandbox", UpstreamName: "passport-exercises", Branch: "onboarding/student",
-		Passport: passportrepo.Passport{CurriculumVersion: "1.2.0", Missions: []string{"core-orientation"}},
+		Passport: passportrepo.Passport{CurriculumVersion: "2.0.0", Missions: []string{"core-orientation"}},
 	}
 	result, err := Sync(context.Background(), repository, 42, runner)
 	if err != nil {

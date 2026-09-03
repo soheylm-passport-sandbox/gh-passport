@@ -1,5 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="You can correct an unsafe GPU request, justify one explicit model, plan the smallest useful smoke test, monitor bottlenecks, and define evidence required before multi-GPU scaling."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Review A One-GPU Euler Plan | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.B_z1DDnN.css"></head><body data-curriculum-version="1.2.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Mission / Euler GPU</span></div><main id="main-content" class="page-shell"><header class="mission-hero"><div class="mission-kicker"><span>01 / 01</span><span>35 active minutes</span><span class="risk risk-gpu">gpu</span></div><h1>Review A One-GPU Euler Plan</h1><p>You can correct an unsafe GPU request, justify one explicit model, plan the smallest useful smoke test, monitor bottlenecks, and define evidence required before multi-GPU scaling.</p><div class="machine-callout"><span>Work here</span><strong>Your computer - text editor. The .slurm.txt fixture is intentionally unsafe training material and must not be submitted.</strong></div></header><div class="mission-layout"><aside class="mission-aside"><nav class="mission-progress" aria-label="Euler GPU mission sequence" data-mission-progress data-current-id="euler-gpu-review" data-base="/"><div class="progress-heading"><span data-progress-source>Curriculum preview</span><strong data-progress-title>Euler GPU</strong></div><ol><li class="active" aria-current="step"><span>01</span><a href="/missions/euler-gpu-review/">Review A One-GPU Euler Plan</a></li></ol><p data-progress-note>This preview shows the complete topic. Your local passport shows only the missions assigned to your route.</p></nav><script>(function(){const contextEndpoint = "/__passport/v1/context";
-const missionIndex = [{"id":"ai-agent-baseline","title":"Use A Safe Agent Loop After The Manual Baseline","route":"/missions/ai-agent-baseline/","track":"ai_agents"},{"id":"ai-tool-configuration","title":"Choose And Configure An AI Access Route","route":"/missions/ai-tool-configuration/","track":"ai_agents"},{"id":"blade-access-storage","title":"Use Blade For GUI Work Without Losing Data","route":"/missions/blade-access-storage/","track":"blade"},{"id":"core-accounts-secrets","title":"Protect Accounts And Secrets","route":"/missions/core-accounts-secrets/","track":"core"},{"id":"core-incidents-ai-responsibility","title":"Respond To Incidents And Own Automated Work","route":"/missions/core-incidents-ai-responsibility/","track":"core"},{"id":"core-orientation","title":"Start And Resume Your Passport","route":"/missions/core-orientation/","track":"core"},{"id":"core-systems-data","title":"Map Systems And Research Data","route":"/missions/core-systems-data/","track":"core"},{"id":"data-collaboration","title":"Design Safe Shared Data Collaboration","route":"/missions/data-collaboration/","track":"data_steward"},{"id":"data-handover","title":"Create A Recoverable Project Handover","route":"/missions/data-handover/","track":"data_steward"},{"id":"data-placement","title":"Place Research Data Intentionally","route":"/missions/data-placement/","track":"data_steward"},{"id":"euler-access-ssh","title":"Establish Safe Euler SSH Access","route":"/missions/euler-access-ssh/","track":"euler_cpu"},{"id":"euler-cpu-accounting","title":"Measure And Right-Size An Euler Job","route":"/missions/euler-cpu-accounting/","track":"euler_cpu"},{"id":"euler-cpu-arrays","title":"Cap And Calculate Euler Job Arrays","route":"/missions/euler-cpu-arrays/","track":"euler_cpu"},{"id":"euler-cpu-first-job","title":"Submit And Control A Tiny Euler CPU Job","route":"/missions/euler-cpu-first-job/","track":"euler_cpu"},{"id":"euler-gpu-review","title":"Review A One-GPU Euler Plan","route":"/missions/euler-gpu-review/","track":"euler_gpu"},{"id":"euler-storage-reproducibility","title":"Place Euler Data And Freeze Run Inputs","route":"/missions/euler-storage-reproducibility/","track":"euler_cpu"},{"id":"git-manual-pr","title":"Complete A Manual Pull Request Loop","route":"/missions/git-manual-pr/","track":"git"},{"id":"git-tools-auth","title":"Configure Git Identity And Your Editor","route":"/missions/git-tools-auth/","track":"git"},{"id":"python-environment","title":"Create A Reproducible Python Environment","route":"/missions/python-environment/","track":"python"},{"id":"python-reproducible-change","title":"Make And Verify A Reproducible Python Change","route":"/missions/python-reproducible-change/","track":"python"},{"id":"supervisor-offboarding","title":"Plan Handover And Offboarding","route":"/missions/supervisor-offboarding/","track":"supervisor"},{"id":"supervisor-onboarding","title":"Assign A Researcher Route And Safe Project Environment","route":"/missions/supervisor-onboarding/","track":"supervisor"}];
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="You can correct an unsafe GPU request, justify one explicit model, plan the smallest useful smoke test, monitor bottlenecks, and define evidence required before multi-GPU scaling."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Review A One-GPU Euler Plan | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.BhM0eQ4y.css"></head><body data-curriculum-version="2.0.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Mission / Euler GPU</span></div><main id="main-content" class="page-shell"><header class="mission-hero"><div class="mission-kicker"><span data-mission-position>01 / 01</span><span>35 active minutes</span><span class="risk risk-gpu">gpu</span></div><h1>Review A One-GPU Euler Plan</h1><p>You can correct an unsafe GPU request, justify one explicit model, plan the smallest useful smoke test, monitor bottlenecks, and define evidence required before multi-GPU scaling.</p><div class="machine-callout"><span>Work here</span><strong data-work-here>local / powershell or zsh or bash</strong></div><ol class="mission-contract" aria-label="Mission stages"><li><span>1</span>Understand</li><li><span>2</span>Do</li><li><span>3</span>Check</li><li><span>4</span>Submit</li></ol></header><div class="mission-layout"><aside class="mission-aside"><nav class="mission-progress" aria-label="Euler GPU mission sequence" data-mission-progress data-current-id="euler-gpu-review" data-base="/"><div class="progress-heading"><span data-progress-source>Curriculum preview</span><strong data-progress-title>Euler GPU</strong></div><ol><li class="active" aria-current="step"><span>01</span><a href="/missions/euler-gpu-review/">Review A One-GPU Euler Plan</a></li></ol><p data-progress-note>This preview shows the complete topic. Your local passport shows only the missions assigned to your route.</p></nav><script>(function(){const contextEndpoint = "/__passport/v1/context";
+const missionIndex = [{"id":"ai-agent-baseline","title":"Use A Safe Agent Loop After The Manual Baseline","route":"/missions/ai-agent-baseline/","track":"ai_agents"},{"id":"ai-tool-configuration","title":"Choose And Configure An AI Access Route","route":"/missions/ai-tool-configuration/","track":"ai_agents"},{"id":"blade-access-storage","title":"Use Blade For GUI Work Without Losing Data","route":"/missions/blade-access-storage/","track":"blade"},{"id":"core-accounts-secrets","title":"Protect Accounts And Secrets","route":"/missions/core-accounts-secrets/","track":"core"},{"id":"core-incidents-ai-responsibility","title":"Respond To Incidents And Own Automated Work","route":"/missions/core-incidents-ai-responsibility/","track":"core"},{"id":"core-orientation","title":"Start And Resume Your Passport","route":"/missions/core-orientation/","track":"core"},{"id":"core-systems-data","title":"Map Systems And Research Data","route":"/missions/core-systems-data/","track":"core"},{"id":"data-collaboration","title":"Design Safe Shared Data Collaboration","route":"/missions/data-collaboration/","track":"data_steward"},{"id":"data-handover","title":"Create A Recoverable Project Handover","route":"/missions/data-handover/","track":"data_steward"},{"id":"data-placement","title":"Place Research Data Intentionally","route":"/missions/data-placement/","track":"data_steward"},{"id":"euler-access-ssh","title":"Establish Safe Euler SSH Access","route":"/missions/euler-access-ssh/","track":"euler_cpu"},{"id":"euler-cpu-accounting","title":"Measure And Right-Size An Euler Job","route":"/missions/euler-cpu-accounting/","track":"euler_cpu"},{"id":"euler-cpu-arrays","title":"Cap And Calculate Euler Job Arrays","route":"/missions/euler-cpu-arrays/","track":"euler_cpu"},{"id":"euler-cpu-first-job","title":"Submit And Control A Tiny Euler CPU Job","route":"/missions/euler-cpu-first-job/","track":"euler_cpu"},{"id":"euler-gpu-review","title":"Review A One-GPU Euler Plan","route":"/missions/euler-gpu-review/","track":"euler_gpu"},{"id":"euler-storage-reproducibility","title":"Place Euler Data And Freeze Run Inputs","route":"/missions/euler-storage-reproducibility/","track":"euler_cpu"},{"id":"git-manual-pr","title":"Complete A Manual Pull Request Loop","route":"/missions/git-manual-pr/","track":"git"},{"id":"git-tools-auth","title":"Configure Git Identity And Your Editor","route":"/missions/git-tools-auth/","track":"git"},{"id":"nas-access-storage","title":"Verify Your Approved NAS Workspace","route":"/missions/nas-access-storage/","track":"nas"},{"id":"python-environment","title":"Create A Reproducible Python Environment","route":"/missions/python-environment/","track":"python"},{"id":"python-reproducible-change","title":"Make And Verify A Reproducible Python Change","route":"/missions/python-reproducible-change/","track":"python"},{"id":"supervisor-offboarding","title":"Plan Handover And Offboarding","route":"/missions/supervisor-offboarding/","track":"supervisor"},{"id":"supervisor-onboarding","title":"Assign A Researcher Route And Safe Project Environment","route":"/missions/supervisor-onboarding/","track":"supervisor"}];
 
   const progress = document.querySelector("[data-mission-progress]");
   const loadAssignedRoute = async () => {
@@ -37,57 +37,287 @@ const missionIndex = [{"id":"ai-agent-baseline","title":"Use A Safe Agent Loop A
     }
   };
   loadAssignedRoute();
-})();</script><div class="authority-note" data-authority-note><strong data-authority-title>Curriculum preview only</strong><p data-authority-copy>This sample page is not assigned to you and cannot record progress.</p><a data-authority-link href="/getting-started/">How to start my passport</a></div></aside><div class="mission-content"><article class="markdown-body mission-body" data-mission-id="euler-gpu-review"><h2 id="outcome">Outcome<a class="heading-anchor" href="#outcome" aria-label="Link to Outcome">#</a></h2><p>You can correct an unsafe GPU request, justify one explicit model, plan the
+})();</script><div class="authority-note" data-authority-note><strong data-authority-title>Curriculum preview only</strong><p data-authority-copy>This sample page cannot record or submit progress.</p><a data-authority-link href="/getting-started/">Open my real passport</a></div></aside><div class="mission-content"><details class="learning-brief" open><summary><span>Learn first</span><strong>Concept, example, trap and recovery</strong></summary><article class="markdown-body mission-body" data-mission-id="euler-gpu-review"><h2 id="outcome">Outcome<a class="heading-anchor" href="#outcome" aria-label="Link to Outcome">#</a></h2><p>You can correct an unsafe GPU request, justify one explicit model, plan the
 smallest useful smoke test, monitor bottlenecks, and define evidence required
 before multi-GPU scaling.</p>
-<h2 id="why-this-matters">Why This Matters<a class="heading-anchor" href="#why-this-matters" aria-label="Link to Why This Matters">#</a></h2><p>Dataset size does not prove multi-GPU scaling. An idle or CPU/I/O-bound GPU job
+<h2 id="concept">Concept<a class="heading-anchor" href="#concept" aria-label="Link to Concept">#</a></h2><p>Dataset size does not prove multi-GPU scaling. An idle or CPU/I/O-bound GPU job
 wastes scarce shared resources, and a long interactive tunnel can remain
 allocated after useful work stops.</p>
-<h2 id="before-you-start">Before You Start<a class="heading-anchor" href="#before-you-start" aria-label="Link to Before You Start">#</a></h2><p>Pass Euler CPU first and obtain supervisor confirmation that the project has a
-real GPU implementation. This mission is review-only; do not submit a GPU job.</p>
-<h2 id="machine-and-shell">Machine And Shell<a class="heading-anchor" href="#machine-and-shell" aria-label="Link to Machine And Shell">#</a></h2><p><strong>Your computer - text editor.</strong> The <code>.slurm.txt</code> fixture is intentionally
-unsafe training material and must not be submitted.</p>
-<h2 id="steps">Steps<a class="heading-anchor" href="#steps" aria-label="Link to Steps">#</a></h2><p>Correct the fixture to use one supported explicit model and <code>es_fuge</code>:</p>
-<!-- passport-snippet:euler-gpu-4090-starter -->
-<pre><code class="language-bash">#SBATCH --account=es_fuge
-#SBATCH --gpus=rtx_4090:1
-#SBATCH --cpus-per-task=16
-#SBATCH --mem-per-cpu=3G
-</code></pre>
-<!-- /passport-snippet:euler-gpu-4090-starter --><p>An RTX 3090 may be used as the general fallback by changing only the GPU type
-to <code>rtx_3090</code>. The RTX PRO 6000 is special-purpose and requires a documented
-need such as GPU memory beyond 24 GiB plus verified CUDA 13 compatibility.</p>
-<p>Add a short measured time limit, logs, environment setup, executable command,
-monitoring plan, and checkpoint behavior. Do not force a partition unless the
-current canonical policy explicitly requires one.</p>
-<h2 id="expected-result">Expected Result<a class="heading-anchor" href="#expected-result" aria-label="Link to Expected Result">#</a></h2><p>The plan uses one GPU, <code>es_fuge</code>, bounded time, logs, monitoring, checkpoints,
-and a measurable criterion for scaling. The CPU/memory profile is recognized as
-a starter value to measure, not a universal requirement.</p>
-<h2 id="independent-verification">Independent Verification<a class="heading-anchor" href="#independent-verification" aria-label="Link to Independent Verification">#</a></h2><p>Explain the next investigation for low GPU utilization with saturated CPUs,
-low storage throughput, full GPU memory, and only 1.1x throughput on two GPUs.
-The answer must investigate bottlenecks rather than automatically add GPUs.</p>
-<h2 id="evidence-to-submit">Evidence To Submit<a class="heading-anchor" href="#evidence-to-submit" aria-label="Link to Evidence To Submit">#</a></h2><p>Complete <code>evidence/euler/gpu-review.md</code> and correct the <code>.slurm.txt</code> fixture. No
-live GPU output, allocation, or account history is required.</p>
+<h2 id="worked-example">Worked Example<a class="heading-anchor" href="#worked-example" aria-label="Link to Worked Example">#</a></h2><p>The parser accepts one explicit GPU, no forced partition, and bounded companion resources; optional live smoke testing remains a separate deliberate action.</p>
+<p>A correct example uses these decisions:</p>
+<ul>
+<li><strong>Which account provides the documented lab GPU access?</strong> The approved es_fuge share.</li>
+<li><strong>What should a one-GPU starter request do?</strong> Request one explicit GPU and bounded CPU, memory, and time.</li>
+</ul>
+<h2 id="common-trap">Common Trap<a class="heading-anchor" href="#common-trap" aria-label="Link to Common Trap">#</a></h2><p>Assuming GPUs are on the public share, requesting all node CPUs for one GPU, or submitting the review fixture accidentally.</p>
 <h2 id="if-blocked">If Blocked<a class="heading-anchor" href="#if-blocked" aria-label="Link to If Blocked">#</a></h2><p>Use the RTX 4090 review baseline. Do not submit duplicate jobs for multiple GPU
 types or select RTX PRO 6000 merely to bypass a queue. Escalate distributed
 training, unusual memory, or CUDA compatibility to the supervisor.</p>
+<p>Useful references:</p>
+<ul>
+<li><a href="/labs/euler-gpu-review/">Euler Gpu Review</a></li>
+<li><a href="/handbook/tracks/euler-gpu/">Euler Gpu</a></li>
+<li><a href="/reference/euler/slurm/">Slurm</a></li>
+<li><a href="/policy/euler-share/">Euler Share</a></li>
+</ul>
 <h2 id="understand-before-accepting-ai-output">Understand Before Accepting AI Output<a class="heading-anchor" href="#understand-before-accepting-ai-output" aria-label="Link to Understand Before Accepting AI Output">#</a></h2><p>Verify that program operations, not only CUDA detection, use the GPU. You must
 explain every requested resource and why adding GPUs may not help a CPU-bound
 pipeline.</p>
-<h2 id="finish-and-continue">Finish And Continue<a class="heading-anchor" href="#finish-and-continue" aria-label="Link to Finish And Continue">#</a></h2><p>Human review can grant the initial GPU endorsement without consuming a GPU. A
-later project-specific smoke test is optional, short, and supervisor-approved.</p>
-</article><section class="submission-card submission-preview" data-submission-card data-submission-paths="[&quot;evidence/euler/gpu-review.md&quot;,&quot;workspace/slurm/gpu_job.slurm.txt&quot;]"><p class="eyebrow">Submit this mission</p><h2 data-submission-title>Preview only: submission is disabled</h2><p data-submission-copy>In your local passport, this panel names the exact evidence file, provides the bounded Git commands, and links to your permanent public assessment pull request.</p><ol><li><strong>Complete and verify</strong><span data-evidence-path>evidence/euler/gpu-review.md, workspace/slurm/gpu_job.slurm.txt</span></li><li><strong>Review the exact diff</strong><span>Remove ETH or other private identifiers, real logs, research data, credentials, and private screenshots.</span></li><li><strong>Commit and push</strong><span>The controller checks only the submitted commit. Local browser progress is not evidence.</span></li><li><strong>Read the result</strong><span>Wait up to 15 minutes, then sync. The final reviewer is requested automatically when deterministic checks pass.</span></li></ol><pre><code class="language-bash" data-submit-commands>git status --short
-git diff -- PATH/TO/EVIDENCE.md
-git add -- PATH/TO/EVIDENCE.md
-git diff --cached
-git commit -m "docs(passport): submit mission evidence"
-git push</code></pre><div class="submission-actions"><a class="button primary" data-edit-evidence href="/getting-started/">Open my local passport first</a><a class="button secondary" data-open-pr hidden>Open permanent assessment PR</a><a class="button secondary" data-open-check hidden>Read automatic check</a><a class="button secondary" data-open-dashboard href="/passport/">Return to dashboard</a></div><p class="submission-status" data-submission-status>Nothing on this static preview is submitted.</p></section></div></div><nav class="mission-footer-nav" aria-label="Mission navigation" data-mission-footer><a href="#" hidden data-previous-mission><span>Previous in route</span><strong></strong></a><a class="source-link" href="https://github.com/IDEALLab/onboarding-IT/blob/8237d33a5a373a229f238f9db1d7284d859c971a/curriculum/missions/euler-gpu-review/README.md" rel="noreferrer">View exact source</a><a class="next" href="/passport/" data-next-mission><span>Route status</span><strong>Return to dashboard</strong></a></nav></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 1.2.0 /exact source 8237d33a</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+</article></details><section class="activity-studio" data-activity-studio data-mission="euler-gpu-review" data-verifier="gpu_script" data-verify-endpoint="/__passport/v2/verify" data-submit-endpoint="/__passport/v2/submit" data-context-endpoint="/__passport/v1/context" data-state-endpoint="/__passport/v1/state" data-sync-endpoint="/__passport/v1/sync" data-passport-url="/passport/" data-practice-endpoint="/__passport/v2/practice"><header class="activity-heading"><div><p class="eyebrow">Do the mission</p><h2>One bounded attempt</h2></div><span class="activity-threshold">Pass: 100% + every safety item</span></header><div class="activity-action"><span>Action</span><p>Correct the unsafe one-GPU Slurm fixture for the es_fuge share, choose one approved GPU model, and justify bounded CPU, memory, time, and logs. Do not submit it.</p><strong>Expected</strong><p>The parser accepts one explicit GPU, no forced partition, and bounded companion resources; optional live smoke testing remains a separate deliberate action.</p></div><section class="practice-launch" data-practice-launch><div><p class="eyebrow">Separate practice space</p><h3>Open this mission&#39;s safe practice files</h3><p>The launcher creates or validates a separate exercise folder. It stops rather than replacing an existing unrelated folder.</p></div><button class="button secondary" type="button" data-prepare-practice disabled>Prepare practice folder</button><div class="practice-result" data-practice-result hidden><strong>Practice workspace ready</strong><p data-practice-path></p><ol class="practice-commands" data-practice-commands></ol></div></section><form data-activity-form><div class="question-stack"><fieldset class="mission-question" data-question="gpu_account" data-question-type="single"><legend><span>01</span>Which account provides the documented lab GPU access?<em>Safety-critical</em></legend><div class="answer-options"><label><input type="radio" name="gpu_account" value="correct" disabled><span>The approved es_fuge share.</span></label><label><input type="radio" name="gpu_account" value="wrong_a" disabled><span>The public share by default.</span></label><label><input type="radio" name="gpu_account" value="wrong_b" disabled><span>Any account name guessed from a GPU model.</span></label></div><p class="question-feedback" data-feedback-for="gpu_account" hidden></p></fieldset><fieldset class="mission-question" data-question="one_gpu_scope" data-question-type="single"><legend><span>02</span>What should a one-GPU starter request do?<em>Safety-critical</em></legend><div class="answer-options"><label><input type="radio" name="one_gpu_scope" value="correct" disabled><span>Request one explicit GPU and bounded CPU, memory, and time.</span></label><label><input type="radio" name="one_gpu_scope" value="wrong_a" disabled><span>Lock every CPU and all memory on the physical node.</span></label><label><input type="radio" name="one_gpu_scope" value="wrong_b" disabled><span>Force an undocumented partition.</span></label></div><p class="question-feedback" data-feedback-for="one_gpu_scope" hidden></p></fieldset></div><fieldset class="mission-attestation"><legend>Before submitting</legend><p>The launcher will copy only this mission's declared synthetic practice files into the public submission. Review those files as well as these answers.</p><label><input type="checkbox" name="reviewed" disabled>I reviewed the answers and any changed practice files myself.</label><label><input type="checkbox" name="no_secrets" disabled>This public submission contains no credentials, private paths, real logs, or research data.</label><label><input type="checkbox" name="observed_result" disabled>I personally observed every result I claim.</label></fieldset><div class="activity-actions"><button class="button secondary" type="button" data-check-work disabled>Check my work</button><button class="button primary" type="button" data-submit-mission disabled>Submit mission</button><a class="button quiet" href="/getting-started/" data-start-passport>Open my real passport first</a></div><div class="activity-result" role="status" aria-live="polite" data-activity-result><strong>Preview only</strong><span>This page can be read, but it cannot store or submit an attempt.</span></div></form></section><script>(function(){const missionId = "euler-gpu-review";
+
+  const studio = document.querySelector(`[data-activity-studio][data-mission="${missionId}"]`);
+  if (studio) {
+    const form = studio.querySelector("[data-activity-form]");
+    const resultBox = studio.querySelector("[data-activity-result]");
+    const checkButton = studio.querySelector("[data-check-work]");
+    const submitButton = studio.querySelector("[data-submit-mission]");
+    let context = null;
+    let lastReady = false;
+
+    const answers = () => {
+      const value = {};
+      for (const fieldset of form.querySelectorAll("[data-question]")) {
+        const id = fieldset.dataset.question;
+        if (fieldset.dataset.questionType === "order") {
+          value[id] = Array.from(fieldset.querySelectorAll("[data-order-position]")).map((item) => item.value).filter(Boolean);
+        } else {
+          value[id] = Array.from(fieldset.querySelectorAll("input:checked")).map((item) => item.value);
+        }
+      }
+      return value;
+    };
+    const localInput = () => Object.fromEntries(Array.from(form.querySelectorAll("[data-live-confirmation] input, [data-live-confirmation] select")).map((item) => [item.name, item.value]));
+    const attestation = () => Object.fromEntries(["reviewed", "no_secrets", "observed_result"].map((name) => [name, Boolean(form.elements[name]?.checked)]));
+    const payload = () => ({ mission: missionId, answers: answers(), local_input: localInput(), attestation: attestation() });
+    const setResult = (title, message, kind = "neutral") => {
+      resultBox.dataset.kind = kind;
+      resultBox.querySelector("strong").textContent = title;
+      resultBox.querySelector("span").textContent = message;
+    };
+    const installCopyButtons = (root = studio) => {
+      for (const button of root.querySelectorAll("[data-copy-command]:not([data-copy-ready])")) {
+        button.dataset.copyReady = "true";
+        button.addEventListener("click", async () => {
+          const command = button.closest("pre")?.querySelector("code")?.textContent || "";
+          try {
+            await navigator.clipboard.writeText(command);
+            button.textContent = "Copied";
+            window.setTimeout(() => { button.textContent = "Copy"; }, 1400);
+          } catch {
+            button.textContent = "Select text";
+          }
+        });
+      }
+    };
+    installCopyButtons();
+    const persistDraft = async () => {
+      if (!context?.local_state) return;
+      const state = structuredClone(context.local_state);
+      state.mission_drafts ||= {};
+      state.mission_drafts[missionId] = answers();
+      try {
+        const response = await fetch(studio.dataset.stateEndpoint, { method: "PUT", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify(state) });
+        if (response.ok) context.local_state = state;
+      } catch {}
+    };
+    const showFeedback = (feedback = []) => {
+      for (const node of form.querySelectorAll("[data-feedback-for]")) node.hidden = true;
+      for (const item of feedback) {
+        const node = form.querySelector(`[data-feedback-for="${item.question}"]`);
+        if (!node) continue;
+        node.hidden = false;
+        node.dataset.correct = String(Boolean(item.correct));
+        node.textContent = item.message;
+      }
+    };
+    const rotateForVariant = (items, variant) => {
+      items.forEach((item, index) => { item.dataset.variantOrigin ||= String(index); });
+      return items.sort((left, right) => {
+        const leftRank = (Number(left.dataset.variantOrigin) - variant + items.length) % items.length;
+        const rightRank = (Number(right.dataset.variantOrigin) - variant + items.length) % items.length;
+        return leftRank - rightRank;
+      });
+    };
+    const applyVariant = (variant, clear = false) => {
+      if (!Number.isInteger(variant) || variant < 1) return;
+      const stack = form.querySelector(".question-stack");
+      const questions = rotateForVariant(Array.from(stack.querySelectorAll(":scope > [data-question]")), variant);
+      questions.forEach((question, index) => {
+        const number = question.querySelector("legend > span");
+        if (number) number.textContent = String(index + 1).padStart(2, "0");
+        stack.append(question);
+        const choices = rotateForVariant(Array.from(question.querySelectorAll(".answer-options > label")), variant);
+        const choiceRoot = question.querySelector(".answer-options");
+        choices.forEach((choice) => choiceRoot?.append(choice));
+        for (const select of question.querySelectorAll("[data-order-position]")) {
+          const options = rotateForVariant(Array.from(select.querySelectorAll("option[value]:not([value=''])")), variant);
+          options.forEach((option) => select.append(option));
+        }
+      });
+      if (clear) {
+        for (const input of form.querySelectorAll("[data-question] input")) input.checked = false;
+        for (const select of form.querySelectorAll("[data-question] select")) select.value = "";
+        persistDraft();
+      }
+    };
+    const request = async (endpoint) => {
+      const response = await fetch(endpoint, { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(payload()) });
+      const value = await response.json().catch(() => ({}));
+      return { response, value };
+    };
+    const waitForController = async () => {
+      const deadline = Date.now() + 3 * 60 * 1000;
+      while (Date.now() < deadline) {
+        await new Promise((resolve) => window.setTimeout(resolve, 10000));
+        try {
+          const response = await fetch(studio.dataset.syncEndpoint, { method: "POST", credentials: "same-origin", headers: { Accept: "application/json" } });
+          if (!response.ok) continue;
+          const value = await response.json();
+          if (value.state === "verified" && value.official?.status?.head_sha) {
+            setResult("Automatic check received", "Opening your trusted passport status.", "success");
+            window.setTimeout(() => { window.location.href = studio.dataset.passportUrl; }, 700);
+            return;
+          }
+          if (value.state === "assessment_recovery_required") {
+            setResult("Safe recovery needed", "Your work remains saved. Open the dashboard for the exact recovery step.", "needs-work");
+            return;
+          }
+        } catch {}
+      }
+      setResult("Submitted; check still running", "You can close this page. Reopen with gh passport open and use Sync from GitHub later.", "neutral");
+    };
+    form.addEventListener("change", () => { lastReady = false; submitButton.disabled = true; persistDraft(); });
+    checkButton.addEventListener("click", async () => {
+      checkButton.disabled = true;
+      setResult("Checking this attempt", "The launcher is running only this mission's bounded verifier.");
+      try {
+        const { response, value } = await request(studio.dataset.verifyEndpoint);
+        if (!response.ok) throw new Error("The local verifier could not run safely.");
+        showFeedback(value.feedback);
+        lastReady = value.status === "ready_to_submit";
+        submitButton.disabled = !lastReady;
+        if (!lastReady) applyVariant(value.next_variant, true);
+        const retryMessage = " Review the feedback; the same skills are now presented in a different order.";
+        setResult(lastReady ? "Ready to submit" : "Revise and retry", `${value.score_percent}% score. ${value.critical_passed ? "Safety items passed." : "A safety-critical item needs correction."}${lastReady ? "" : retryMessage}`, lastReady ? "success" : "needs-work");
+      } catch (error) {
+        setResult("Check stopped safely", error.message || "Use the recovery section below.", "error");
+      } finally { checkButton.disabled = false; }
+    });
+    submitButton.addEventListener("click", async () => {
+      if (!lastReady) return;
+      submitButton.disabled = true;
+      setResult("Submitting once", "The launcher is generating and staging exactly one structured receipt.");
+      try {
+        const { response, value } = await request(studio.dataset.submitEndpoint);
+        if (!response.ok) throw new Error(value.detail || value.error || "Submission stopped safely.");
+        setResult("Submitted to GitHub", "The automatic check is running. Keep this page open or return later; do not submit again.", "success");
+        waitForController();
+      } catch (error) {
+        setResult("Nothing was published", error.message, "error");
+        submitButton.disabled = false;
+      }
+    });
+    const practiceButton = studio.querySelector("[data-prepare-practice]");
+    practiceButton?.addEventListener("click", async () => {
+      practiceButton.disabled = true;
+      try {
+        const response = await fetch(studio.dataset.practiceEndpoint, { method: "POST", credentials: "same-origin", headers: { Accept: "application/json" } });
+        const value = await response.json();
+        if (!response.ok) throw new Error(value.error || "practice setup stopped safely");
+        const panel = studio.querySelector("[data-practice-result]");
+        panel.hidden = false;
+        panel.querySelector("[data-practice-path]").textContent = `Folder: ${value.path}`;
+        const enter = context.repository.passport.platform === "windows"
+          ? `Set-Location -LiteralPath "${value.path}"`
+          : `cd -- "${value.path}"`;
+        const commands = [enter];
+        if (missionId === "git-manual-pr") commands.push(
+          "git status --short --branch",
+          "git diff -- workspace/manual_task",
+          "git add -- workspace/manual_task/project-note.md",
+          "git diff --cached --check",
+          "git diff --cached",
+          'git commit -m "docs(practice): explain staged diff review"',
+          `git push --set-upstream origin ${value.branch}`,
+          `gh pr create --repo ${context.repository.owner}/${context.repository.name} --base main --head ${value.branch} --draft --title "docs(practice): complete manual Git loop" --body "Synthetic IDEAL Lab Passport practice. No credentials, private data, or research data."`,
+        );
+        const list = panel.querySelector("[data-practice-commands]");
+        list.replaceChildren(...commands.map((command, index) => {
+          const item = document.createElement("li");
+          const label = document.createElement("span");
+          label.textContent = `Step ${index + 1}`;
+          const pre = document.createElement("pre");
+          const code = document.createElement("code");
+          code.textContent = command;
+          const copy = document.createElement("button");
+          copy.type = "button";
+          copy.dataset.copyCommand = "";
+          copy.textContent = "Copy";
+          pre.append(code, copy);
+          item.append(label, pre);
+          return item;
+        }));
+        installCopyButtons(panel);
+      } catch (error) {
+        setResult("Practice setup stopped safely", error.message, "error");
+        practiceButton.disabled = false;
+      }
+    });
+
+    fetch(studio.dataset.contextEndpoint, { credentials: "same-origin", headers: { Accept: "application/json" } }).then(async (response) => {
+      if (!response.ok) return;
+      context = await response.json();
+      if (!context?.repository?.passport?.missions?.includes(missionId)) return;
+      const assigned = context.repository.passport.missions;
+      const activeMission = context.official?.status?.current_mission || assigned[0];
+      if (missionId !== activeMission) {
+        setResult(
+          context.official?.status?.stage === "complete" ? "Route already complete" : "Mission locked",
+          context.official?.status?.stage === "complete"
+            ? "Return to the dashboard to open the trusted completion result."
+            : "Finish the current mission shown on your dashboard first.",
+          "neutral",
+        );
+        return;
+      }
+      const platform = context.repository.passport.platform;
+      const localShell = platform === "windows" ? "powershell" : platform === "macos" ? "zsh" : "bash";
+      const visibleCommands = [];
+      for (const command of studio.querySelectorAll("[data-command-platform]")) {
+        const target = command.dataset.commandPlatform;
+        const shell = command.dataset.commandShell;
+        const visible = target === platform || target === "euler" || target === "blade" ||
+          (target === "all" && shell === localShell);
+        command.hidden = !visible;
+        if (visible) visibleCommands.push(command);
+      }
+      visibleCommands.forEach((command, index) => {
+        command.querySelector("div span").textContent = `Step ${index + 1}`;
+      });
+      for (const control of form.querySelectorAll("input, select, button")) control.disabled = false;
+      submitButton.disabled = true;
+      studio.querySelector("[data-start-passport]").hidden = true;
+      applyVariant(context.local_state?.attempt_counts?.[missionId] || 0);
+      const draft = context.local_state?.mission_drafts?.[missionId] || {};
+      for (const [question, values] of Object.entries(draft)) {
+        const fieldset = form.querySelector(`[data-question="${question}"]`);
+        if (!fieldset || !Array.isArray(values)) continue;
+        if (fieldset.dataset.questionType === "order") {
+          Array.from(fieldset.querySelectorAll("[data-order-position]")).forEach((select, index) => { select.value = values[index] || ""; });
+        } else {
+          for (const input of fieldset.querySelectorAll("input")) input.checked = values.includes(input.value);
+        }
+      }
+      setResult("Attempt saved on this computer", "Answer the questions, run the bounded check, then submit once.");
+    }).catch(() => {});
+  }
+})();</script></div></div><nav class="mission-footer-nav" aria-label="Mission navigation" data-mission-footer><a href="#" hidden data-previous-mission><span>Previous in route</span><strong></strong></a><a class="source-link" href="https://github.com/IDEALLab/onboarding-IT/blob/395057426112aa55991016a603ec4222237ba55f/curriculum/missions/euler-gpu-review/README.md" rel="noreferrer">View exact source</a><a class="next" href="/passport/" data-next-mission><span>Route status</span><strong>Return to dashboard</strong></a></nav></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 2.0.0 /exact source 39505742</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
 `).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
 `).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html><script>(function(){const missionId = "euler-gpu-review";
 const contextEndpoint = "/__passport/v1/context";
 const stateEndpoint = "/__passport/v1/state";
 const basePath = "/";
-const missionIndex = [{"id":"ai-agent-baseline","title":"Use A Safe Agent Loop After The Manual Baseline","route":"/missions/ai-agent-baseline/"},{"id":"ai-tool-configuration","title":"Choose And Configure An AI Access Route","route":"/missions/ai-tool-configuration/"},{"id":"blade-access-storage","title":"Use Blade For GUI Work Without Losing Data","route":"/missions/blade-access-storage/"},{"id":"core-accounts-secrets","title":"Protect Accounts And Secrets","route":"/missions/core-accounts-secrets/"},{"id":"core-incidents-ai-responsibility","title":"Respond To Incidents And Own Automated Work","route":"/missions/core-incidents-ai-responsibility/"},{"id":"core-orientation","title":"Start And Resume Your Passport","route":"/missions/core-orientation/"},{"id":"core-systems-data","title":"Map Systems And Research Data","route":"/missions/core-systems-data/"},{"id":"data-collaboration","title":"Design Safe Shared Data Collaboration","route":"/missions/data-collaboration/"},{"id":"data-handover","title":"Create A Recoverable Project Handover","route":"/missions/data-handover/"},{"id":"data-placement","title":"Place Research Data Intentionally","route":"/missions/data-placement/"},{"id":"euler-access-ssh","title":"Establish Safe Euler SSH Access","route":"/missions/euler-access-ssh/"},{"id":"euler-cpu-accounting","title":"Measure And Right-Size An Euler Job","route":"/missions/euler-cpu-accounting/"},{"id":"euler-cpu-arrays","title":"Cap And Calculate Euler Job Arrays","route":"/missions/euler-cpu-arrays/"},{"id":"euler-cpu-first-job","title":"Submit And Control A Tiny Euler CPU Job","route":"/missions/euler-cpu-first-job/"},{"id":"euler-gpu-review","title":"Review A One-GPU Euler Plan","route":"/missions/euler-gpu-review/"},{"id":"euler-storage-reproducibility","title":"Place Euler Data And Freeze Run Inputs","route":"/missions/euler-storage-reproducibility/"},{"id":"git-manual-pr","title":"Complete A Manual Pull Request Loop","route":"/missions/git-manual-pr/"},{"id":"git-tools-auth","title":"Configure Git Identity And Your Editor","route":"/missions/git-tools-auth/"},{"id":"python-environment","title":"Create A Reproducible Python Environment","route":"/missions/python-environment/"},{"id":"python-reproducible-change","title":"Make And Verify A Reproducible Python Change","route":"/missions/python-reproducible-change/"},{"id":"supervisor-offboarding","title":"Plan Handover And Offboarding","route":"/missions/supervisor-offboarding/"},{"id":"supervisor-onboarding","title":"Assign A Researcher Route And Safe Project Environment","route":"/missions/supervisor-onboarding/"}];
+const missionIndex = [{"id":"ai-agent-baseline","title":"Use A Safe Agent Loop After The Manual Baseline","route":"/missions/ai-agent-baseline/","machine":"local"},{"id":"ai-tool-configuration","title":"Choose And Configure An AI Access Route","route":"/missions/ai-tool-configuration/","machine":"local"},{"id":"blade-access-storage","title":"Use Blade For GUI Work Without Losing Data","route":"/missions/blade-access-storage/","machine":"blade"},{"id":"core-accounts-secrets","title":"Protect Accounts And Secrets","route":"/missions/core-accounts-secrets/","machine":"browser"},{"id":"core-incidents-ai-responsibility","title":"Respond To Incidents And Own Automated Work","route":"/missions/core-incidents-ai-responsibility/","machine":"browser"},{"id":"core-orientation","title":"Start And Resume Your Passport","route":"/missions/core-orientation/","machine":"browser"},{"id":"core-systems-data","title":"Map Systems And Research Data","route":"/missions/core-systems-data/","machine":"browser"},{"id":"data-collaboration","title":"Design Safe Shared Data Collaboration","route":"/missions/data-collaboration/","machine":"browser"},{"id":"data-handover","title":"Create A Recoverable Project Handover","route":"/missions/data-handover/","machine":"browser"},{"id":"data-placement","title":"Place Research Data Intentionally","route":"/missions/data-placement/","machine":"browser"},{"id":"euler-access-ssh","title":"Establish Safe Euler SSH Access","route":"/missions/euler-access-ssh/","machine":"local"},{"id":"euler-cpu-accounting","title":"Measure And Right-Size An Euler Job","route":"/missions/euler-cpu-accounting/","machine":"euler"},{"id":"euler-cpu-arrays","title":"Cap And Calculate Euler Job Arrays","route":"/missions/euler-cpu-arrays/","machine":"local"},{"id":"euler-cpu-first-job","title":"Submit And Control A Tiny Euler CPU Job","route":"/missions/euler-cpu-first-job/","machine":"euler"},{"id":"euler-gpu-review","title":"Review A One-GPU Euler Plan","route":"/missions/euler-gpu-review/","machine":"local"},{"id":"euler-storage-reproducibility","title":"Place Euler Data And Freeze Run Inputs","route":"/missions/euler-storage-reproducibility/","machine":"browser"},{"id":"git-manual-pr","title":"Complete A Manual Pull Request Loop","route":"/missions/git-manual-pr/","machine":"local"},{"id":"git-tools-auth","title":"Configure Git Identity And Your Editor","route":"/missions/git-tools-auth/","machine":"local"},{"id":"nas-access-storage","title":"Verify Your Approved NAS Workspace","route":"/missions/nas-access-storage/","machine":"nas"},{"id":"python-environment","title":"Create A Reproducible Python Environment","route":"/missions/python-environment/","machine":"local"},{"id":"python-reproducible-change","title":"Make And Verify A Reproducible Python Change","route":"/missions/python-reproducible-change/","machine":"local"},{"id":"supervisor-offboarding","title":"Plan Handover And Offboarding","route":"/missions/supervisor-offboarding/","machine":"browser"},{"id":"supervisor-onboarding","title":"Assign A Researcher Route And Safe Project Environment","route":"/missions/supervisor-onboarding/","machine":"browser"}];
 
   const rememberMission = async () => {
     try {
@@ -97,89 +327,47 @@ const missionIndex = [{"id":"ai-agent-baseline","title":"Use A Safe Agent Loop A
       const route = context?.repository?.passport?.missions;
       const state = context?.local_state;
       if (!Array.isArray(route) || !route.includes(missionId) || !state) return;
-      const safeGitHub = (value) => {
-        if (typeof value !== "string") return null;
-        try {
-          const url = new URL(value);
-          return url.protocol === "https:" && url.hostname === "github.com" ? url.href : null;
-        } catch { return null; }
-      };
-      const submission = document.querySelector("[data-submission-card]");
-      if (submission) {
-        const rawPaths = JSON.parse(submission.dataset.submissionPaths || "[]");
-        const evidence = Array.isArray(rawPaths) ? rawPaths.filter((item) => typeof item === "string" && item) : [];
-        const owner = context.repository?.owner;
-        const name = context.repository?.name;
-        const branch = context.repository?.branch;
-        if (evidence.length && typeof owner === "string" && typeof name === "string" && typeof branch === "string") {
-          const repositoryUrl = `https://github.com/${encodeURIComponent(owner)}/${encodeURIComponent(name)}`;
-          const evidencePath = evidence[0].split("/").map(encodeURIComponent).join("/");
-          const edit = submission.querySelector("[data-edit-evidence]");
-          edit.href = `${repositoryUrl}/edit/${encodeURIComponent(branch)}/${evidencePath}`;
-          edit.textContent = evidence.length === 1 ? "Edit the mission file" : "Edit the first mission file";
-          const commands = submission.querySelector("[data-submit-commands]");
-          const quotedPaths = evidence.map((path) => `"${path.replaceAll('"', '\\"')}"`).join(" ");
-          commands.textContent = `git status --short\ngit diff -- ${quotedPaths}\ngit add -- ${quotedPaths}\ngit diff --cached\ngit commit -m "docs(passport): submit ${missionId} evidence"\ngit push`;
-          submission.querySelector("[data-evidence-path]").textContent = evidence.join(", ");
-          submission.querySelector("[data-submission-title]").textContent = "Push once, then let the controller check it";
-          submission.querySelector("[data-submission-copy]").textContent = "Your answer is the committed file below. The public PR is the submission record; do not merge or close it.";
-          submission.querySelector("[data-submission-status]").textContent = context.repository.dirty
-            ? "You have local changes. Review and commit them before expecting a new check."
-            : context.repository.remote_head_sha !== context.repository.head_sha
-              ? "Your commit is local. Run git push before waiting for the controller."
-              : "The local branch matches its pushed commit. Sync from the dashboard for the latest result.";
-          submission.classList.remove("submission-preview");
-          const pr = safeGitHub(context.official?.pull_request_url || context.sync_result?.pull_request_url);
-          const prLink = submission.querySelector("[data-open-pr]");
-          const fallbackPR = `https://github.com/soheylm-passport-sandbox/passport-exercises/pulls?q=${encodeURIComponent(`is:pr is:open head:${owner}:${branch}`)}`;
-          prLink.href = pr || fallbackPR;
-          prLink.textContent = pr ? "Open permanent assessment PR" : "Find permanent assessment PR";
-          prLink.hidden = false;
-          const check = safeGitHub(context.official?.check_run_url);
-          const checkLink = submission.querySelector("[data-open-check]");
-          if (check) { checkLink.href = check; checkLink.hidden = false; }
-        }
-      }
       const authority = document.querySelector("[data-authority-note]");
       if (authority) {
-        authority.querySelector("[data-authority-title]").textContent = "Your submitted-work record";
-        authority.querySelector("[data-authority-copy]").textContent = "Your dashboard and permanent public draft PR show submitted work and controller status.";
-        const authorityLink = authority.querySelector("[data-authority-link]");
-        authorityLink.href = `${String(basePath || "/").replace(/\/$/, "")}/passport/`;
-        authorityLink.textContent = "Open my dashboard";
+        authority.querySelector("[data-authority-title]").textContent = "Your local passport";
+        authority.querySelector("[data-authority-copy]").textContent = "Draft answers stay on this computer. Only generated receipts are submitted.";
+        const link = authority.querySelector("[data-authority-link]");
+        link.href = `${String(basePath || "/").replace(/\/$/, "")}/passport/`;
+        link.textContent = "Return to my dashboard";
       }
       const index = new Map(missionIndex.map((item) => [item.id, item]));
       if (route.some((id) => !index.has(id))) return;
       const current = route.indexOf(missionId);
+      const position = document.querySelector("[data-mission-position]");
+      if (position) position.textContent = `${String(current + 1).padStart(2, "0")} / ${String(route.length).padStart(2, "0")}`;
+      const workHere = document.querySelector("[data-work-here]");
+      if (workHere) {
+        const platform = context.repository.passport.platform;
+        const shell = platform === "windows" ? "PowerShell" : platform === "macos" ? "zsh" : "bash";
+        const mission = index.get(missionId);
+        const location = mission?.machine === "euler" ? "Euler / bash"
+          : mission?.machine === "blade" ? "Blade / PowerShell"
+          : mission?.machine === "nas" ? `Approved NAS folder / ${shell}`
+          : mission?.machine === "browser" ? "This browser"
+          : `Your computer / ${shell}`;
+        workHere.textContent = location;
+      }
       const base = String(basePath || "/").replace(/\/$/, "");
       const setFooter = (selector, item, fallback) => {
         const anchor = document.querySelector(selector);
         if (!anchor) return;
         if (!item) {
-          if (fallback) {
-            anchor.hidden = false;
-            anchor.href = `${base}/passport/`;
-            anchor.querySelector("span").textContent = "Route status";
-            anchor.querySelector("strong").textContent = "Return to dashboard";
-          } else anchor.hidden = true;
+          if (fallback) { anchor.hidden = false; anchor.href = `${base}/passport/`; anchor.querySelector("span").textContent = "Route status"; anchor.querySelector("strong").textContent = "Return to dashboard"; }
+          else anchor.hidden = true;
           return;
         }
-        anchor.hidden = false;
-        anchor.href = `${base}${item.route}`;
-        anchor.querySelector("strong").textContent = item.title;
+        anchor.hidden = false; anchor.href = `${base}${item.route}`; anchor.querySelector("strong").textContent = item.title;
       };
       setFooter("[data-previous-mission]", index.get(route[current - 1]), false);
       setFooter("[data-next-mission]", index.get(route[current + 1]), true);
       if (state.last_opened_mission === missionId) return;
-      await fetch(stateEndpoint, {
-        method: "PUT",
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ ...state, last_opened_mission: missionId }),
-      });
-    } catch {
-      // Static preview and offline use remain fully readable without local state.
-    }
+      await fetch(stateEndpoint, { method: "PUT", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...state, last_opened_mission: missionId }) });
+    } catch {}
   };
   rememberMission();
 })();</script>

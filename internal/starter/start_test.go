@@ -235,6 +235,30 @@ func TestWritePassportIsIdempotentAndRefusesRouteReplacement(t *testing.T) {
 	}
 }
 
+func TestInterruptedGeneratedPassportCanResumeWithoutAcceptingOtherChanges(t *testing.T) {
+	for _, status := range []string{
+		"?? passport.json\n",
+		"A  passport.json\n",
+		" M passport.json\n",
+		"MM passport.json\n",
+	} {
+		if !onlyGeneratedPassportChange(status) {
+			t.Fatalf("safe interrupted status was rejected: %q", status)
+		}
+	}
+	for _, status := range []string{
+		"?? notes.txt\n",
+		"?? passport.json\n?? notes.txt\n",
+		"R  passport.json -> stolen.json\n",
+		" M passport.json/child\n",
+		"",
+	} {
+		if onlyGeneratedPassportChange(status) {
+			t.Fatalf("unrelated or malformed status was accepted: %q", status)
+		}
+	}
+}
+
 func TestLoadExistingPassportReusesOnlyTheCanonicalOwnedRoute(t *testing.T) {
 	directory := t.TempDir()
 	path := filepath.Join(directory, "passport.json")
