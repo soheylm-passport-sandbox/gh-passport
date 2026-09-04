@@ -8,8 +8,8 @@ const (
 	ExerciseOwner       = "soheylm-passport-sandbox"
 	ExerciseName        = "passport-exercises"
 	ExtensionRepository = "soheylm-passport-sandbox/gh-passport"
-	ExtensionRelease    = "v0.3.0"
-	ControllerAppID     = "4784930"
+	ExtensionRelease    = "v0.3.1"
+	ControllerAppID     = "4827197"
 	SupportAssignee     = "SoheylM"
 )
 
