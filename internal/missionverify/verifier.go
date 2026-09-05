@@ -67,8 +67,9 @@ type Catalog struct {
 }
 
 type Responsibility struct {
-	Title  string   `json:"title"`
-	Tracks []string `json:"tracks"`
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	Tracks      []string `json:"tracks"`
 }
 
 type Track struct {

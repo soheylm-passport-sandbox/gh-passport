@@ -79,8 +79,9 @@ type catalog struct {
 }
 
 type responsibility struct {
-	Title  string   `json:"title"`
-	Tracks []string `json:"tracks"`
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	Tracks      []string `json:"tracks"`
 }
 
 type track struct {
@@ -501,7 +502,6 @@ func loadCatalog(path string) (catalog, error) {
 
 func decodeCatalog(raw []byte) (catalog, error) {
 	decoder := json.NewDecoder(bytes.NewReader(raw))
-	decoder.DisallowUnknownFields()
 	var value catalog
 	if err := decoder.Decode(&value); err != nil {
 		return catalog{}, fmt.Errorf("parse passport curriculum catalogue: %w", err)
