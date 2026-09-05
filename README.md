@@ -9,7 +9,7 @@ First install [GitHub CLI](https://cli.github.com/) and authenticate:
 
 ```text
 gh auth login --web --git-protocol https
-gh extension install soheylm-passport-sandbox/gh-passport --force --pin v0.4.2
+gh extension install soheylm-passport-sandbox/gh-passport --force --pin v0.4.3
 ```
 
 Then start the local setup wizard:
@@ -32,6 +32,20 @@ gh passport sync
 gh passport doctor
 ```
 
+## Updates
+
+The first launcher installation uses the command above. After that, the local
+Passport dashboard checks the trusted `soheylm-passport-sandbox/gh-passport`
+releases and displays **Update and reopen** when a newer release supports the
+same curriculum version. Nothing is installed without that click.
+
+The updater closes the local server, installs the exact selected release,
+checks the GitHub-published SHA-256 digest and reported curriculum version, and
+reopens the same Passport folder. Local navigation, draft answers, and GitHub
+submissions are not changed. If verification fails, it restores and reopens the
+previous launcher. A curriculum-version change requires a separately tested
+migration and is never treated as an ordinary launcher update.
+
 Local browser state remembers navigation and drafts only. The generated public
 learning record holds sanitized submissions. The trusted lab controller is the
 only source accepted for completion status. Git transport remains in the
@@ -49,4 +63,7 @@ project details.
 
 Release assets follow GitHub CLI's documented naming convention for Windows
 amd64, macOS amd64/arm64, and Linux amd64/arm64. Source installs are for
-maintainer development only.
+maintainer development only. Each release note contains one machine-readable
+compatibility marker generated from `SOURCE.json`; the updater ignores drafts,
+prereleases, malformed metadata, missing asset digests, and incompatible
+curriculum versions.

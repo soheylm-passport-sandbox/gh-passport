@@ -18,6 +18,7 @@ import (
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/deployment"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/githubstatus"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/installregistry"
+	"github.com/soheylm-passport-sandbox/gh-passport/internal/launcherupdate"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/localserver"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/localstate"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/passportrepo"
@@ -90,8 +91,12 @@ func run(arguments []string) error {
 	case "doctor":
 		return doctor(arguments)
 	case "version":
-		fmt.Printf("gh-passport %s (curriculum %s, controller-app-id %s, bridge-contract v1)\n", version, curriculumVersion, controllerAppID)
-		return nil
+		return printVersion(arguments)
+	case "__apply-update":
+		if len(arguments) != 2 || arguments[0] != "--plan" || arguments[1] == "" {
+			return errors.New("invalid private update helper invocation")
+		}
+		return launcherupdate.Apply(arguments[1])
 	case "help", "--help", "-h":
 		usage()
 		return nil
@@ -153,6 +158,7 @@ func start(arguments []string) error {
 
 func startBrowserWizard(options starter.Options) error {
 	var passportServer *localserver.Server
+	updates := make(chan launcherupdate.Prepared, 1)
 	bootstrap, err := localserver.NewBootstrap(func(_ context.Context, selection localserver.BootstrapSelection) (string, error) {
 		options.Platform = selection.Platform
 		options.Responsibilities = selection.Responsibilities
@@ -172,6 +178,7 @@ func startBrowserWizard(options starter.Options) error {
 		if err != nil {
 			return "", err
 		}
+		passportServer.EnableUpdates(newUpdateService(repository.Root), updates)
 		target, _, err := passportServer.Start()
 		return target, err
 	})
@@ -192,13 +199,22 @@ func startBrowserWizard(options starter.Options) error {
 	}
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
-	<-signals
+	var prepared *launcherupdate.Prepared
+	select {
+	case <-signals:
+	case update := <-updates:
+		prepared = &update
+	}
 	shutdown, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if passportServer != nil {
 		_ = passportServer.Close(shutdown)
 	}
-	return bootstrap.Close(shutdown)
+	closeErr := bootstrap.Close(shutdown)
+	if prepared != nil {
+		return launcherupdate.Launch(*prepared)
+	}
+	return closeErr
 }
 
 func open(arguments []string) error {
@@ -223,6 +239,8 @@ func open(arguments []string) error {
 	if err != nil {
 		return err
 	}
+	updates := make(chan launcherupdate.Prepared, 1)
+	server.EnableUpdates(newUpdateService(repository.Root), updates)
 	target, reused, err := server.Start()
 	if err != nil {
 		return err
@@ -231,9 +249,11 @@ func open(arguments []string) error {
 	if reused {
 		fmt.Println("Reusing the passport process already running for this clone.")
 		if !noBrowser && os.Getenv("PASSPORT_NO_BROWSER") != "1" {
-			return localserver.OpenBrowser(target)
+			if err := localserver.OpenBrowser(target); err != nil {
+				return err
+			}
 		}
-		return nil
+		return signalUpdateReady()
 	}
 	fmt.Println("Press Ctrl+C in this terminal to stop the local passport.")
 	if !noBrowser && os.Getenv("PASSPORT_NO_BROWSER") != "1" {
@@ -242,12 +262,65 @@ func open(arguments []string) error {
 			return err
 		}
 	}
+	if err := signalUpdateReady(); err != nil {
+		_ = server.Close(context.Background())
+		return err
+	}
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
-	<-signals
+	var prepared *launcherupdate.Prepared
+	select {
+	case <-signals:
+	case update := <-updates:
+		prepared = &update
+	}
 	shutdown, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	return server.Close(shutdown)
+	closeErr := server.Close(shutdown)
+	if prepared != nil {
+		return launcherupdate.Launch(*prepared)
+	}
+	return closeErr
+}
+
+func signalUpdateReady() error {
+	path := os.Getenv(launcherupdate.ReadyFileEnv)
+	token := os.Getenv(launcherupdate.ReadyTokenEnv)
+	if path == "" && token == "" {
+		return nil
+	}
+	if path == "" || token == "" {
+		return errors.New("the update readiness request is incomplete")
+	}
+	if err := launcherupdate.SignalReady(path, token); err != nil {
+		return errors.New("could not confirm that the updated local Passport is ready")
+	}
+	return nil
+}
+
+func newUpdateService(repositoryRoot string) *launcherupdate.Service {
+	return &launcherupdate.Service{
+		RepositoryRoot:    repositoryRoot,
+		CurrentVersion:    version,
+		CurriculumVersion: curriculumVersion,
+		Runner:            githubstatus.GHRunner{},
+	}
+}
+
+func printVersion(arguments []string) error {
+	if len(arguments) == 0 {
+		fmt.Printf("gh-passport %s (curriculum %s, controller-app-id %s, bridge-contract v1)\n", version, curriculumVersion, controllerAppID)
+		return nil
+	}
+	if len(arguments) != 1 || arguments[0] != "--json" {
+		return fmt.Errorf("unsupported version options: %s", strings.Join(arguments, " "))
+	}
+	return writeJSON(map[string]any{
+		"version":            version,
+		"curriculum_version": curriculumVersion,
+		"controller_app_id":  controllerAppID,
+		"bridge_contract":    1,
+	})
 }
 
 func status(arguments []string) error {
@@ -569,7 +642,7 @@ Usage:
   gh passport status [--json]
   gh passport sync [--json]
   gh passport doctor [--json] [--bundle]
-  gh passport version
+  gh passport version [--json]
 
 The local application remembers navigation only. GitHub controller checks and
 the assigned reviewer determine official completion. doctor --bundle writes

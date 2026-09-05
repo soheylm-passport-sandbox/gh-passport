@@ -25,6 +25,7 @@ import (
 	"time"
 
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/githubstatus"
+	"github.com/soheylm-passport-sandbox/gh-passport/internal/launcherupdate"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/localstate"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/missionverify"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/passportrepo"
@@ -32,6 +33,11 @@ import (
 )
 
 const cookieName = "ideal_passport_local_session"
+
+type LauncherUpdater interface {
+	Check(context.Context) launcherupdate.Status
+	Prepare(context.Context) (launcherupdate.Prepared, error)
+}
 
 type Server struct {
 	repository      passportrepo.Repository
@@ -50,6 +56,9 @@ type Server struct {
 	statusMu        sync.RWMutex
 	official        *githubstatus.Official
 	syncResult      *githubstatus.Result
+	updateQueued    bool
+	updater         LauncherUpdater
+	updateReady     chan<- launcherupdate.Prepared
 }
 
 type ContextPayload struct {
@@ -89,6 +98,16 @@ func New(
 		token:           hex.EncodeToString(tokenBytes[:32]),
 		cspNonce:        hex.EncodeToString(tokenBytes[32:]),
 	}, nil
+}
+
+// EnableUpdates connects the loopback UI to the trusted launcher updater.
+// It is optional so static previews and unit fixtures cannot initiate updates.
+func (server *Server) EnableUpdates(
+	updater LauncherUpdater,
+	ready chan<- launcherupdate.Prepared,
+) {
+	server.updater = updater
+	server.updateReady = ready
 }
 
 func (server *Server) Start() (string, bool, error) {
@@ -147,6 +166,8 @@ func (server *Server) handler() http.Handler {
 	mux.HandleFunc("GET /__passport/start/{token}", server.startSession)
 	mux.HandleFunc("GET /__passport/v1/health", server.health)
 	mux.HandleFunc("GET /__passport/v1/context", server.withSession(server.context))
+	mux.HandleFunc("GET /__passport/v1/update", server.withSession(server.updateStatus))
+	mux.HandleFunc("POST /__passport/v1/update", server.withSession(server.startUpdate))
 	mux.HandleFunc("PUT /__passport/v1/state", server.withSession(server.updateState))
 	mux.HandleFunc("POST /__passport/v1/sync", server.withSession(server.sync))
 	mux.HandleFunc("POST /__passport/v2/verify", server.withSession(server.verifyMission))
@@ -157,11 +178,57 @@ func (server *Server) handler() http.Handler {
 	return server.securityHeaders(server.hostGuard(mux))
 }
 
+func (server *Server) updateStatus(response http.ResponseWriter, request *http.Request) {
+	if server.updater == nil {
+		http.NotFound(response, request)
+		return
+	}
+	ctx, cancel := context.WithTimeout(request.Context(), 15*time.Second)
+	defer cancel()
+	server.writeJSON(response, http.StatusOK, server.updater.Check(ctx))
+}
+
+func (server *Server) startUpdate(response http.ResponseWriter, request *http.Request) {
+	if server.updater == nil || server.updateReady == nil {
+		http.NotFound(response, request)
+		return
+	}
+	server.mu.Lock()
+	defer server.mu.Unlock()
+	if server.updateQueued {
+		server.writeError(response, http.StatusConflict, "launcher_update_already_starting")
+		return
+	}
+	ctx, cancel := context.WithTimeout(request.Context(), 30*time.Second)
+	defer cancel()
+	prepared, err := server.updater.Prepare(ctx)
+	if err != nil {
+		server.writeJSON(response, http.StatusServiceUnavailable, map[string]string{
+			"error":  "launcher_update_unavailable",
+			"detail": "The update could not be verified. Keep using the current Passport and try again later.",
+		})
+		return
+	}
+	server.updateQueued = true
+	server.writeJSON(response, http.StatusAccepted, map[string]string{
+		"status":  "update_starting",
+		"version": prepared.Version,
+		"message": "The local Passport will close, update, and reopen in a new browser tab.",
+	})
+	go func() {
+		time.Sleep(250 * time.Millisecond)
+		server.updateReady <- prepared
+	}()
+}
+
 func (server *Server) Close(ctx context.Context) error {
 	if server.http == nil {
 		return nil
 	}
 	err := server.http.Shutdown(ctx)
+	if err != nil {
+		_ = server.http.Close()
+	}
 	server.releaseInstance()
 	return err
 }

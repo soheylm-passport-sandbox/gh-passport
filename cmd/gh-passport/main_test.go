@@ -1,12 +1,57 @@
 package main
 
 import (
+	"encoding/json"
+	"io"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"testing"
+
+	"github.com/soheylm-passport-sandbox/gh-passport/internal/launcherupdate"
 )
+
+func TestVersionJSONIsMachineReadable(t *testing.T) {
+	read, write, err := os.Pipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	previous := os.Stdout
+	os.Stdout = write
+	callErr := printVersion([]string{"--json"})
+	write.Close()
+	os.Stdout = previous
+	if callErr != nil {
+		t.Fatal(callErr)
+	}
+	raw, err := io.ReadAll(read)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var value struct {
+		Version           string `json:"version"`
+		CurriculumVersion string `json:"curriculum_version"`
+	}
+	if err := json.Unmarshal(raw, &value); err != nil {
+		t.Fatalf("version output is not JSON: %v: %s", err, raw)
+	}
+	if value.Version != version || value.CurriculumVersion != curriculumVersion {
+		t.Fatalf("unexpected version output: %#v", value)
+	}
+}
+
+func TestUpdateReadinessRequiresBothPrivateValues(t *testing.T) {
+	t.Setenv(launcherupdate.ReadyFileEnv, "")
+	t.Setenv(launcherupdate.ReadyTokenEnv, "")
+	if err := signalUpdateReady(); err != nil {
+		t.Fatalf("ordinary launch should not require update readiness: %v", err)
+	}
+	t.Setenv(launcherupdate.ReadyFileEnv, filepath.Join(t.TempDir(), "reopen-ready.json"))
+	if err := signalUpdateReady(); err == nil {
+		t.Fatal("an incomplete readiness request should fail")
+	}
+}
 
 func TestDiagnosticBundleIsPrivateAndRedacted(t *testing.T) {
 	root := filepath.Join(t.TempDir(), "student name with spaces")
