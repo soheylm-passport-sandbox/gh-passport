@@ -164,6 +164,28 @@ const previewPassPercent = 80;
         });
       }
     };
+    const personalizeRecipeCommands = (value) => {
+      const repository = value?.repository?.passport?.fork_repository;
+      const githubUser = value?.repository?.passport?.github_user;
+      if (typeof repository !== "string" || !repository || typeof githubUser !== "string" || !githubUser) return;
+      const replacements = {
+        "{{fork_repository}}": repository,
+        "{{practice_branch}}": `practice/${githubUser.toLowerCase()}`,
+      };
+      for (const code of studio.querySelectorAll(".recipe-commands code")) {
+        const template = code.dataset.commandTemplate || code.textContent || "";
+        code.dataset.commandTemplate = template;
+        code.textContent = Object.entries(replacements).reduce(
+          (command, [placeholder, replacement]) => command.replaceAll(placeholder, replacement),
+          template,
+        );
+        const copy = code.parentElement?.querySelector("[data-copy-command]");
+        if (copy && !code.textContent.includes("{{")) {
+          copy.disabled = false;
+          copy.textContent = "Copy";
+        }
+      }
+    };
     installCopyButtons();
     const persistDraft = async () => {
       if (!context?.local_state) return;
@@ -407,6 +429,7 @@ const previewPassPercent = 80;
       }
       context = await response.json();
       if (!context?.repository?.passport?.missions?.includes(missionId)) return;
+      personalizeRecipeCommands(context);
       const assigned = context.repository.passport.missions;
       const officialHead = context.official?.status?.head_sha || "";
       const pending = context.local_state?.pending_submissions || {};
@@ -465,7 +488,7 @@ supervisor to assign the next owner.</p>
 </ul>
 <h2 id="understand-before-accepting-ai-output">Understand Before Accepting AI Output<a class="heading-anchor" href="#understand-before-accepting-ai-output" aria-label="Link to Understand Before Accepting AI Output">#</a></h2><p>An agent may format an inventory but cannot certify that paths exist, access
 works, results reproduce, or disposal is approved. A person verifies each item.</p>
-</article></details></div></div><nav class="mission-footer-nav" aria-label="Lesson navigation" data-mission-footer><a href="/missions/data-collaboration/" data-previous-mission><span>Previous lesson</span><strong>Design Safe Shared Data Collaboration</strong></a><a class="source-link" href="https://github.com/IDEALLab/onboarding-IT/blob/dbdc7040f45ee736de3355058a4189254f0c88f4/curriculum/missions/data-handover/README.md" rel="noreferrer">View this lesson on GitHub</a><a class="next" href="/passport/" data-next-mission><span>Course status</span><strong>Return to my progress</strong></a></nav></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practise safely, check the result yourself, and keep a verifiable record on GitHub.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Course version 2.1.2 /published version dbdc7040</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+</article></details></div></div><nav class="mission-footer-nav" aria-label="Lesson navigation" data-mission-footer><a href="/missions/data-collaboration/" data-previous-mission><span>Previous lesson</span><strong>Design Safe Shared Data Collaboration</strong></a><a class="source-link" href="https://github.com/IDEALLab/onboarding-IT/blob/b2be545f0a58e53ce7c058773d4789057669097d/curriculum/missions/data-handover/README.md" rel="noreferrer">View this lesson on GitHub</a><a class="next" href="/passport/" data-next-mission><span>Course status</span><strong>Return to my progress</strong></a></nav></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practise safely, check the result yourself, and keep a verifiable record on GitHub.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Course version 2.1.2 /published version b2be545f</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
 `).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
 `).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html><script>(function(){const missionId = "data-handover";
 const contextEndpoint = "/__passport/v1/context";
