@@ -19,6 +19,7 @@ import (
 
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/githubstatus"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/launcherupdate"
+	"github.com/soheylm-passport-sandbox/gh-passport/internal/localstate"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/passportrepo"
 )
 
@@ -706,6 +707,38 @@ func TestBrowserCannotForgeRouteOrOfficialSyncFields(t *testing.T) {
 	response = request(server, http.MethodPut, "/__passport/v1/state", body, true, true)
 	if response.Code != http.StatusForbidden {
 		t.Fatalf("forged sync metadata returned %d", response.Code)
+	}
+
+	forged = payload.LocalState
+	forged.PendingSubmissions = map[string]localstate.PendingSubmission{
+		"core-orientation": {HeadSHA: strings.Repeat("b", 40), SubmittedAt: "2026-09-05T12:00:00Z"},
+	}
+	body, _ = json.Marshal(forged)
+	response = request(server, http.MethodPut, "/__passport/v1/state", body, true, true)
+	if response.Code != http.StatusForbidden {
+		t.Fatalf("forged pending submission returned %d", response.Code)
+	}
+}
+
+func TestPendingSubmissionStopsDuplicateUntilExactOfficialResult(t *testing.T) {
+	server := testServer(t)
+	server.repository.Passport.Missions = append(server.repository.Passport.Missions, "core-accounts-secrets")
+	server.repository.RemoteHeadSHA = server.repository.HeadSHA
+	server.markPendingSubmission("core-accounts-secrets")
+	state, err := server.store.Load()
+	if err != nil {
+		t.Fatal(err)
+	}
+	pending, exists := state.PendingSubmissions["core-accounts-secrets"]
+	if !exists || pending.HeadSHA != server.repository.HeadSHA || !server.submissionPending("core-accounts-secrets") {
+		t.Fatalf("pending submission was not recorded: %#v", state.PendingSubmissions)
+	}
+	if current := server.activeMissionID(); current != "core-accounts-secrets" {
+		t.Fatalf("pending mission did not block the route: %q", current)
+	}
+	server.official = &githubstatus.Official{Status: githubstatus.ControllerStatus{HeadSHA: server.repository.HeadSHA}}
+	if server.submissionPending("core-accounts-secrets") {
+		t.Fatal("matching trusted result did not resolve pending submission")
 	}
 }
 

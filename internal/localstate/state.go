@@ -20,17 +20,25 @@ var (
 )
 
 type State struct {
-	SchemaVersion     int                            `json:"schema_version"`
-	PassportID        string                         `json:"passport_id"`
-	CurriculumVersion string                         `json:"curriculum_version"`
-	RouteDigest       string                         `json:"route_digest"`
-	LastOpenedMission string                         `json:"last_opened_mission"`
-	ExpandedHelp      []string                       `json:"expanded_help"`
-	MissionDrafts     map[string]map[string][]string `json:"mission_drafts,omitempty"`
-	AttemptCounts     map[string]int                 `json:"attempt_counts,omitempty"`
-	LaunchCount       int                            `json:"launch_count"`
-	LastOfficialSync  string                         `json:"last_official_sync,omitempty"`
-	LastSeenHeadSHA   string                         `json:"last_seen_head_sha,omitempty"`
+	SchemaVersion      int                            `json:"schema_version"`
+	PassportID         string                         `json:"passport_id"`
+	CurriculumVersion  string                         `json:"curriculum_version"`
+	RouteDigest        string                         `json:"route_digest"`
+	LastOpenedMission  string                         `json:"last_opened_mission"`
+	ExpandedHelp       []string                       `json:"expanded_help"`
+	MissionDrafts      map[string]map[string][]string `json:"mission_drafts,omitempty"`
+	AttemptCounts      map[string]int                 `json:"attempt_counts,omitempty"`
+	PendingSubmissions map[string]PendingSubmission   `json:"pending_submissions,omitempty"`
+	LaunchCount        int                            `json:"launch_count"`
+	LastOfficialSync   string                         `json:"last_official_sync,omitempty"`
+	LastSeenHeadSHA    string                         `json:"last_seen_head_sha,omitempty"`
+}
+
+// PendingSubmission records a pushed lesson while the trusted controller is
+// still checking it. It is local navigation state, never proof of completion.
+type PendingSubmission struct {
+	HeadSHA     string `json:"head_sha"`
+	SubmittedAt string `json:"submitted_at"`
 }
 
 type Store struct {
@@ -122,7 +130,7 @@ func (state State) Validate() error {
 	if len(state.ExpandedHelp) > 100 {
 		return errors.New("local state contains too many expanded help entries")
 	}
-	if len(state.MissionDrafts) > 50 || len(state.AttemptCounts) > 50 {
+	if len(state.MissionDrafts) > 50 || len(state.AttemptCounts) > 50 || len(state.PendingSubmissions) > 50 {
 		return errors.New("local state contains too many mission records")
 	}
 	for mission, answers := range state.MissionDrafts {
@@ -143,6 +151,14 @@ func (state State) Validate() error {
 	for mission, count := range state.AttemptCounts {
 		if !missionPattern.MatchString(mission) || count < 0 || count > 10_000 {
 			return errors.New("local state contains an invalid attempt count")
+		}
+	}
+	for mission, submission := range state.PendingSubmissions {
+		if !missionPattern.MatchString(mission) || !shaPattern.MatchString(submission.HeadSHA) {
+			return errors.New("local state contains an invalid pending submission")
+		}
+		if _, err := time.Parse(time.RFC3339, submission.SubmittedAt); err != nil {
+			return errors.New("local state contains an invalid pending submission time")
 		}
 	}
 	if state.LaunchCount < 0 || state.LaunchCount > 10_000 {

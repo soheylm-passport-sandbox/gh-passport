@@ -18,8 +18,14 @@ func TestAtomicStateRoundTripAndPermissions(t *testing.T) {
 		RouteDigest:       "digest",
 		LastOpenedMission: "core-orientation",
 		ExpandedHelp:      []string{"ssh"},
-		LastOfficialSync:  time.Now().UTC().Format(time.RFC3339),
-		LastSeenHeadSHA:   "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+		PendingSubmissions: map[string]PendingSubmission{
+			"core-orientation": {
+				HeadSHA:     "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+				SubmittedAt: "2026-09-05T12:00:00Z",
+			},
+		},
+		LastOfficialSync: time.Now().UTC().Format(time.RFC3339),
+		LastSeenHeadSHA:  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
 	}
 	if err := store.Save(state); err != nil {
 		t.Fatal(err)
@@ -28,7 +34,7 @@ func TestAtomicStateRoundTripAndPermissions(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if loaded.LastOpenedMission != state.LastOpenedMission || loaded.LastSeenHeadSHA != state.LastSeenHeadSHA {
+	if loaded.LastOpenedMission != state.LastOpenedMission || loaded.LastSeenHeadSHA != state.LastSeenHeadSHA || loaded.PendingSubmissions["core-orientation"] != state.PendingSubmissions["core-orientation"] {
 		t.Fatalf("state round trip mismatch: %#v", loaded)
 	}
 	info, err := os.Stat(store.Path())
@@ -38,6 +44,25 @@ func TestAtomicStateRoundTripAndPermissions(t *testing.T) {
 	// Windows reports ACL-backed files with synthetic POSIX permission bits.
 	if runtime.GOOS != "windows" && info.Mode().Perm()&0o077 != 0 {
 		t.Fatalf("local state is accessible beyond the user: %o", info.Mode().Perm())
+	}
+}
+
+func TestStateRejectsMalformedPendingSubmissions(t *testing.T) {
+	base := State{
+		SchemaVersion: 1, PassportID: "p", CurriculumVersion: "1.2.0",
+		RouteDigest: "digest", LastOpenedMission: "core-orientation", ExpandedHelp: []string{},
+	}
+	for name, submission := range map[string]PendingSubmission{
+		"bad-sha":  {HeadSHA: "not-a-sha", SubmittedAt: "2026-09-05T12:00:00Z"},
+		"bad-time": {HeadSHA: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", SubmittedAt: "tomorrow"},
+	} {
+		t.Run(name, func(t *testing.T) {
+			state := base
+			state.PendingSubmissions = map[string]PendingSubmission{"core-orientation": submission}
+			if err := New(t.TempDir()).Save(state); err == nil {
+				t.Fatal("expected malformed pending submission to be rejected")
+			}
+		})
 	}
 }
 

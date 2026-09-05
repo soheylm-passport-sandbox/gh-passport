@@ -478,7 +478,8 @@ func (server *Server) updateState(response http.ResponseWriter, request *http.Re
 	}
 	if state.LastOfficialSync != existing.LastOfficialSync ||
 		state.LastSeenHeadSHA != existing.LastSeenHeadSHA ||
-		state.LaunchCount != existing.LaunchCount {
+		state.LaunchCount != existing.LaunchCount ||
+		!samePendingSubmissions(state.PendingSubmissions, existing.PendingSubmissions) {
 		server.writeError(response, http.StatusForbidden, "official_sync_fields_are_read_only")
 		return
 	}
@@ -525,6 +526,9 @@ func (server *Server) sync(response http.ResponseWriter, request *http.Request) 
 		state.LastOfficialSync = result.SyncedAt
 		state.LastSeenHeadSHA = result.RemoteHeadSHA
 	}
+	if result.Official != nil {
+		state.PendingSubmissions = map[string]localstate.PendingSubmission{}
+	}
 	_ = server.store.Save(state)
 	server.writeJSON(response, http.StatusOK, result)
 }
@@ -549,6 +553,10 @@ func (server *Server) decodeAttempt(response http.ResponseWriter, request *http.
 		server.writeError(response, http.StatusForbidden, "mission_outside_assigned_route")
 		return missionverify.Catalog{}, missionverify.Attempt{}, false
 	}
+	if server.submissionPending(attempt.Mission) {
+		server.writeError(response, http.StatusConflict, "mission_submission_pending")
+		return missionverify.Catalog{}, missionverify.Attempt{}, false
+	}
 	if attempt.Mission != server.activeMissionID() {
 		server.writeError(response, http.StatusConflict, "mission_not_current")
 		return missionverify.Catalog{}, missionverify.Attempt{}, false
@@ -562,6 +570,9 @@ func (server *Server) decodeAttempt(response http.ResponseWriter, request *http.
 }
 
 func (server *Server) activeMissionID() string {
+	if pending := server.pendingMissionID(); pending != "" {
+		return pending
+	}
 	server.statusMu.RLock()
 	defer server.statusMu.RUnlock()
 	if server.official != nil {
@@ -634,10 +645,57 @@ func (server *Server) submitMission(response http.ResponseWriter, request *http.
 		})
 		return
 	}
+	server.markPendingSubmission(attempt.Mission)
 	server.writeJSON(response, http.StatusCreated, map[string]any{
 		"status": "queued", "mission": attempt.Mission,
 		"message": "Submitted once. Wait for the trusted controller result.",
 	})
+}
+
+func (server *Server) submissionPending(mission string) bool {
+	return server.pendingMissionID() == mission
+}
+
+func (server *Server) pendingMissionID() string {
+	state, err := server.store.Load()
+	if err != nil {
+		return ""
+	}
+	server.statusMu.RLock()
+	officialHead := ""
+	if server.official != nil {
+		officialHead = server.official.Status.HeadSHA
+	}
+	server.statusMu.RUnlock()
+	for _, mission := range server.repository.Passport.Missions {
+		pending, exists := state.PendingSubmissions[mission]
+		if exists && pending.HeadSHA != officialHead {
+			return mission
+		}
+	}
+	return ""
+}
+
+func (server *Server) markPendingSubmission(mission string) {
+	headSHA := server.repository.HeadSHA
+	if headSHA == "" || headSHA != server.repository.RemoteHeadSHA || !regexp.MustCompile(`^[a-f0-9]{40}$`).MatchString(headSHA) {
+		return
+	}
+	state, err := server.store.Load()
+	if err != nil {
+		return
+	}
+	if state.SchemaVersion == 0 {
+		state = server.defaultState()
+	}
+	if state.PendingSubmissions == nil {
+		state.PendingSubmissions = map[string]localstate.PendingSubmission{}
+	}
+	state.PendingSubmissions[mission] = localstate.PendingSubmission{
+		HeadSHA:     headSHA,
+		SubmittedAt: time.Now().UTC().Format(time.RFC3339),
+	}
+	_ = server.store.Save(state)
 }
 
 type setupRequest struct {
@@ -748,6 +806,18 @@ func samePath(left, right string) bool {
 		return strings.EqualFold(leftAbsolute, rightAbsolute)
 	}
 	return leftAbsolute == rightAbsolute
+}
+
+func samePendingSubmissions(left, right map[string]localstate.PendingSubmission) bool {
+	if len(left) != len(right) {
+		return false
+	}
+	for mission, submission := range left {
+		if right[mission] != submission {
+			return false
+		}
+	}
+	return true
 }
 
 func (server *Server) preparePractice(response http.ResponseWriter, _ *http.Request) {
@@ -1525,14 +1595,15 @@ func (server *Server) defaultState() localstate.State {
 		server.repository.Owner + "/" + server.repository.Name + ":" + server.repository.Passport.CurriculumVersion,
 	))
 	return localstate.State{
-		SchemaVersion:     1,
-		PassportID:        hex.EncodeToString(passportID[:12]),
-		CurriculumVersion: server.repository.Passport.CurriculumVersion,
-		RouteDigest:       hex.EncodeToString(routeDigest[:]),
-		LastOpenedMission: server.repository.Passport.Missions[0],
-		ExpandedHelp:      []string{},
-		MissionDrafts:     map[string]map[string][]string{},
-		AttemptCounts:     map[string]int{},
+		SchemaVersion:      1,
+		PassportID:         hex.EncodeToString(passportID[:12]),
+		CurriculumVersion:  server.repository.Passport.CurriculumVersion,
+		RouteDigest:        hex.EncodeToString(routeDigest[:]),
+		LastOpenedMission:  server.repository.Passport.Missions[0],
+		ExpandedHelp:       []string{},
+		MissionDrafts:      map[string]map[string][]string{},
+		AttemptCounts:      map[string]int{},
+		PendingSubmissions: map[string]localstate.PendingSubmission{},
 	}
 }
 
