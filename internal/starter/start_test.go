@@ -209,6 +209,45 @@ func TestResolveMissionsAddsUniversalAndTransitiveTracksInCatalogOrder(t *testin
 	}
 }
 
+func TestDecodeCatalogAcceptsAdditiveTeachingMetadata(t *testing.T) {
+	raw := []byte(`{
+  "schema_version": 2,
+  "curriculum_version": "2.1.1",
+  "source_repository": "soheylm-passport-sandbox/passport-exercises",
+  "platforms": ["windows", "macos", "linux"],
+  "universal_tracks": ["core"],
+  "track_dependencies": {"core": []},
+  "responsibilities": {
+    "git": {
+      "title": "I edit code or documentation",
+      "description": "Learn Git and GitHub before using them for assessed work.",
+      "tracks": ["core"],
+      "future_display_hint": "safe additive metadata"
+    }
+  },
+  "tracks": [{"id": "core", "title": "Safety", "missions": ["safe"]}],
+  "missions": {
+    "safe": {
+      "track": "core",
+      "title": "Work safely",
+      "activity": {},
+      "verification": {},
+      "submission": {},
+      "review_policy": "automatic"
+    }
+  },
+  "future_catalog_metadata": {"purpose": "teaching"}
+}`)
+
+	value, err := decodeCatalog(raw)
+	if err != nil {
+		t.Fatalf("additive teaching metadata broke the launcher: %v", err)
+	}
+	if value.Responsibilities["git"].Description == "" {
+		t.Fatal("responsibility description was not decoded")
+	}
+}
+
 func TestWritePassportIsIdempotentAndRefusesRouteReplacement(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "passport.json")
 	value := passport{
