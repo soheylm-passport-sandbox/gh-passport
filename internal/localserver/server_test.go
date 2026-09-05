@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/githubstatus"
+	"github.com/soheylm-passport-sandbox/gh-passport/internal/launcherupdate"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/passportrepo"
 )
 
@@ -29,8 +30,76 @@ func (ignoredRunner) Run(_ context.Context, _ string, _ string, _ ...string) ([]
 
 type unavailableGitHub struct{}
 
+type fakeUpdater struct {
+	status   launcherupdate.Status
+	prepared launcherupdate.Prepared
+	err      error
+}
+
+func (updater fakeUpdater) Check(context.Context) launcherupdate.Status {
+	return updater.status
+}
+
+func (updater fakeUpdater) Prepare(context.Context) (launcherupdate.Prepared, error) {
+	return updater.prepared, updater.err
+}
+
 func (unavailableGitHub) Run(_ context.Context, _ string, _ ...string) ([]byte, error) {
 	return nil, context.DeadlineExceeded
+}
+
+func TestLauncherUpdateIsServerSelectedAndQueued(t *testing.T) {
+	ready := make(chan launcherupdate.Prepared, 1)
+	prepared := launcherupdate.Prepared{Version: "v0.4.3", HelperPath: "helper", PlanPath: "plan", LogPath: "log"}
+	server := &Server{}
+	server.EnableUpdates(fakeUpdater{
+		status:   launcherupdate.Status{State: "available", CurrentVersion: "v0.4.2", CurriculumVersion: "2.1.1"},
+		prepared: prepared,
+	}, ready)
+
+	statusRecorder := httptest.NewRecorder()
+	server.updateStatus(statusRecorder, httptest.NewRequest(http.MethodGet, "/__passport/v1/update", nil))
+	if statusRecorder.Code != http.StatusOK || !strings.Contains(statusRecorder.Body.String(), `"state":"available"`) {
+		t.Fatalf("update status = %d: %s", statusRecorder.Code, statusRecorder.Body.String())
+	}
+
+	startRecorder := httptest.NewRecorder()
+	server.startUpdate(startRecorder, httptest.NewRequest(http.MethodPost, "/__passport/v1/update", nil))
+	if startRecorder.Code != http.StatusAccepted || !strings.Contains(startRecorder.Body.String(), `"version":"v0.4.3"`) {
+		t.Fatalf("start update = %d: %s", startRecorder.Code, startRecorder.Body.String())
+	}
+	select {
+	case queued := <-ready:
+		if queued != prepared {
+			t.Fatalf("queued update = %#v", queued)
+		}
+	case <-time.After(time.Second):
+		t.Fatal("verified update was not queued")
+	}
+	secondRecorder := httptest.NewRecorder()
+	server.startUpdate(secondRecorder, httptest.NewRequest(http.MethodPost, "/__passport/v1/update", nil))
+	if secondRecorder.Code != http.StatusConflict {
+		t.Fatalf("second update status = %d: %s", secondRecorder.Code, secondRecorder.Body.String())
+	}
+}
+
+func TestLauncherUpdateFailureDoesNotQueueOrExposeDetails(t *testing.T) {
+	ready := make(chan launcherupdate.Prepared, 1)
+	server := &Server{}
+	server.EnableUpdates(fakeUpdater{err: errors.New("token or private path must not reach browser")}, ready)
+	recorder := httptest.NewRecorder()
+	server.startUpdate(recorder, httptest.NewRequest(http.MethodPost, "/__passport/v1/update", nil))
+	if recorder.Code != http.StatusServiceUnavailable {
+		t.Fatalf("status = %d: %s", recorder.Code, recorder.Body.String())
+	}
+	if strings.Contains(recorder.Body.String(), "token") || strings.Contains(recorder.Body.String(), "private path") {
+		t.Fatalf("private update failure leaked to browser: %s", recorder.Body.String())
+	}
+	select {
+	case <-ready:
+		t.Fatal("failed update was queued")
+	default:
+	}
 }
 
 type gitEnvironmentRunner struct {
@@ -57,6 +126,36 @@ type aiConfigurationRunner struct {
 type sshConfigRunner struct {
 	output string
 	err    error
+}
+
+type practiceRunner struct {
+	root   string
+	origin string
+	calls  []string
+}
+
+func (runner *practiceRunner) Run(_ context.Context, _ string, name string, args ...string) ([]byte, error) {
+	command := strings.Join(append([]string{name}, args...), " ")
+	runner.calls = append(runner.calls, command)
+	switch command {
+	case "git clone " + runner.origin + " " + runner.root:
+		if err := os.MkdirAll(runner.root, 0o700); err != nil {
+			return nil, err
+		}
+		return nil, nil
+	case "git remote get-url origin":
+		return []byte(runner.origin + "\n"), nil
+	case "git fetch --prune origin":
+		return nil, nil
+	case "git show-ref --verify --quiet refs/heads/practice/student":
+		return nil, errors.New("local branch absent")
+	case "git show-ref --verify --quiet refs/remotes/origin/practice/student":
+		return nil, errors.New("remote branch absent")
+	case "git switch --create practice/student origin/main":
+		return nil, nil
+	default:
+		return nil, errors.New("unexpected command: " + command)
+	}
 }
 
 func (runner sshConfigRunner) Run(_ context.Context, _ string, name string, args ...string) ([]byte, error) {
@@ -149,6 +248,40 @@ func TestGitEnvironmentUsesPracticeAndRejectsManagedTransportIdentity(t *testing
 	server.runner = gitEnvironmentRunner{root: practice, name: "Student Name", email: "student@example.org"}
 	if checks = server.verifyGitEnvironment(); checks["github_auth"] {
 		t.Fatalf("wrong active GitHub account satisfied the Git mission: %#v", checks)
+	}
+}
+
+func TestPreparePracticeCreatesASeparateFolderAndBranch(t *testing.T) {
+	parent := t.TempDir()
+	transport := filepath.Join(parent, ".transport")
+	root := filepath.Join(parent, "practice")
+	origin := "https://github.com/student/passport-exercises.git"
+	runner := &practiceRunner{root: root, origin: origin}
+	server := &Server{
+		repository: passportrepo.Repository{
+			Root:  transport,
+			Owner: "student",
+			Name:  "passport-exercises",
+			Passport: passportrepo.Passport{
+				GitHubUser: "Student",
+			},
+		},
+		runner: runner,
+	}
+	recorder := httptest.NewRecorder()
+	server.preparePractice(recorder, httptest.NewRequest(http.MethodPost, "/__passport/v2/practice", nil))
+	if recorder.Code != http.StatusOK {
+		t.Fatalf("prepare practice status = %d, body = %s", recorder.Code, recorder.Body.String())
+	}
+	var response map[string]string
+	if err := json.Unmarshal(recorder.Body.Bytes(), &response); err != nil {
+		t.Fatal(err)
+	}
+	if response["path"] != root || response["branch"] != "practice/student" || response["status"] != "ready" {
+		t.Fatalf("unexpected practice response: %#v", response)
+	}
+	if !strings.Contains(strings.Join(runner.calls, "\n"), "git switch --create practice/student origin/main") {
+		t.Fatalf("practice branch was not created from origin/main: %#v", runner.calls)
 	}
 }
 
