@@ -194,6 +194,47 @@ func TestCompatibilityMarkerRejectsUnknownOrDuplicateData(t *testing.T) {
 	}
 }
 
+func TestCheckShowsOnlyResultsForTheInstalledLauncher(t *testing.T) {
+	root := t.TempDir()
+	statusPath := filepath.Join(root, ".passport-local", "update-status.json")
+	if err := writeResult(statusPath, Result{
+		Status: "rolled_back", Version: "v0.5.0", RecordedAt: "2026-09-06T10:00:00Z",
+		Message: "The previous launcher was restored.",
+	}); err != nil {
+		t.Fatal(err)
+	}
+	service := Service{
+		RepositoryRoot: root, CurrentVersion: "v0.5.2", CurriculumVersion: "2.1.2",
+		Runner: staticRunner{output: []byte("[]")}, OperatingSystem: "linux", Architecture: "amd64",
+	}
+	status := service.Check(context.Background())
+	if status.State != "up_to_date" || status.LastResult != nil {
+		t.Fatalf("stale rollback leaked into current status: %#v", status)
+	}
+
+	if err := writeResult(statusPath, Result{
+		Status: "rolled_back", Version: "v0.5.2", RecordedAt: "2026-09-06T10:05:00Z",
+		Message: "The previous launcher was restored.",
+	}); err != nil {
+		t.Fatal(err)
+	}
+	status = service.Check(context.Background())
+	if status.LastResult == nil || status.LastResult.Status != "rolled_back" || status.LastResult.Version != "v0.5.2" {
+		t.Fatalf("current rollback was hidden: %#v", status)
+	}
+
+	if err := writeResult(statusPath, Result{
+		Status: "updated", Version: "v0.5.2", PreviousVersion: "v0.5.1", RecordedAt: "2026-09-06T10:10:00Z",
+		Message: "The Passport launcher was updated.",
+	}); err != nil {
+		t.Fatal(err)
+	}
+	status = service.Check(context.Background())
+	if status.LastResult == nil || status.LastResult.Status != "updated" || status.LastResult.Version != "v0.5.2" {
+		t.Fatalf("current successful update was hidden: %#v", status)
+	}
+}
+
 func TestSignalReadyRejectsUntrustedLocationOrToken(t *testing.T) {
 	root := t.TempDir()
 	if err := SignalReady(filepath.Join(root, "reopen-ready.json"), strings.Repeat("a", 32)); err == nil {
