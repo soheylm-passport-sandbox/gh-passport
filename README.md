@@ -9,7 +9,7 @@ First install [GitHub CLI](https://cli.github.com/) and authenticate:
 
 ```text
 gh auth login --web --git-protocol https
-gh extension install soheylm-passport-sandbox/gh-passport --force --pin v0.5.3
+gh extension install soheylm-passport-sandbox/gh-passport --force --pin v0.5.4
 ```
 
 Then start the local setup wizard:
