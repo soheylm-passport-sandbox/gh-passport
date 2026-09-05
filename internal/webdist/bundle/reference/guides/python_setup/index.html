@@ -1,7 +1,10 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Goal: create isolated, reproducible Python environments locally and use the project's declared setup instead of accumulating packages in one global Python."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Python Environments With Miniforge | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.BhM0eQ4y.css"></head><body data-curriculum-version="2.0.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / reference</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">reference</p><h1>Python Environments With Miniforge</h1><p>Goal: create isolated, reproducible Python environments locally and use the project&#39;s declared setup instead of accumulating packages in one global Python.</p></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/b93a95b/onboarding_IT_guides/python_setup.md" rel="noreferrer">View exact source</a><a href="/passport/">Return to my dashboard</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><p><strong>Goal:</strong> create isolated, reproducible Python environments locally and use the
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Goal: create isolated, reproducible Python environments locally and use the project's declared setup instead of accumulating packages in one global Python."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Python Environments With Miniforge | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.GCBP_7Qu.css"></head><body data-curriculum-version="2.1.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / reference</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">reference</p><h1>Python Environments With Miniforge</h1><p>Goal: create isolated, reproducible Python environments locally and use the project&#39;s declared setup instead of accumulating packages in one global Python.</p></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/92b6d71c34be6661602449e40db04b36a4d61524/onboarding_IT_guides/python_setup.md" rel="noreferrer">View exact source</a><a href="/passport/">Return to my dashboard</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><p><strong>Goal:</strong> create isolated, reproducible Python environments locally and use the
 project&#39;s declared setup instead of accumulating packages in one global Python.</p>
 <p><strong>Prerequisites:</strong> know whether the project already declares Python and package
 versions in <code>pyproject.toml</code>, <code>environment.yml</code>, or another setup file.</p>
+<p><strong>Execution context:</strong> install and run Conda on your own computer. Use Windows
+PowerShell, macOS zsh, or Linux Bash from the exact project root named by the
+current step.</p>
 <p>The canonical practical exercise is
 <a href="/labs/reproducible-python/">Reproducible Python Environment</a>.</p>
 <h2 id="mental-model">Mental Model<a class="heading-anchor" href="#mental-model" aria-label="Link to Mental Model">#</a></h2><ul>
@@ -14,7 +17,33 @@ environment.</li>
 </ul>
 <p>Do not install project packages into Conda <code>base</code>, the operating-system Python,
 or with <code>sudo pip</code>.</p>
+<h2 id="before-installing-anything">Before Installing Anything<a class="heading-anchor" href="#before-installing-anything" aria-label="Link to Before Installing Anything">#</a></h2><p>Run:</p>
+<pre><code class="language-text">conda --version
+conda info --base
+</code></pre>
+<p>If both commands work, keep that installation and skip all installation
+sections below.</p>
+<p>On Windows, if PowerShell says that <code>conda</code> is unknown, search the Start menu
+for <strong>Miniforge Prompt</strong>, <strong>Miniconda Prompt</strong>, or <strong>Anaconda Prompt</strong> before
+downloading anything. If one exists, open it and run the two checks above. If
+they work, run this once in that prompt:</p>
+<pre><code class="language-powershell">conda init powershell
+</code></pre>
+<p>Close only that setup terminal, keep the terminal running the Passport open,
+open a new PowerShell window, and repeat the checks. If
+more than one Conda prompt or installation appears, stop and choose one with
+setup help; do not uninstall or overwrite either copy.</p>
+<p>On macOS or Linux, the Passport mission checks common personal installation
+folders and runs <code>conda init</code> for the selected shell when it finds exactly one
+existing installation. The change applies to a newly opened terminal, not the
+terminal that ran the command. Close that command terminal, open a new one,
+return to the practice folder, and repeat <code>conda --version</code> and
+<code>conda info --base</code>. If the check finds more than one installation, stop and
+choose one with setup help. Only install Miniforge after the check prints
+<code>no-common-conda-installation</code>.</p>
 <h2 id="install-miniforge-on-windows">Install Miniforge On Windows<a class="heading-anchor" href="#install-miniforge-on-windows" aria-label="Link to Install Miniforge On Windows">#</a></h2><p><strong>Execution context: Windows laptop - browser and Miniforge Prompt.</strong></p>
+<p>Complete the checks above first. If no existing Conda installation or Start
+menu prompt was found:</p>
 <ol>
 <li>Download the Windows x86-64 installer from the
 <a href="https://github.com/conda-forge/miniforge" rel="noreferrer" data-external-link>official Miniforge repository</a>.</li>
@@ -31,44 +60,123 @@ conda info --base
 personal Miniforge installation.</p>
 <p>To use Conda from PowerShell, run <code>conda init powershell</code> once from Miniforge
 Prompt, close every PowerShell window, and open a new one.</p>
-<h2 id="install-miniforge-on-macos-or-linux">Install Miniforge On macOS Or Linux<a class="heading-anchor" href="#install-miniforge-on-macos-or-linux" aria-label="Link to Install Miniforge On macOS Or Linux">#</a></h2><p><strong>Execution context: local macOS zsh or Linux Bash.</strong></p>
-<p>Download the installer matching the current operating system and CPU from the
-<a href="https://github.com/conda-forge/miniforge/releases/latest" rel="noreferrer" data-external-link>official Miniforge releases</a>.
-Then run the downloaded filename, for example:</p>
-<pre><code class="language-bash">bash Miniforge3-MacOSX-arm64.sh
+<h2 id="install-miniforge-on-macos">Install Miniforge On macOS<a class="heading-anchor" href="#install-miniforge-on-macos" aria-label="Link to Install Miniforge On macOS">#</a></h2><p><strong>Execution context: local macOS Terminal using zsh.</strong></p>
+<p>Run this only after the existing-installation check prints
+<code>no-common-conda-installation</code>. This complete block detects the Mac architecture,
+downloads the matching official installer and published checksum into a new
+temporary directory, verifies the checksum, and removes only those temporary
+files when it exits.</p>
+<!-- passport-snippet:miniforge-macos-installer -->
+<pre><code class="language-zsh">(
+set -eu
+temporary=&quot;$(mktemp -d &quot;${TMPDIR:-/tmp}/ideal-passport-miniforge.XXXXXX&quot;)&quot;
+installer=&quot;$temporary/Miniforge3.sh&quot;
+checksum=&quot;$temporary/Miniforge3.sh.sha256&quot;
+cleanup() { rm -f -- &quot;$installer&quot; &quot;$checksum&quot;; rmdir -- &quot;$temporary&quot; 2&gt;/dev/null || true; }
+trap cleanup EXIT HUP INT TERM
+asset=&quot;Miniforge3-MacOSX-$(uname -m).sh&quot;
+printf &#39;Operating system: &#39;; uname -s
+printf &#39;Architecture: &#39;; uname -m
+command -v curl &gt;/dev/null || { printf &#39;STOP: curl is unavailable; use the official installer link.\n&#39; &gt;&amp;2; exit 1; }
+curl -fL --output &quot;$installer&quot; &quot;https://github.com/conda-forge/miniforge/releases/latest/download/$asset&quot;
+curl -fL --output &quot;$checksum&quot; &quot;https://github.com/conda-forge/miniforge/releases/latest/download/$asset.sha256&quot;
+expected=&quot;$(awk &#39;{print $1}&#39; &quot;$checksum&quot;)&quot;
+actual=&quot;$(shasum -a 256 &quot;$installer&quot; | awk &#39;{print $1}&#39;)&quot;
+[ &quot;$actual&quot; = &quot;$expected&quot; ] || { printf &#39;STOP: checksum mismatch. Do not run the installer.\n&#39; &gt;&amp;2; exit 1; }
+printf &#39;checksum-ok\n&#39;
+bash &quot;$installer&quot;
+)
 </code></pre>
-<p>Use <code>Miniforge3-MacOSX-x86_64.sh</code>, <code>Miniforge3-Linux-x86_64.sh</code>, or another
-official filename when that matches the machine. Do not guess architecture;
-check with:</p>
-<pre><code class="language-bash">uname -s
-uname -m
+<!-- /passport-snippet:miniforge-macos-installer --><p>Choose the personal default installation unless an existing path is reported.
+Answer yes when asked to initialize zsh. Then close only that setup Terminal,
+keep the terminal running the Passport open, open a new one, and run:</p>
+<pre><code class="language-zsh">conda --version
+conda info --base
 </code></pre>
-<p>Accept shell initialization when prompted, close the terminal, open a new one,
-then verify:</p>
+<h2 id="install-miniforge-on-linux">Install Miniforge On Linux<a class="heading-anchor" href="#install-miniforge-on-linux" aria-label="Link to Install Miniforge On Linux">#</a></h2><p><strong>Execution context: local Linux terminal using Bash.</strong></p>
+<p>Run this only after the existing-installation check prints
+<code>no-common-conda-installation</code>. Do not use <code>sudo</code>.</p>
+<!-- passport-snippet:miniforge-linux-installer -->
+<pre><code class="language-bash">(
+set -eu
+temporary=&quot;$(mktemp -d &quot;${TMPDIR:-/tmp}/ideal-passport-miniforge.XXXXXX&quot;)&quot;
+installer=&quot;$temporary/Miniforge3.sh&quot;
+checksum=&quot;$temporary/Miniforge3.sh.sha256&quot;
+cleanup() { rm -f -- &quot;$installer&quot; &quot;$checksum&quot;; rmdir -- &quot;$temporary&quot; 2&gt;/dev/null || true; }
+trap cleanup EXIT HUP INT TERM
+asset=&quot;Miniforge3-$(uname -s)-$(uname -m).sh&quot;
+printf &#39;Operating system: &#39;; uname -s
+printf &#39;Architecture: &#39;; uname -m
+command -v curl &gt;/dev/null || { printf &#39;STOP: curl is unavailable; use the official installer link.\n&#39; &gt;&amp;2; exit 1; }
+curl -fL --output &quot;$installer&quot; &quot;https://github.com/conda-forge/miniforge/releases/latest/download/$asset&quot;
+curl -fL --output &quot;$checksum&quot; &quot;https://github.com/conda-forge/miniforge/releases/latest/download/$asset.sha256&quot;
+expected=&quot;$(awk &#39;{print $1}&#39; &quot;$checksum&quot;)&quot;
+actual=&quot;$(sha256sum &quot;$installer&quot; | awk &#39;{print $1}&#39;)&quot;
+[ &quot;$actual&quot; = &quot;$expected&quot; ] || { printf &#39;STOP: checksum mismatch. Do not run the installer.\n&#39; &gt;&amp;2; exit 1; }
+printf &#39;checksum-ok\n&#39;
+bash &quot;$installer&quot;
+)
+</code></pre>
+<!-- /passport-snippet:miniforge-linux-installer --><p>Choose the personal default installation unless an existing path is reported.
+Answer yes when asked to initialize Bash. Then close only that setup terminal,
+keep the terminal running the Passport open, open a new one, and run:</p>
 <pre><code class="language-bash">conda --version
 conda info --base
 </code></pre>
-<p>Optional: prevent automatic activation of <code>base</code>:</p>
-<pre><code class="language-bash">conda config --set auto_activate_base false
+<p>If the script reports an unsupported asset, existing destination, missing
+checksum tool, or checksum mismatch, stop. Use the
+<a href="https://github.com/conda-forge/miniforge/releases/latest" rel="noreferrer" data-external-link>official Miniforge releases</a>
+and request help rather than guessing a filename or overwriting an installation.</p>
+<h2 id="create-a-project-local-conda-environment">Create A Project-Local Conda Environment<a class="heading-anchor" href="#create-a-project-local-conda-environment" aria-label="Link to Create A Project-Local Conda Environment">#</a></h2><p><strong>Execution context: local terminal at the repository root after Conda
+initialization.</strong></p>
+<p>The Passport training project uses <code>.venv</code> as a project-local Conda prefix.
+Despite the folder name, it is a Conda environment, not one created with
+<code>python -m venv</code>.</p>
+<p>The committed definition is the setup contract:</p>
+<pre><code class="language-yaml">channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.11
 </code></pre>
-<h2 id="create-a-project-environment">Create A Project Environment<a class="heading-anchor" href="#create-a-project-environment" aria-label="Link to Create A Project Environment">#</a></h2><p><strong>Execution context: local terminal after Conda initialization.</strong></p>
-<p>Use the Python version declared by the project. For a training project that
-explicitly chooses Python 3.11:</p>
-<pre><code class="language-bash">conda create -n passport-python python=3.11 -y
-conda activate passport-python
-python --version
+<p><code>nodefaults</code> prevents a learner&#39;s personal Conda configuration from silently
+adding another package channel. A real project may pin more dependencies, but
+it should still document its channel policy and Python version.</p>
+<p>Use the
+<a href="/missions/python-environment/">Create A Reproducible Python Environment</a>
+mission for the exact Windows, macOS, or Linux commands. It enforces this order:</p>
+<ol>
+<li>read the committed definition;</li>
+<li>inspect <code>.venv</code> without changing it;</li>
+<li>keep it only if it is a real directory, a Conda environment, and uses the
+declared Python version;</li>
+<li>stop on a file, symbolic link, junction, incomplete environment, or version
+mismatch rather than deleting it;</li>
+<li>prove <code>.venv/</code> is ignored by Git;</li>
+<li>create it from <code>environment.yml</code> only when absent;</li>
+<li>activate it by its local prefix;</li>
+<li>print <code>sys.executable</code>, the Python version, and the pip location;</li>
+<li>select that same interpreter in the editor.</li>
+</ol>
+<p>The Git-ignore check must succeed before the creation command:</p>
+<pre><code class="language-bash">git check-ignore -v --no-index .venv/conda-meta/history
+</code></pre>
+<p><strong>Expected:</strong> Git prints the rule covering <code>.venv/</code>. If it prints nothing,
+stop and correct <code>.gitignore</code> before creating the environment.</p>
+<p>The creation command is:</p>
+<pre><code class="language-bash">conda env create --prefix ./.venv --file environment.yml -y
+</code></pre>
+<p>Do not run it until the preceding inspection and Git-ignore checks pass. Do not
+remove or replace an existing <code>.venv</code> merely to make the command succeed.</p>
+<p>After activation, verify the interpreter rather than trusting the prompt:</p>
+<pre><code class="language-bash">conda activate ./.venv
+python -c &quot;import sys; print(sys.executable); print(sys.version)&quot;
 python -m pip --version
 </code></pre>
-<p><strong>Expected result:</strong> both Python and pip paths belong to
-<code>passport-python</code>. Use <code>where python</code> on Windows or <code>which python</code> on
-macOS/Linux to inspect the path.</p>
-<p>Install the project exactly as its README declares. Common patterns include:</p>
-<pre><code class="language-bash">python -m pip install -e &#39;.[dev]&#39;
-</code></pre>
-<p>or:</p>
-<pre><code class="language-bash">conda env create -f environment.yml
-</code></pre>
-<p>Do not run both unless the project explicitly combines them.</p>
+<p>All reported paths must belong to this repository&#39;s <code>.venv</code>. Install the real
+project only with the command documented by that project. Never improvise a
+second installer, install into Conda <code>base</code>, or use <code>sudo pip</code> to bypass an
+environment problem.</p>
 <h2 id="record-reproducibility">Record Reproducibility<a class="heading-anchor" href="#record-reproducibility" aria-label="Link to Record Reproducibility">#</a></h2><p>Prefer a project contract containing:</p>
 <div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
 <thead>
@@ -100,7 +208,7 @@ possible.</p>
 <h2 id="vs-code">VS Code<a class="heading-anchor" href="#vs-code" aria-label="Link to VS Code">#</a></h2><ol>
 <li>Open the project folder.</li>
 <li>Run <strong>Python: Select Interpreter</strong> from the Command Palette.</li>
-<li>Select the project environment.</li>
+<li>Select the interpreter whose path is inside the project&#39;s <code>.venv</code> folder.</li>
 <li>In the integrated terminal, run:</li>
 </ol>
 <pre><code class="language-bash">python --version
@@ -108,34 +216,12 @@ python -m pip --version
 </code></pre>
 <p>For notebooks, select the same environment in the kernel picker.</p>
 <h2 id="euler-python-environment">Euler Python Environment<a class="heading-anchor" href="#euler-python-environment" aria-label="Link to Euler Python Environment">#</a></h2><p>Do not copy a local environment directory to Euler. Create an Euler-native
-virtual environment using an available software stack.</p>
-<p>The following module path was verified on 2026-08-04. Recheck with
-<code>module spider python/3.11.6</code> if it fails.</p>
-<p><strong>Execution context: Euler login node - Bash for inspection and lightweight
-environment creation. Use a CPU allocation when installation compiles or does
-substantial work.</strong></p>
-<pre><code class="language-bash">module purge
-module load stack/2024-06 gcc/12.2.0 python/3.11.6
-python --version
-read -r -p &quot;Short project name: &quot; project_name
-case &quot;$project_name&quot; in
-  &#39;&#39;|*[!A-Za-z0-9._-]*)
-    printf &#39;STOP: use only letters, numbers, dot, underscore, or hyphen.\n&#39; &gt;&amp;2
-    project_name=&#39;&#39;
-    ;;
-esac
-venv_path=&quot;$HOME/venvs/$project_name&quot;
-if [ -n &quot;$project_name&quot; ] &amp;&amp; [ -e &quot;$venv_path&quot; ]; then
-  printf &#39;STOP: %s already exists; nothing was overwritten.\n&#39; &quot;$venv_path&quot; &gt;&amp;2
-elif [ -n &quot;$project_name&quot; ]; then
-  mkdir -p &quot;$HOME/venvs&quot;
-  python -m venv &quot;$venv_path&quot;
-  source &quot;$venv_path/bin/activate&quot;
-  python -m pip install --upgrade pip
-fi
-</code></pre>
-<p>Then follow the project&#39;s dependency instructions. Keep environments in
-<code>$HOME</code>, not shared <code>/cluster/work/fuge</code>.</p>
+virtual environment using an available software stack. Follow the Passport
+mission first, then use the
+<a href="/reference/euler/python-environments/">Euler Python environment reference</a>
+for project-specific work. It explains storage, module loading, batch-script
+activation, dependency installation, and recovery without duplicating a second
+setup recipe here.</p>
 <p>For GPU Python, use the <code>python_cuda/3.11.6</code> module only when the project needs
 that toolchain and after checking current availability:</p>
 <pre><code class="language-bash">module spider python_cuda/3.11.6
@@ -194,6 +280,6 @@ device placement; do not install random CUDA versions into the same env.</li>
 <h2 id="ask-for-help-when">Ask For Help When<a class="heading-anchor" href="#ask-for-help-when" aria-label="Link to Ask For Help When">#</a></h2><p>Dependency declarations conflict, private packages lack documented access,
 binary/CUDA compatibility is unclear, or installation requires global changes.</p>
 <p>Verified: 2026-08-04. Review by: 2026-11-04. Owner: lab software maintainer.</p>
-</article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/reference/guides/homebrew/">Homebrew On macOS (Optional)</a><a href="/reference/guides/nas_ideal/">Connect To The IDEAL Lab NAS</a><a href="/reference/guides/obsidian/">Obsidian (Optional Handbook View)</a><a href="/reference/guides/overleaf/">Overleaf &amp; LaTeX Guide</a><a href="/reference/guides/remote/">Remote Access: Blade, Lab Workstations, And Euler</a><a href="/reference/guides/vscode/">Visual Studio Code Setup And Daily Use</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current mission to practice, verify, and submit evidence.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 2.0.0 /exact source b93a95b</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+</article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/handbook/tracks/euler-gpu/">Euler GPU Track</a><a href="/labs/reproducible-python/">Lab: Reproducible Python Environment</a><a href="/reference/euler/python-environments/">Python Environments On Euler</a><a href="/reference/guides/homebrew/">Homebrew On macOS (Optional)</a><a href="/reference/guides/nas_ideal/">Connect To The IDEAL Lab NAS</a><a href="/reference/guides/vscode/">Visual Studio Code Setup And Use</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current mission to practice, verify, and submit evidence.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 2.1.0 /exact source 92b6d71c</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
 `).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
 `).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html>

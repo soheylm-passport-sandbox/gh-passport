@@ -249,6 +249,8 @@ func ConfirmLive(mission Mission, input map[string]string) (map[string]any, erro
 	switch verifier {
 	case "ssh_config":
 		checks["key_only_marker"] = input["marker"] == "config-ok"
+	case "euler_python":
+		checks["environment_marker"] = input["environment_marker"] == "euler-python-env-ok"
 	case "euler_job":
 		checks["job_id"] = regexp.MustCompile(`^[1-9][0-9]{2,}$`).MatchString(input["job_id"])
 		checks["correct_account"] = input["account"] == "es_fuge"
@@ -257,7 +259,8 @@ func ConfirmLive(mission Mission, input map[string]string) (map[string]any, erro
 		checks["completed"] = strings.EqualFold(input["state"], "COMPLETED")
 		checks["zero_exit"] = input["exit_code"] == "0:0"
 		checks["one_cpu"] = input["alloc_cpus"] == "1"
-		checks["one_gib_per_cpu"] = regexp.MustCompile(`(?i)^1G(?:n)?$`).MatchString(input["req_mem"])
+		checks["one_gib_per_cpu"] = regexp.MustCompile(`(?i)^1G(?:[cn])?$`).MatchString(input["req_mem"])
+		checks["python_environment"] = input["python_environment"] == "yes"
 		checks["seff_inspected"] = input["seff_seen"] == "yes"
 		checks["output_verified"] = input["output_marker"] == "5 squared is 25"
 	case "euler_accounting":
@@ -271,6 +274,8 @@ func ConfirmLive(mission Mission, input map[string]string) (map[string]any, erro
 		checks["durable_copy"] = input["durable_copy"] == "yes"
 		checks["temporary_removed"] = input["temporary_removed"] == "yes"
 		checks["avoided_c_drive"] = input["avoided_c_drive"] == "yes"
+	case "ai_configuration":
+		checks["agent_response_seen"] = input["agent_response_seen"] == "yes"
 	default:
 		return nil, errors.New("this live verifier is not implemented by the launcher")
 	}

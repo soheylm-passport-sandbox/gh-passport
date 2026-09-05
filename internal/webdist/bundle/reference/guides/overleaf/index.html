@@ -1,196 +1,103 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Goal: create a reviewable LaTeX document in the approved project workspace and compile a reproducible PDF."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Overleaf &amp; LaTeX Guide | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.BhM0eQ4y.css"></head><body data-curriculum-version="2.0.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / reference</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">reference</p><h1>Overleaf &amp; LaTeX Guide</h1><p>Goal: create a reviewable LaTeX document in the approved project workspace and compile a reproducible PDF.</p></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/b93a95b/onboarding_IT_guides/overleaf.md" rel="noreferrer">View exact source</a><a href="/passport/">Return to my dashboard</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><p><strong>Goal:</strong> create a reviewable LaTeX document in the approved project workspace
-and compile a reproducible PDF.</p>
-<p><strong>Prerequisites:</strong> ETH/Overleaf access and the supervisor-approved project or
-template. Do not upload a confidential manuscript to an unapproved service.</p>
-<p><strong>Execution context:</strong> browser-based Overleaf project; LaTeX snippets belong in
-the project source, not a terminal.</p>
-<hr>
-<h2 id="table-of-contents">Table of Contents<a class="heading-anchor" href="#table-of-contents" aria-label="Link to Table of Contents">#</a></h2><ol>
-<li><a href="#what-is-latex">What is LaTeX?</a>  </li>
-<li><a href="#why-use-overleaf">Why use Overleaf?</a>  </li>
-<li><a href="#sign-up">Sign Up / Log In</a>  </li>
-<li><a href="#lab-template">Start from the Lab Template</a>  </li>
-<li><a href="#organise">Organise Your Document</a>  <ul>
-<li><a href="#structure">Structure</a>  </li>
-<li><a href="#figures-and-tables">Figures &amp; Tables</a>  </li>
-<li><a href="#citations">Citations &amp; Bibliography</a>  </li>
-<li><a href="#acronyms">Acronyms</a>  </li>
-<li><a href="#math">Math</a></li>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Goal: edit an assigned writing project, verify that it compiles, and keep authorized source and PDF copies in the project’s durable handover location."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Overleaf (Optional Project Writing) | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.GCBP_7Qu.css"></head><body data-curriculum-version="2.1.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / reference</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">reference</p><h1>Overleaf (Optional Project Writing)</h1><p>Goal: edit an assigned writing project, verify that it compiles, and keep authorized source and PDF copies in the project’s durable handover location.</p></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/92b6d71c34be6661602449e40db04b36a4d61524/onboarding_IT_guides/overleaf.md" rel="noreferrer">View exact source</a><a href="/passport/">Return to my dashboard</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><p><strong>Goal:</strong> edit an assigned writing project, verify that it compiles, and keep
+authorized source and PDF copies in the project’s durable handover location.</p>
+<p><strong>Prerequisites:</strong> an assigned project or template, an approved account, named
+collaborators, and an information-owner decision about material that may be
+uploaded.</p>
+<p><strong>Execution context:</strong> use Overleaf in your browser. Store milestone and
+handover exports in the supervisor-approved durable project location.</p>
+<p>Use Overleaf only when your supervisor or project assigns it. It is not a
+Passport prerequisite. The project owner decides which service, template,
+collaborators, and information classification are approved.</p>
+<h2 id="1-confirm-the-project-before-uploading-anything">1. Confirm The Project Before Uploading Anything<a class="heading-anchor" href="#1-confirm-the-project-before-uploading-anything" aria-label="Link to 1. Confirm The Project Before Uploading Anything">#</a></h2><p>Ask your supervisor for:</p>
+<ul>
+<li>the approved Overleaf project or template;</li>
+<li>the account you should use;</li>
+<li>who may receive access;</li>
+<li>whether the manuscript, figures, and data may be stored there;</li>
+<li>where the source and final PDF must be archived.</li>
 </ul>
-</li>
-<li><a href="#collaboration">Collaboration</a>  </li>
-<li><a href="#compile">Compile &amp; Download</a>  </li>
-<li><a href="#tips">Extra Productivity Tips</a></li>
+<p>Do not upload unpublished, personal, confidential, export-controlled, or
+partner material until its owner has approved this exact service and project.</p>
+<h2 id="2-open-the-assigned-project">2. Open The Assigned Project<a class="heading-anchor" href="#2-open-the-assigned-project" aria-label="Link to 2. Open The Assigned Project">#</a></h2><ol>
+<li>Sign in at <a href="https://www.overleaf.com/" rel="noreferrer" data-external-link>https://www.overleaf.com/</a> with the account approved for the
+project.</li>
+<li>Open the link provided by your supervisor.</li>
+<li>If instructed to create your own copy, use Overleaf&#39;s <strong>Copy Project</strong>
+action once.</li>
+<li>Rename the copy so its owner and purpose are clear.</li>
 </ol>
-<hr>
-<h2 id="what-is-latex">1 · What is LaTeX?<a class="heading-anchor" href="#what-is-latex" aria-label="Link to 1 · What is LaTeX?">#</a></h2><ul>
-<li><strong>LaTeX</strong> (pronounced “Lah-tech”) is a typesetting language ideal for academic writing.  </li>
-<li>Automates references, equations, figure numbering, cross-links, and styling.  </li>
-<li>Plain-text source files = perfect for version control.</li>
-</ul>
-<hr>
-<h2 id="why-use-overleaf">2 · Why use Overleaf?<a class="heading-anchor" href="#why-use-overleaf" aria-label="Link to 2 · Why use Overleaf?">#</a></h2><div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
-<thead>
-<tr>
-<th>Feature</th>
-<th>Benefit</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>Browser-based</strong></td>
-<td>No local install; works on any device.</td>
-</tr>
-<tr>
-<td><strong>Real-time compile</strong></td>
-<td>PDF updates as you type; error logs shown inline.</td>
-</tr>
-<tr>
-<td><strong>Collaboration</strong></td>
-<td>Multiple users edit simultaneously with live cursors.</td>
-</tr>
-<tr>
-<td><strong>Version history</strong></td>
-<td>Rewind to any past state with one click.</td>
-</tr>
-<tr>
-<td><strong>ETHZ single-sign-on</strong></td>
-<td>Share projects easily inside the university.</td>
-</tr>
-</tbody></table></div>
-<hr>
-<h2 id="sign-up">3 · Sign Up / Log In<a class="heading-anchor" href="#sign-up" aria-label="Link to 3 · Sign Up / Log In">#</a></h2><ol>
-<li>Visit <a href="https://www.overleaf.com" rel="noreferrer" data-external-link>https://www.overleaf.com</a>  </li>
-<li><strong>Sign up</strong> with your <strong>ETHZ e-mail</strong> <code>username@ethz.ch</code>.  </li>
-<li>Confirm e-mail → dashboard opens; you can now access from any device.</li>
-</ol>
-<hr>
-<h2 id="lab-template">4 · Start from the Lab Template<a class="heading-anchor" href="#lab-template" aria-label="Link to 4 · Start from the Lab Template">#</a></h2><p>Use the lab&#39;s thesis/report template: <a href="https://www.overleaf.com/read/jwhmsrpkdycd#6c3291" rel="noreferrer" data-external-link><strong>Lab Template</strong></a></p>
-<p>📖 <strong>Need help structuring your thesis?</strong> Check out the <a href="https://docs.google.com/document/d/1D6XS7yHa-P31BMVVCdm-a6uoIuu-LC7bURbhsu9t4k8/edit?tab=t.0" rel="noreferrer" data-external-link><strong>Thesis Structure Guide</strong></a> for tips on how to fill in each section.</p>
+<p>A copy is a new project. Collaborators, comments, tracked changes, and history
+from the original are not automatically transferred. Re-add only authorized
+collaborators.</p>
+<h2 id="3-compile-the-unchanged-baseline">3. Compile The Unchanged Baseline<a class="heading-anchor" href="#3-compile-the-unchanged-baseline" aria-label="Link to 3. Compile The Unchanged Baseline">#</a></h2><p>Before editing:</p>
 <ol>
-<li>Click the link → project opens in Overleaf.  </li>
-<li>Top-left menu → <strong>Copy Project</strong> → it appears in <em>My Projects</em>.  </li>
-<li>You now have a private copy; edit freely.</li>
+<li>identify the project&#39;s main <code>.tex</code> document;</li>
+<li>select <strong>Recompile</strong>;</li>
+<li>wait for the PDF or the first reported error;</li>
+<li>record whether the unchanged project compiled.</li>
 </ol>
-<hr>
-<h2 id="organise">5 · Organise Your Document<a class="heading-anchor" href="#organise" aria-label="Link to 5 · Organise Your Document">#</a></h2><h3 id="structure">5.1 · Structure<a class="heading-anchor" href="#structure" aria-label="Link to 5.1 · Structure">#</a></h3><pre><code class="language-latex">\section{Introduction}
-\subsection{Motivation}
-% …
-\chapter{Methods}
-\input{methods/experiment.tex}
-</code></pre>
-<p>Common layout:</p>
-<ul>
-<li>Title page  </li>
-<li>Abstract  </li>
-<li>Table of Contents  </li>
-<li>Chapters (Intro, Methods, Results, Discussion, Conclusion)  </li>
-<li>References (<code>references.bib</code>)</li>
-</ul>
-<h3 id="figures-and-tables">5.2 · Figures &amp; Tables<a class="heading-anchor" href="#figures-and-tables" aria-label="Link to 5.2 · Figures &amp;amp; Tables">#</a></h3><pre><code class="language-latex">\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.7\linewidth]{figures/setup.png}
-  \caption{Experimental setup}
-\end{figure}
-</code></pre>
-<p>Preview renders instantly; drag-and-drop images into the <em>figures/</em> folder.</p>
-<h3 id="citations">5.3 · Citations &amp; Bibliography<a class="heading-anchor" href="#citations" aria-label="Link to 5.3 · Citations &amp;amp; Bibliography">#</a></h3><ol>
-<li>Export refs from Zotero/Mendeley into <strong><code>refs.bib</code></strong>.  </li>
-<li>Include in <code>main.tex</code>:</li>
+<p><strong>Expected:</strong> the assigned template produces a PDF before your changes.</p>
+<p>If it fails unchanged, stop and report the first meaningful error, project
+link, and template version to the project owner. Do not add packages at random
+or change the compiler until the owner confirms the intended setup.</p>
+<h2 id="4-make-and-verify-one-small-edit">4. Make And Verify One Small Edit<a class="heading-anchor" href="#4-make-and-verify-one-small-edit" aria-label="Link to 4. Make And Verify One Small Edit">#</a></h2><ol>
+<li>Edit the named source file, not a generated file.</li>
+<li>Recompile.</li>
+<li>Confirm the intended text appears in the PDF.</li>
+<li>Open <strong>Logs and output files</strong> and resolve the first meaningful error before
+later errors.</li>
 </ol>
-<pre><code class="language-latex">\bibliography{refs}
-\bibliographystyle{ieeetr} % or apa, unsrt, …
+<p>Use LaTeX source for structure rather than manual visual formatting. A minimal
+example is:</p>
+<pre><code class="language-latex">\section{Method}
+\label{sec:method}
+
+The test procedure is described here.
 </code></pre>
-<ol start="3">
-<li>Cite inline: <code>\cite{einstein1905}</code> → Overleaf formats automatically.</li>
+<p>The project template owns its bibliography, acronym, figure, and package
+conventions. Inspect existing examples before adding a new package or file
+layout.</p>
+<h2 id="5-share-only-with-named-collaborators">5. Share Only With Named Collaborators<a class="heading-anchor" href="#5-share-only-with-named-collaborators" aria-label="Link to 5. Share Only With Named Collaborators">#</a></h2><p>Use the project&#39;s <strong>Share</strong> control to add authorized collaborators through
+their own accounts. Do not create a public link unless the information owner
+explicitly approves public access. Confirm access with the collaborator rather
+than sharing your own account.</p>
+<h2 id="6-export-for-review-and-handover">6. Export For Review And Handover<a class="heading-anchor" href="#6-export-for-review-and-handover" aria-label="Link to 6. Export For Review And Handover">#</a></h2><p>Download both artifacts when the project requires a milestone or handover:</p>
+<ol>
+<li>the compiled PDF;</li>
+<li>the source <code>.zip</code>.</li>
 </ol>
-<h3 id="acronyms">5.4 · Acronyms (Recommended)<a class="heading-anchor" href="#acronyms" aria-label="Link to 5.4 · Acronyms (Recommended)">#</a></h3><p>If your copy of the lab template does not already include acronym support, add it once in the preamble (<code>main.tex</code>):</p>
-<pre><code class="language-latex">\usepackage{acronym}
-</code></pre>
-<p>Then define acronyms (for example in a dedicated section or appendix):</p>
-<pre><code class="language-latex">\begin{acronym}
-  \acro{PINN}{Physics-Informed Neural Network}
-  \acro{FEM}{Finite Element Method}
-\end{acronym}
-</code></pre>
-<p>Use in text:</p>
-<ul>
-<li><code>\ac{PINN}</code> on first use (prints full term + acronym)</li>
-<li><code>\ac{PINN}</code> later (prints acronym only)</li>
-<li><code>\acs{PINN}</code> acronym only, <code>\acl{PINN}</code> full text only</li>
+<p>Overleaf exports these separately. Store them in the supervisor-approved
+durable project location and record the date or project revision. A browser
+download folder is not the authoritative archive.</p>
+<h2 id="verification">Verification<a class="heading-anchor" href="#verification" aria-label="Link to Verification">#</a></h2><ul>
+<li>The unchanged assigned project compiled or its baseline failure was reported.</li>
+<li>The edited source produces the intended PDF change.</li>
+<li>The log has no unexplained fatal error.</li>
+<li>Only authorized accounts can access the project.</li>
+<li>The required source and PDF copies exist in approved durable storage.</li>
 </ul>
-<h3 id="math">5.5 · Math<a class="heading-anchor" href="#math" aria-label="Link to 5.5 · Math">#</a></h3><p>Inline <code>$E = mc^2$</code> or display:</p>
-<pre><code class="language-latex">\begin{equation}
-  \mathbf{F} = m\mathbf{a}
-\end{equation}
-</code></pre>
-<p>LaTeX math mode supports everything from subscripts to integrals.</p>
-<hr>
-<h2 id="collaboration">6 · Collaboration<a class="heading-anchor" href="#collaboration" aria-label="Link to 6 · Collaboration">#</a></h2><ul>
-<li>Click <strong>Share</strong> (top-right) → add supervisor’s ETHZ e-mail or generate link.  </li>
-<li>Edits sync live; coloured cursors show who is typing.  </li>
-<li>Use the <strong>Chat</strong> panel or <code>% \todo{...}</code> comments in source for feedback.</li>
+<h2 id="if-blocked">If Blocked<a class="heading-anchor" href="#if-blocked" aria-label="Link to If Blocked">#</a></h2><ul>
+<li><strong>Wrong template or no access:</strong> ask the project owner; do not make an
+unrelated replacement project.</li>
+<li><strong>Copy compiles differently:</strong> a copied project can use a newer TeX Live
+version. Compare project compiler settings with the owner before editing.</li>
+<li><strong>Compilation fails:</strong> inspect the first meaningful error and its source
+line. Restore a known project revision if your last edit caused it.</li>
+<li><strong>Confidentiality is unclear:</strong> stop uploading and obtain an owner decision.</li>
+<li><strong>Handover location is unclear:</strong> keep the project unchanged until the owner
+names the durable destination.</li>
 </ul>
-<hr>
-<h2 id="compile">7 · Compile &amp; Download<a class="heading-anchor" href="#compile" aria-label="Link to 7 · Compile &amp;amp; Download">#</a></h2><ul>
-<li>Overleaf auto-compiles on save; errors appear in the <strong>Logs</strong> panel.  </li>
-<li>Final PDF → <strong>Menu → Download PDF</strong>.  </li>
-<li>Need ZIP of sources? <strong>Menu → Download as ZIP</strong>.</li>
+<h2 id="official-help">Official Help<a class="heading-anchor" href="#official-help" aria-label="Link to Official Help">#</a></h2><ul>
+<li><a href="https://docs.overleaf.com/managing-projects-and-files/copying-a-project" rel="noreferrer" data-external-link>Copying a project</a></li>
+<li><a href="https://docs.overleaf.com/getting-started/recompiling-your-project" rel="noreferrer" data-external-link>Recompiling a project</a></li>
+<li><a href="https://docs.overleaf.com/troubleshooting-and-support/fixing-latex-errors" rel="noreferrer" data-external-link>Fixing LaTeX errors</a></li>
+<li><a href="https://docs.overleaf.com/managing-projects-and-files/downloading-a-project" rel="noreferrer" data-external-link>Downloading source and PDF</a></li>
 </ul>
-<hr>
-<h2 id="tips">8 · Extra Productivity Tips<a class="heading-anchor" href="#tips" aria-label="Link to 8 · Extra Productivity Tips">#</a></h2><div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
-<thead>
-<tr>
-<th>Tip</th>
-<th>How</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>Version history</strong></td>
-<td>Click <strong>History &amp; Revisions</strong> → restore any snapshot.</td>
-</tr>
-<tr>
-<td><strong>Track changes</strong></td>
-<td>Enable <strong>Review → Track Changes</strong> for inline diffs.</td>
-</tr>
-<tr>
-<td><strong>Spell/Grammar</strong></td>
-<td>Toggle spell-checker (ABC✓ icon); language = English.</td>
-</tr>
-<tr>
-<td><strong>Comments</strong></td>
-<td><code>%</code> starts a comment line—ignored in output.</td>
-</tr>
-<tr>
-<td><strong>Snippets</strong></td>
-<td>Type <code>fig</code> + <em>Tab</em> → figure skeleton (built-in snippets).</td>
-</tr>
-<tr>
-<td><strong>Git sync (advanced)</strong></td>
-<td>Overleaf → <strong>Menu → Git</strong> to pull/push via Git CLI.</td>
-</tr>
-</tbody></table></div>
-<p><strong>AI writing assistance:</strong> Use agents for outlines, clarity checks, LaTeX error
-debugging, and question generation. Do not upload unpublished confidential
-manuscripts, sensitive personal data, or restricted collaboration material to
-unapproved AI tools. Mark AI-assisted text for your own review before sharing it
-with a supervisor.</p>
-<hr>
-<p>Happy writing! LaTeX handles the formatting, so you can focus on the content.</p>
-<h2 id="verification-and-recovery">Verification And Recovery<a class="heading-anchor" href="#verification-and-recovery" aria-label="Link to Verification And Recovery">#</a></h2><ul>
-<li>The project compiles from its declared main <code>.tex</code> file.</li>
-<li>References resolve and the log has no unexplained fatal errors.</li>
-<li>The supervisor has access through their own account.</li>
-<li>Source and final PDF can be downloaded for handover.</li>
-</ul>
-<p>If compilation fails, read the first meaningful error and its source line. Do
-not repeatedly add packages or delete generated project content at an agent&#39;s
-suggestion. Restore a known revision through project history when a recent edit
-caused the failure.</p>
-<h2 id="ask-for-help-when">Ask For Help When<a class="heading-anchor" href="#ask-for-help-when" aria-label="Link to Ask For Help When">#</a></h2><p>Template ownership, sharing rights, confidentiality, compilation failures, or
-AI-use disclosure is unclear. Ask the supervisor before changing project
-visibility or uploading protected material.</p>
-<p>Verified: 2026-08-04. Review by: 2027-02-04. Owner: project supervisor.</p>
-<!-- ===================================================================== -->
-</article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/reference/guides/homebrew/">Homebrew On macOS (Optional)</a><a href="/reference/guides/nas_ideal/">Connect To The IDEAL Lab NAS</a><a href="/reference/guides/obsidian/">Obsidian (Optional Handbook View)</a><a href="/reference/guides/project_management/">Student Project Management Cheat Sheet</a><a href="/reference/guides/python_setup/">Python Environments With Miniforge</a><a href="/reference/guides/remote/">Remote Access: Blade, Lab Workstations, And Euler</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current mission to practice, verify, and submit evidence.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 2.0.0 /exact source b93a95b</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+<h2 id="ask-for-help-when">Ask For Help When<a class="heading-anchor" href="#ask-for-help-when" aria-label="Link to Ask For Help When">#</a></h2><p>The assigned project or owner is unclear, baseline compilation fails, a
+collaborator cannot be authorized safely, protected material may have been
+uploaded, or no durable handover location has been assigned. Do not include
+protected manuscript content in a public support request.</p>
+<p>Verified: 2026-09-05. Review by: 2027-03-05. Owner: project supervisor.</p>
+</article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/reference/guides/homebrew/">Homebrew On macOS (Optional)</a><a href="/reference/guides/nas_ideal/">Connect To The IDEAL Lab NAS</a><a href="/reference/guides/obsidian/">Obsidian (Optional Handbook View)</a><a href="/reference/guides/project_management/">Project Planning And Decision Records (Optional)</a><a href="/reference/guides/python_setup/">Python Environments With Miniforge</a><a href="/reference/guides/vscode/">Visual Studio Code Setup And Use</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current mission to practice, verify, and submit evidence.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 2.1.0 /exact source 92b6d71c</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
 `).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
 `).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html>
