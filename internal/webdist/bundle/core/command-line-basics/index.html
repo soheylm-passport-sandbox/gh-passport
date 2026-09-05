@@ -1,0 +1,169 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Use this page when a lesson asks you to run a command and the terms are new. You do not need to memorize shell syntax to complete the Passport."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Terminal And Command Basics | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.BSIZvOzH.css"></head><body data-curriculum-version="2.1.2"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Choose lessons</a><a data-mission-navigation href="/missions/core-orientation/">Sample lesson</a><a href="/reference/">Guides &amp; terms</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Choose lessons</a><a data-mission-navigation href="/missions/core-orientation/">Sample lesson</a><a href="/reference/">Guides &amp; terms</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a lesson or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search lessons, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Lessons</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Public course preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r}. Keep the terminal window that launched the Passport open while you work. The Git lesson later explains how GitHub stores the submitted work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my progress`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`My progress`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current lesson`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / core</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">core</p><h1>Terminal And Command Basics</h1></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/2a3653b84b56fbb2460ac1c78ebdd34825376873/docs/core/command-line-basics.md" rel="noreferrer">View this page on GitHub</a><a href="/passport/">Return to my progress</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><aside class="reference-command-primer"><strong>Before running a command</strong><p>A <strong>command</strong> is a line of text that tells a computer to do one task. You paste it into a <strong>terminal</strong>, the text application used for commands. A <strong>shell</strong> is the part inside that application that reads the command. PowerShell, zsh, and Bash are shells. Open only the application named for your computer below; it starts the correct shell automatically. You do not need to install a separate Bash or zsh application.</p><ul><li><strong>Windows:</strong> press the Windows key, type <strong>PowerShell</strong>, and open the result named PowerShell. Do not use Command Prompt, Git Bash, or WSL for a block labelled PowerShell.</li><li><strong>macOS:</strong> press <strong>Command+Space</strong>, type <strong>Terminal</strong>, and press Return. The Terminal application starts zsh automatically.</li><li><strong>Linux:</strong> open <strong>Terminal</strong> from the applications menu. The Terminal application normally starts Bash automatically.</li></ul><p>The <strong>prompt</strong> is the text beside the blinking cursor. Check the stated computer, paste only the command after its prompt, press Enter, and wait for the prompt to return. For an Euler command, connect to Euler first; the same text window then controls the remote Euler computer.</p><a href="/core/command-line-basics/">How to open a terminal and run a command</a></aside><div class="reference-markdown"><p>Use this page when a lesson asks you to run a command and the terms are new.
+You do not need to memorize shell syntax to complete the Passport.</p>
+<p>An <strong>application</strong>, or app, is a program you open, such as a web browser or
+PowerShell. A <strong>browser</strong> is the app used to open websites. A <strong>file</strong> stores one
+item and a <strong>folder</strong> groups files. To <strong>download</strong> is to copy something from a
+website onto this computer. To <strong>install</strong> is to add an application so this
+computer can run it.</p>
+<h2 id="command-terminal-shell-and-prompt">Command, Terminal, Shell, And Prompt<a class="heading-anchor" href="#command-terminal-shell-and-prompt" aria-label="Link to Command, Terminal, Shell, And Prompt">#</a></h2><p>A <strong>command</strong> is a line of text that tells a computer to do one task. You type
+or paste commands into a <strong>terminal</strong>, the text application used for commands.
+A <strong>shell</strong> is the part inside that application that reads the command and asks
+the computer to run it. You do not need programming experience to follow a
+copy-and-check command in this Passport.</p>
+<p>PowerShell, Bash, and zsh are names of shells. Open only the application named
+for your computer below; it starts the correct shell automatically. Do not
+install a separate Bash or zsh application for this Passport. A Linux terminal
+normally starts Bash, and an SSH connection to Euler starts Bash on Euler in
+the same terminal window.</p>
+<p>When an instruction says <strong>Terminal on your Linux computer</strong>, open the
+application named Terminal; it normally starts Bash for you. When it says
+<strong>after SSH connects to Euler</strong>, first connect as instructed; the same text
+window then controls Euler. Do not search for or install a separate Bash
+application.</p>
+<div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Computer</th>
+<th>Application to open</th>
+<th>Shell used in this guide</th>
+<th>Ready prompt often looks like</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Windows</td>
+<td>PowerShell, or Windows Terminal with a PowerShell tab</td>
+<td>PowerShell</td>
+<td><code>PS C:\Users\Ada&gt;</code></td>
+</tr>
+<tr>
+<td>macOS</td>
+<td>Terminal</td>
+<td>zsh</td>
+<td><code>ada@Mac ~ %</code></td>
+</tr>
+<tr>
+<td>Linux</td>
+<td>Terminal</td>
+<td>Bash</td>
+<td><code>ada@laptop:~$</code></td>
+</tr>
+<tr>
+<td>Euler after SSH login</td>
+<td>The same local terminal window</td>
+<td>Bash running on Euler</td>
+<td><code>[ada@eu-login-xx ~]$</code></td>
+</tr>
+</tbody></table></div>
+<p>The <strong>prompt</strong> is the text beside the blinking cursor when the shell is ready.
+The <strong>command</strong> is the instruction entered after it. The <strong>output</strong> is the text
+printed after the command runs.</p>
+<p>Do not type prompt text such as <code>PS C:\Users\Ada&gt;</code>, <code>%</code>, or <code>$</code>. Passport copy
+buttons copy only the command.</p>
+<p>For example, this is one short PowerShell session:</p>
+<pre><code class="language-text">PS C:\Users\Ada&gt; git --version
+git version 2.51.0
+PS C:\Users\Ada&gt;
+</code></pre>
+<ul>
+<li><code>PS C:\Users\Ada&gt;</code> is the prompt already printed by PowerShell.</li>
+<li><code>git --version</code> is the command you paste and run.</li>
+<li><code>git version 2.51.0</code> is output from Git; your version number may differ.</li>
+<li>the final prompt means the command finished and the shell is ready again.</li>
+</ul>
+<p>A terminal panel inside an editor such as VS Code can also contain a shell, but
+use the standalone application during first setup. Do not paste a command into
+a browser address bar, a Markdown file, an editor&#39;s search box, or a chat.</p>
+<h2 id="try-one-harmless-command">Try One Harmless Command<a class="heading-anchor" href="#try-one-harmless-command" aria-label="Link to Try One Harmless Command">#</a></h2><p>Choose only the command for your computer. It prints <code>terminal-ready</code> and does
+not install, delete, or configure anything.</p>
+<p>Windows PowerShell:</p>
+<pre><code class="language-powershell">Write-Output &quot;terminal-ready&quot;
+</code></pre>
+<p>macOS or Linux Terminal:</p>
+<pre><code class="language-bash">printf &#39;terminal-ready\n&#39;
+</code></pre>
+<p>Expected: the next line is <code>terminal-ready</code>, followed by the prompt again. You
+have now opened the correct application and run one command.</p>
+<h2 id="open-the-correct-application">Open The Correct Application<a class="heading-anchor" href="#open-the-correct-application" aria-label="Link to Open The Correct Application">#</a></h2><h3 id="windows">Windows<a class="heading-anchor" href="#windows" aria-label="Link to Windows">#</a></h3><ol>
+<li>Press the Windows key.</li>
+<li>Type <code>PowerShell</code>.</li>
+<li>Open PowerShell. Windows Terminal is also suitable when its tab says
+PowerShell.</li>
+<li>Wait for a line beginning with <code>PS</code> and a blinking cursor.</li>
+</ol>
+<p>Use the PowerShell window that appears. It provides both the text window and
+the shell for this guide.</p>
+<p>Do not use Command Prompt, Git Bash, or WSL for a block labelled PowerShell.
+Their command languages differ. Installing Git may add an application named
+Git Bash; its presence does not change which application this guide tells you
+to open.</p>
+<h3 id="macos">macOS<a class="heading-anchor" href="#macos" aria-label="Link to macOS">#</a></h3><ol>
+<li>Press Command+Space.</li>
+<li>Type <code>Terminal</code>.</li>
+<li>Press Return.</li>
+<li>Wait for a prompt normally ending with <code>%</code>.</li>
+</ol>
+<p>The default shell is zsh. Terminal starts it automatically; do not search for
+a separate zsh app. Use command blocks labelled for Terminal on your Mac.</p>
+<h3 id="linux">Linux<a class="heading-anchor" href="#linux" aria-label="Link to Linux">#</a></h3><ol>
+<li>Open the applications menu.</li>
+<li>Open the application named Terminal.</li>
+<li>Wait for a prompt, normally ending with <code>$</code>.</li>
+</ol>
+<p>Ubuntu normally starts Bash. Use command blocks labelled for Terminal on your
+Linux computer. Do not
+run an Ubuntu command block on another Linux distribution unless the page says
+it applies there.</p>
+<h2 id="run-one-command">Run One Command<a class="heading-anchor" href="#run-one-command" aria-label="Link to Run One Command">#</a></h2><ol>
+<li>Read the application and computer named above the command.</li>
+<li>Choose <strong>Copy</strong>.</li>
+<li>Click once after the prompt in the named terminal.</li>
+<li>Paste the command.</li>
+<li>Press Enter once.</li>
+<li>Wait until the output stops and the prompt returns.</li>
+<li>Compare the output with <strong>Expected</strong> on the page.</li>
+</ol>
+<p>For a block containing several lines, paste the complete block once. Do not
+also paste the heading, expected result, or explanatory text.</p>
+<h2 id="know-which-computer-receives-the-command">Know Which Computer Receives The Command<a class="heading-anchor" href="#know-which-computer-receives-the-command" aria-label="Link to Know Which Computer Receives The Command">#</a></h2><p><strong>Local</strong> means the computer in front of you. <strong>Remote</strong> means another computer
+reached over a network. A <strong>server</strong> is a remote computer that provides a
+service. SSH, or Secure Shell, is a protected way to open a shell on a remote
+computer. After <code>ssh euler</code>, the same terminal window contains Bash running on
+an Euler server rather than a shell running on your laptop. The prompt changes,
+and the mission labels later commands as Euler / Bash.</p>
+<p>Do not run a command on Euler merely because its terminal window is open. Read
+the machine label on every step.</p>
+<h2 id="paths-and-the-current-folder">Paths And The Current Folder<a class="heading-anchor" href="#paths-and-the-current-folder" aria-label="Link to Paths And The Current Folder">#</a></h2><p>A <strong>path</strong> is the address of a file or folder:</p>
+<ul>
+<li>Windows example: <code>C:\Users\Ada\project</code></li>
+<li>macOS or Linux example: <code>/home/ada/project</code></li>
+</ul>
+<p>The <strong>current folder</strong>, also called the current directory, is the folder where
+an unqualified command acts. A mission that needs a particular folder provides
+an exact command to enter it. Keep that terminal in the stated folder until the
+mission says otherwise.</p>
+<h2 id="stop-a-running-program">Stop A Running Program<a class="heading-anchor" href="#stop-a-running-program" aria-label="Link to Stop A Running Program">#</a></h2><p>When a mission says <strong>press Ctrl+C</strong>, hold the Ctrl key and tap C once. Do not
+type the characters <code>Ctrl+C</code>. This asks the program currently using the
+terminal to stop. Wait for the normal prompt to return before typing another
+command.</p>
+<p>Closing the terminal also stops programs in it, but may hide useful output.
+Prefer Ctrl+C when the mission names it.</p>
+<h2 id="password-prompts">Password Prompts<a class="heading-anchor" href="#password-prompts" aria-label="Link to Password Prompts">#</a></h2><p>Only enter a password when the documented step explicitly expects a prompt
+from the operating system or service you are using. Some shells show no dots or
+characters while a password is typed; this is normal. Never paste a password,
+token, recovery code, or SSH private key into the Passport, Git, an issue, or an
+AI tool.</p>
+<h2 id="if-a-command-fails">If A Command Fails<a class="heading-anchor" href="#if-a-command-fails" aria-label="Link to If A Command Fails">#</a></h2><p>Read the first error and use the <strong>If not</strong> instruction for that step.</p>
+<ul>
+<li><code>command not found</code> means the named program is unavailable in this shell.</li>
+<li><code>No such file or directory</code> usually means the path or current folder is wrong.</li>
+<li><code>Permission denied</code> means access was refused; it does not mean you should add
+administrator rights.</li>
+</ul>
+<p>Do not guess with <code>sudo</code> (Linux administrator mode), <strong>Run as administrator</strong>,
+changed file permissions, or a repeated installation. Run
+<code>gh passport doctor</code> from a new terminal when the mission directs you to it,
+and submit only error text with credentials and private details removed through
+the help path.</p>
+</div></article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/core/">IT And Research Safety Core</a><a href="/core/accounts-and-security/">Accounts And Secrets</a><a href="/labs/first-safe-pr/">Lab: First Safe Pull Request</a><a href="/reference/">Reference And Troubleshooting</a><a href="/reference/euler/euler-tunnel/">Euler Tunnel And VS Code</a><a href="/reference/guides/homebrew/">Homebrew On macOS (Optional)</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current lesson to practise, verify, and submit the result.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practise safely, check the result yourself, and keep a verifiable record on GitHub.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Course version 2.1.2 /published version 2a3653b8</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+`).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
+`).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html>
