@@ -80,8 +80,8 @@ func TestEulerJobReceiptRequiresEveryObservedBoundary(t *testing.T) {
 	valid := map[string]string{
 		"job_id": "123456", "account": "es_fuge", "owner_checked": "yes",
 		"queue_inspected": "yes", "state": "COMPLETED", "exit_code": "0:0",
-		"alloc_cpus": "1", "req_mem": "1Gn", "seff_seen": "yes",
-		"output_marker": "5 squared is 25",
+		"alloc_cpus": "1", "req_mem": "1Gc", "seff_seen": "yes",
+		"python_environment": "yes", "output_marker": "5 squared is 25",
 	}
 	receipt, err := ConfirmLive(mission, valid)
 	if err != nil || receipt["passed"] != true {
@@ -97,5 +97,29 @@ func TestEulerJobReceiptRequiresEveryObservedBoundary(t *testing.T) {
 		if err != nil || receipt["passed"] == true {
 			t.Fatalf("invalid %s passed: %#v, %v", key, receipt, err)
 		}
+	}
+}
+
+func TestEulerPythonReceiptRequiresExactSafeMarker(t *testing.T) {
+	mission := Mission{Verification: Verification{LocalVerifier: "euler_python", RequiresLiveConfirmation: true}}
+	receipt, err := ConfirmLive(mission, map[string]string{"environment_marker": "euler-python-env-ok"})
+	if err != nil || receipt["passed"] != true {
+		t.Fatalf("valid Euler Python marker = %#v, %v", receipt, err)
+	}
+	receipt, err = ConfirmLive(mission, map[string]string{"environment_marker": "almost-ok"})
+	if err != nil || receipt["passed"] == true {
+		t.Fatalf("invalid Euler Python marker passed = %#v, %v", receipt, err)
+	}
+}
+
+func TestAIConfigurationRequiresTheObservedReadOnlyResult(t *testing.T) {
+	mission := Mission{Verification: Verification{LocalVerifier: "ai_configuration", RequiresLiveConfirmation: true}}
+	receipt, err := ConfirmLive(mission, map[string]string{"agent_response_seen": "yes"})
+	if err != nil || receipt["passed"] != true {
+		t.Fatalf("observed read-only result = %#v, %v", receipt, err)
+	}
+	receipt, err = ConfirmLive(mission, map[string]string{"agent_response_seen": "no"})
+	if err != nil || receipt["passed"] == true {
+		t.Fatalf("unobserved read-only result passed = %#v, %v", receipt, err)
 	}
 }

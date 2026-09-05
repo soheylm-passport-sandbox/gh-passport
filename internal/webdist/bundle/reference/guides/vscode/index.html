@@ -1,295 +1,200 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Prerequisites: browser access to the project repository. Install only the extensions required by that project and your selected passport tracks."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Visual Studio Code Setup And Daily Use | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.BhM0eQ4y.css"></head><body data-curriculum-version="2.0.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / reference</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">reference</p><h1>Visual Studio Code Setup And Daily Use</h1><p>Prerequisites: browser access to the project repository. Install only the extensions required by that project and your selected passport tracks.</p></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/b93a95b/onboarding_IT_guides/vscode.md" rel="noreferrer">View exact source</a><a href="/passport/">Return to my dashboard</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><blockquote>
-<p><strong>Goal:</strong> install VS Code, select the project environment, run repository
-checks, use Git, and review AI-assisted changes without losing control.</p>
-</blockquote>
-<p><strong>Prerequisites:</strong> browser access to the project repository. Install only the
-extensions required by that project and your selected passport tracks.</p>
-<p><strong>Execution context:</strong> installation and local settings run on your laptop. A
-VS Code terminal runs wherever the VS Code status bar says you are connected;
-verify before pasting local, Blade, or Euler commands.</p>
-<hr>
-<h2 id="table-of-contents">Table of Contents<a class="heading-anchor" href="#table-of-contents" aria-label="Link to Table of Contents">#</a></h2><ol>
-<li><a href="#why-vs-code">Why VS Code?</a>  </li>
-<li><a href="#install-vs-code">Install VS Code</a>  </li>
-<li><a href="#essential-extensions">Essential Extensions</a>  </li>
-<li><a href="#conda-environments-in-vs-code">Conda Environments in VS Code</a>  </li>
-<li><a href="#running-code">Running Code</a>  <ul>
-<li><a href="#python-scripts">Python scripts</a>  </li>
-<li><a href="#jupyter-notebooks">Jupyter notebooks</a></li>
-</ul>
-</li>
-<li><a href="#linting--formatting-with-ruff">Linting &amp; Formatting with Ruff</a>  </li>
-<li><a href="#git-collaboration-inside-vs-code">Git Collaboration inside VS Code</a>  </li>
-<li><a href="#ai-coding-tools">AI Coding Tools</a></li>
-<li><a href="#productivity-tips">Productivity Tips</a>  </li>
-<li><a href="#troubleshooting">Troubleshooting</a></li>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Goal: open the correct project, use its declared tools and Python environment, and distinguish local work from an Euler Remote-SSH session."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Visual Studio Code Setup And Use | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.GCBP_7Qu.css"></head><body data-curriculum-version="2.1.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / reference</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">reference</p><h1>Visual Studio Code Setup And Use</h1><p>Goal: open the correct project, use its declared tools and Python environment, and distinguish local work from an Euler Remote-SSH session.</p></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/92b6d71c34be6661602449e40db04b36a4d61524/onboarding_IT_guides/vscode.md" rel="noreferrer">View exact source</a><a href="/passport/">Return to my dashboard</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><p><strong>Goal:</strong> open the correct project, use its declared tools and Python
+environment, and distinguish local work from an Euler Remote-SSH session.</p>
+<p><strong>Prerequisites:</strong> start the local Passport first. Complete the Git, Python,
+AI, or Euler prerequisite mission before using the corresponding VS Code
+feature.</p>
+<p><strong>Execution context:</strong> VS Code runs on your own computer unless the lower-left
+status bar explicitly names a remote SSH host. Commands run in the integrated
+terminal shown by the current window.</p>
+<p>Use this guide when a Passport mission or project asks you to work in VS Code.
+Installing VS Code does not install Git, Python, Conda, an AI service, or Euler
+access. Complete those Passport missions in the order assigned.</p>
+<h2 id="1-install-vs-code">1. Install VS Code<a class="heading-anchor" href="#1-install-vs-code" aria-label="Link to 1. Install VS Code">#</a></h2><p><strong>Where:</strong> your computer.</p>
+<ol>
+<li>Open <a href="https://code.visualstudio.com/download" rel="noreferrer" data-external-link>https://code.visualstudio.com/download</a>.</li>
+<li>Choose the installer for your operating system and processor.</li>
+<li>Run the installer from the official download.</li>
+<li>On Windows, enable <strong>Add to PATH</strong> when the installer offers it.</li>
+<li>Open VS Code and select <strong>Help &gt; About</strong>.</li>
 </ol>
-<hr>
-<h2 id="why-vs-code">Why VS Code?<a class="heading-anchor" href="#why-vs-code" aria-label="Link to Why VS Code?">#</a></h2><ul>
-<li><strong>Lightweight + extensible</strong> — starts fast, scales with extensions.  </li>
-<li><strong>Single-window workflow</strong> — editor, terminal, debugger, Git, Jupyter.  </li>
-<li><strong>Cross-platform</strong> — identical on Windows, macOS, Linux, and via Remote-SSH.</li>
-</ul>
-<hr>
-<h2 id="install-vs-code">Install VS Code<a class="heading-anchor" href="#install-vs-code" aria-label="Link to Install VS Code">#</a></h2><ol>
-<li>Download from <a href="https://code.visualstudio.com/" rel="noreferrer" data-external-link>https://code.visualstudio.com/</a>  </li>
-<li>Run the installer. On Windows, keep defaults <strong>and</strong> tick “Add to PATH” / “Open with Code”.  </li>
-<li>Launch VS Code → <strong>Help → About</strong> to confirm version.</li>
+<p><strong>Expected:</strong> the About window names Visual Studio Code and shows a version.</p>
+<p>If an ETH-managed computer blocks installation, stop and request the approved
+software installation. Do not bypass device management or use an unknown
+download mirror.</p>
+<h2 id="2-open-the-exact-project-folder">2. Open The Exact Project Folder<a class="heading-anchor" href="#2-open-the-exact-project-folder" aria-label="Link to 2. Open The Exact Project Folder">#</a></h2><ol>
+<li>In VS Code, select <strong>File &gt; Open Folder</strong>.</li>
+<li>Select the repository folder named by the Passport or project README.</li>
+<li>Select <strong>Terminal &gt; New Terminal</strong>.</li>
+<li>Run:</li>
 </ol>
-<hr>
-<h2 id="essential-extensions">Essential Extensions<a class="heading-anchor" href="#essential-extensions" aria-label="Link to Essential Extensions">#</a></h2><div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
-<thead>
-<tr>
-<th>Extension</th>
-<th>Publisher</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>Python</strong></td>
-<td>Microsoft</td>
-<td>Language support, debugger, Jupyter kernels</td>
-</tr>
-<tr>
-<td><strong>Jupyter</strong></td>
-<td>Microsoft</td>
-<td>Run <code>.ipynb</code> notebooks inside VS Code</td>
-</tr>
-<tr>
-<td><strong>Ruff</strong></td>
-<td>Astral Software</td>
-<td>Python linter / formatter</td>
-</tr>
-<tr>
-<td><strong>GitHub Pull Requests and Issues</strong></td>
-<td>GitHub</td>
-<td>PR review and issues</td>
-</tr>
-<tr>
-<td><strong>GitHub Copilot</strong></td>
-<td>GitHub</td>
-<td>Recommended no-cost student agent route after GitHub Education verification</td>
-</tr>
-<tr>
-<td><strong>Remote Development</strong></td>
-<td>Microsoft</td>
-<td>Remote-SSH for Euler / lab machines</td>
-</tr>
-</tbody></table></div>
-<blockquote>
-<p><strong>Install:</strong> Extensions sidebar (⌘/Ctrl + Shift + X) → search → <strong>Install</strong>.</p>
-</blockquote>
-<hr>
-<h2 id="conda-environments-in-vs-code">Conda Environments in VS Code<a class="heading-anchor" href="#conda-environments-in-vs-code" aria-label="Link to Conda Environments in VS Code">#</a></h2><ol>
-<li><strong>Create / activate env (if needed)</strong>  <pre><code class="language-bash">conda create -n lab python=3.11
-conda activate lab
+<pre><code class="language-bash">git rev-parse --show-toplevel
+git status --short --branch
 </code></pre>
-</li>
-<li><strong>Select interpreter</strong>  <ul>
-<li>Click Python version in status-bar (bottom-right), <strong>or</strong>  </li>
-<li>Command Palette -&gt; <strong>Python: Select Interpreter</strong> -&gt; choose the project&#39;s <code>lab</code> environment.</li>
+<p><strong>Expected:</strong> the first command prints the folder you intended to open. The
+second prints the expected branch and no unexplained changes.</p>
+<p>If Git says the folder is not a repository, or the path is not the expected
+project, close the VS Code window and open the correct folder. Do not initialize
+a new repository inside a clone.</p>
+<h2 id="3-check-where-the-terminal-runs">3. Check Where The Terminal Runs<a class="heading-anchor" href="#3-check-where-the-terminal-runs" aria-label="Link to 3. Check Where The Terminal Runs">#</a></h2><p>Before copying a command, read both:</p>
+<ul>
+<li>the lower-left VS Code status bar;</li>
+<li>the terminal prompt and current path.</li>
 </ul>
-</li>
-</ol>
-<p>Interpreter choice is stored per workspace in <code>.vscode/settings.json</code>.</p>
-<hr>
-<h2 id="running-code">Running Code<a class="heading-anchor" href="#running-code" aria-label="Link to Running Code">#</a></h2><h3 id="python-scripts">Python scripts<a class="heading-anchor" href="#python-scripts" aria-label="Link to Python scripts">#</a></h3><ul>
-<li>Create <code>hello.py</code> → <code>print(&quot;Hello lab!&quot;)</code>  </li>
-<li>Press <strong>Run ▶</strong> (top-right) or <strong>F5</strong> to debug.  </li>
-<li>Output appears in <strong>Terminal</strong> / <strong>Debug Console</strong>.</li>
-</ul>
-<h3 id="jupyter-notebooks">Jupyter notebooks<a class="heading-anchor" href="#jupyter-notebooks" aria-label="Link to Jupyter notebooks">#</a></h3><ol>
-<li><code>File → New File… → Jupyter Notebook</code> (or save <code>*.ipynb</code>).  </li>
-<li>Top-right <strong>kernel picker</strong> → select <code>lab</code>.  </li>
-<li>Add cells → <strong>Run ▷</strong> — Markdown &amp; rich outputs render inline.</li>
-</ol>
-<hr>
-<h2 id="linting--formatting-with-ruff">Linting &amp; Formatting with Ruff<a class="heading-anchor" href="#linting--formatting-with-ruff" aria-label="Link to Linting &amp;amp; Formatting with Ruff">#</a></h2><ol>
-<li><p>Install <strong>Ruff</strong> extension.  </p>
-</li>
-<li><p>Use the repository&#39;s existing <code>pyproject.toml</code>. For a new project, start with
-the IDEAL Lab template rather than inventing settings. A current minimal form
-is:</p>
-<pre><code class="language-toml">[tool.ruff]
-line-length = 100
-
-[tool.ruff.lint]
-select = [&quot;E4&quot;, &quot;E7&quot;, &quot;E9&quot;, &quot;F&quot;, &quot;I&quot;]
-</code></pre>
-</li>
-<li><p>Issues appear live in the editor &amp; <strong>Problems</strong> panel.  </p>
-</li>
-<li><p>Format file: <strong>Shift + Alt + F</strong> (or right-click → <em>Format Document</em>).</p>
-</li>
-</ol>
-<hr>
-<h2 id="git-collaboration-inside-vs-code">Git Collaboration inside VS Code<a class="heading-anchor" href="#git-collaboration-inside-vs-code" aria-label="Link to Git Collaboration inside VS Code">#</a></h2><p><em>Full sign-in instructions live in <a href="/reference/guides/git_workflow/"><code>git_workflow.md</code></a>.</em></p>
-<h3 id="daily-loop">Daily loop<a class="heading-anchor" href="#daily-loop" aria-label="Link to Daily loop">#</a></h3><div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
-<thead>
-<tr>
-<th>Step</th>
-<th>VS Code UI</th>
-<th>Shortcut</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Pull latest</td>
-<td>↧ icon / <strong>Git: Pull</strong></td>
-<td>⌘/Ctrl + Shift + P</td>
-</tr>
-<tr>
-<td>Create branch</td>
-<td>Status-bar → branch → <strong>New</strong></td>
-<td>—</td>
-</tr>
-<tr>
-<td>Stage → commit</td>
-<td><strong>Source Control</strong> sidebar</td>
-<td><strong>Ctrl + Enter</strong></td>
-</tr>
-<tr>
-<td>Push</td>
-<td>↥ icon / <strong>Git: Push</strong></td>
-<td>—</td>
-</tr>
-<tr>
-<td>PR</td>
-<td>Toast → <strong>Create Pull Request</strong></td>
-<td>—</td>
-</tr>
-</tbody></table></div>
-<h3 id="example-integrate-two-feature-branches">Example — integrate two feature branches<a class="heading-anchor" href="#example-integrate-two-feature-branches" aria-label="Link to Example — integrate two feature branches">#</a></h3><ol>
-<li><strong>Sync <code>main</code></strong> — checkout <code>main</code> → <strong>Pull</strong>.  </li>
-<li><strong>New branch</strong> <code>integrate-wing-fuselage</code> → <strong>Push</strong>.  </li>
-<li><strong>Merge <code>wing</code></strong> into integration branch → resolve conflicts → <strong>Push</strong>.  </li>
-<li><strong>Merge <code>fuselage</code></strong> (same).  </li>
-<li>Both developers test on <code>integrate-wing-fuselage</code>; repeat as needed.</li>
-</ol>
-<hr>
-<h2 id="ai-coding-tools">AI Coding Tools<a class="heading-anchor" href="#ai-coding-tools" aria-label="Link to AI Coding Tools">#</a></h2><p>Complete the manual FirstSteps change before delegating an edit. The canonical
-<a href="/reference/ai/">AI coding-agent guide</a> explains the model,
-provider/gateway, harness, interface, permissions, cost, and data boundaries.</p>
-<p>The recommended student route is
-<a href="/reference/ai/vscode-copilot-student/">GitHub Copilot Student</a>, a
-personal no-cost GitHub Education benefit. It is not an ETH-purchased GitHub
-Copilot subscription. Zed with personal OpenRouter is an optional paid route,
-not a passport requirement.</p>
-<p>VS Code can host several AI workflows:</p>
+<p>A local window runs commands on your computer. A window marked <strong>SSH</strong> runs
+commands on the remote host. The mission always names the required machine and
+shell. Do not run a PowerShell command at an Euler Bash prompt, or an Euler
+command on your laptop.</p>
+<h2 id="4-install-only-required-extensions">4. Install Only Required Extensions<a class="heading-anchor" href="#4-install-only-required-extensions" aria-label="Link to 4. Install Only Required Extensions">#</a></h2><p>Open Extensions with <strong>Ctrl+Shift+X</strong> on Windows/Linux or
+<strong>Command+Shift+X</strong> on macOS. Search by name, check the publisher, and install
+only what the project or current mission requires.</p>
 <div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
 <thead>
 <tr>
-<th>Tool</th>
-<th>Best use</th>
-<th>Repo instruction file</th>
+<th>Need</th>
+<th>Extension</th>
+<th>Publisher</th>
 </tr>
 </thead>
 <tbody><tr>
+<td>Python files</td>
+<td>Python</td>
+<td>Microsoft</td>
+</tr>
+<tr>
+<td>Jupyter notebooks</td>
+<td>Jupyter</td>
+<td>Microsoft</td>
+</tr>
+<tr>
+<td>Repository configured for Ruff</td>
+<td>Ruff</td>
+<td>Astral Software</td>
+</tr>
+<tr>
+<td>Optional PR view in VS Code</td>
+<td>GitHub Pull Requests</td>
+<td>GitHub</td>
+</tr>
+<tr>
+<td>Assigned Copilot route</td>
 <td>GitHub Copilot</td>
-<td>Inline suggestions, chat, PR summaries and reviews</td>
-<td><code>.github/copilot-instructions.md</code>, <code>AGENTS.md</code></td>
+<td>GitHub</td>
 </tr>
 <tr>
-<td>Codex</td>
-<td>Larger agentic edits, reviews, repo exploration</td>
-<td><code>AGENTS.md</code></td>
-</tr>
-<tr>
-<td>Claude Code</td>
-<td>Planning, codebase exploration, careful refactors</td>
-<td><code>CLAUDE.md</code> importing <code>AGENTS.md</code></td>
-</tr>
-<tr>
-<td>Cursor</td>
-<td>Agentic editing inside Cursor&#39;s VS Code-like editor</td>
-<td><code>.cursor/rules/</code> and <code>AGENTS.md</code></td>
+<td>Assigned Euler tunnel route</td>
+<td>Remote - SSH</td>
+<td>Microsoft</td>
 </tr>
 </tbody></table></div>
-<p>Use the same operating loop for all of them:</p>
+<p>An extension can read or modify workspace files. Do not install an extension
+only because a pop-up recommends it.</p>
+<h2 id="5-select-the-project-python-environment">5. Select The Project Python Environment<a class="heading-anchor" href="#5-select-the-project-python-environment" aria-label="Link to 5. Select The Project Python Environment">#</a></h2><p>Complete <strong>Create A Reproducible Python Environment</strong> first. Then:</p>
 <ol>
-<li>Ask for an explanation before edits.</li>
-<li>Give constraints: files to inspect, files not to touch, no new dependencies unless approved.</li>
-<li>Ask for tests or smoke checks before implementation.</li>
-<li>Review the diff yourself.</li>
-<li>Run verification before accepting the result.</li>
+<li>Open the Command Palette with <strong>Ctrl+Shift+P</strong> or
+<strong>Command+Shift+P</strong>.</li>
+<li>Run <strong>Python: Select Interpreter</strong>.</li>
+<li>Select the Python executable inside this repository&#39;s <code>.venv</code> folder.</li>
+<li>Open a new integrated terminal.</li>
+<li>Run:</li>
 </ol>
-<p>Prefer one-time approval for an understood tool or terminal command. Do not
-enable broad automatic approval merely to avoid prompts.</p>
-<p>Good prompt:</p>
-<pre><code class="language-text">Goal: add a test for the CSV loader edge case.
-Context: inspect src/data_loader.py and tests/test_data_loader.py.
-Constraints: do not change public function names; do not add dependencies.
-Verification: run pytest tests/test_data_loader.py.
-Output: explain the failing behavior, add the test, then summarize the diff.
+<pre><code class="language-bash">python -c &quot;import sys; print(sys.executable); print(sys.version)&quot;
+python -m pip --version
 </code></pre>
-<p>Never paste passwords, tokens, private keys, recovery codes, or strictly
-confidential data into an AI tool. Internal, confidential, personal, partner,
-or unpublished material requires approval for the exact tool, account mode,
-project, and data classification. Follow the
-<a href="/policy/data-and-ai/">Data And AI Policy</a>.</p>
-<hr>
-<h2 id="productivity-tips">Productivity Tips<a class="heading-anchor" href="#productivity-tips" aria-label="Link to Productivity Tips">#</a></h2><ul>
-<li><strong>Command Palette:</strong> ⌘/Ctrl + Shift + P — launch anything.  </li>
-<li><strong>Multi-cursor editing:</strong> Alt + Click (Option + Click on macOS).  </li>
-<li><strong>Integrated Terminal:</strong> ⌃/Ctrl + ` — inherits active Conda env.  </li>
-<li><strong>Remote-SSH:</strong> use the canonical <a href="/reference/euler/euler-tunnel/">Euler tunnel</a>
-to work on an allocated compute node. Do not open the NAS root as a source-code
-workspace.</li>
-<li>Customize settings: <strong>File → Preferences → Settings / Keyboard Shortcuts</strong>.</li>
+<p><strong>Expected:</strong> both paths are inside the same project <code>.venv</code> folder.</p>
+<p>For a notebook, use its kernel picker and select that same environment. Do not
+choose Conda <code>base</code>, a global Python, or an environment from another project.</p>
+<h2 id="6-run-the-project39s-own-check">6. Run The Project&#39;s Own Check<a class="heading-anchor" href="#6-run-the-project39s-own-check" aria-label="Link to 6. Run The Project&amp;#39;s Own Check">#</a></h2><p>Read <code>README.md</code>, <code>CONTRIBUTING.md</code>, and <code>pyproject.toml</code> when present. Run the
+smallest test or check that the repository documents. Examples such as
+<code>pytest</code>, Ruff, or a build command are valid only when the repository actually
+declares them.</p>
+<p>Record the command and its real result. A green editor decoration is not a
+substitute for the documented terminal check.</p>
+<h2 id="7-use-git-without-hiding-the-state">7. Use Git Without Hiding The State<a class="heading-anchor" href="#7-use-git-without-hiding-the-state" aria-label="Link to 7. Use Git Without Hiding The State">#</a></h2><p>Complete the manual Git and pull-request missions before relying on VS Code&#39;s
+Source Control buttons. The canonical sequence remains:</p>
+<pre><code class="language-text">git status --short --branch
+git diff
+git add &lt;reviewed-path&gt;
+git diff --cached
+git commit -m &quot;type(scope): concise summary&quot;
+git push
+</code></pre>
+<p>This block shows the order; it is not a copy-paste command. Replace
+<code>&lt;reviewed-path&gt;</code>, the commit type, scope, and summary with the values from your
+current task.
+The <a href="/reference/guides/git_workflow/">Git workflow</a> explains branches, Conventional Commits,
+draft pull requests, and safe recovery.</p>
+<p>After completing that workflow once, you may use the Source Control panel for
+the same operations. Always inspect <strong>Changes</strong> before staging and <strong>Staged
+Changes</strong> before committing. Do not press Sync, Pull, Force Push, or Merge to
+clear an error you do not understand.</p>
+<h2 id="8-add-ai-only-after-the-manual-baseline">8. Add AI Only After The Manual Baseline<a class="heading-anchor" href="#8-add-ai-only-after-the-manual-baseline" aria-label="Link to 8. Add AI Only After The Manual Baseline">#</a></h2><p>Complete the manual pull-request mission first, then follow the assigned
+<a href="/reference/ai/">AI tool setup</a>. The supported no-cost student
+route is <a href="/reference/ai/vscode-copilot-student/">VS Code with GitHub Copilot Student</a>.
+Zed with a personal OpenRouter account is optional and may cost money.</p>
+<p>Before accepting an agent change:</p>
+<ol>
+<li>state the task and files it may touch;</li>
+<li>prohibit secrets, protected data, unapproved dependencies, and publishing;</li>
+<li>inspect commands before approval;</li>
+<li>inspect <code>git diff</code> yourself;</li>
+<li>run the repository&#39;s check yourself.</li>
+</ol>
+<p>An agent does not prove that a command succeeded by saying that it ran it.</p>
+<h2 id="9-use-euler-remote-ssh-only-after-terminal-access-works">9. Use Euler Remote-SSH Only After Terminal Access Works<a class="heading-anchor" href="#9-use-euler-remote-ssh-only-after-terminal-access-works" aria-label="Link to 9. Use Euler Remote-SSH Only After Terminal Access Works">#</a></h2><p>Do not debug VS Code and SSH at the same time.</p>
+<ol>
+<li>Complete <strong>Establish Safe Euler SSH Access</strong> until the key-only alias prints
+<code>config-ok</code>.</li>
+<li>If a compute-node editor is required, complete the
+<a href="/reference/euler/euler-tunnel/">Euler tunnel procedure</a> until its
+terminal-only test succeeds.</li>
+<li>Install <strong>Remote - SSH</strong> from Microsoft.</li>
+<li>Run <strong>Remote-SSH: Connect to Host</strong> and select <code>euler-tunnel</code>.</li>
+<li>Enter the local SSH-key passphrase if prompted. Do not expect an ETH
+password during the key-only connection.</li>
+<li>After the remote window opens, run:</li>
+</ol>
+<pre><code class="language-bash">hostname
+printf &#39;SLURM_JOB_ID=%s\n&#39; &quot;$SLURM_JOB_ID&quot;
+</code></pre>
+<p><strong>Expected:</strong> the hostname is an allocated compute node and <code>SLURM_JOB_ID</code> is
+not empty. A first connection may install VS Code Server under
+<code>~/.vscode-server</code>; this is expected.</p>
+<p>If the terminal-only SSH or tunnel test fails, close VS Code and repair that
+test first. Stopping <code>euler-tunnel</code> releases its allocation.</p>
+<h2 id="finish-a-work-session">Finish A Work Session<a class="heading-anchor" href="#finish-a-work-session" aria-label="Link to Finish A Work Session">#</a></h2><ol>
+<li>Save intended files.</li>
+<li>Run the project&#39;s verification command.</li>
+<li>Run <code>git status --short --branch</code> and account for every listed path.</li>
+<li>Push only reviewed commits when the project workflow requires it.</li>
+<li>Close remote VS Code windows and stop temporary Euler tunnels or jobs.</li>
+</ol>
+<h2 id="common-failures">Common Failures<a class="heading-anchor" href="#common-failures" aria-label="Link to Common Failures">#</a></h2><ul>
+<li><strong>Wrong folder:</strong> reopen the repository root printed by the Passport.</li>
+<li><strong>Wrong machine:</strong> close the remote window or connect to the named host, then
+recheck the status bar and prompt.</li>
+<li><strong>Wrong Python:</strong> activate/reselect the project <code>.venv</code>, open a new terminal,
+and print <code>sys.executable</code> again.</li>
+<li><strong>Git buttons disabled:</strong> verify that <code>git status</code> works in the opened folder.</li>
+<li><strong>Unexpected files:</strong> stop, inspect <code>git diff</code>, and do not stage them.</li>
+<li><strong>Agent makes broad edits:</strong> stop the agent, inspect the diff, and discard
+only changes you have identified as unwanted.</li>
+<li><strong>Remote-SSH asks for an ETH password:</strong> close VS Code and rerun the exact
+key-only terminal test from the SSH mission.</li>
 </ul>
-<hr>
-<h2 id="troubleshooting">Troubleshooting<a class="heading-anchor" href="#troubleshooting" aria-label="Link to Troubleshooting">#</a></h2><div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
-<thead>
-<tr>
-<th>Symptom</th>
-<th>Fix</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Conda env not listed</td>
-<td>Activate env once in terminal → restart VS Code <strong>or</strong> run <strong>Python: Select Interpreter (Refresh)</strong>.</td>
-</tr>
-<tr>
-<td>Wrong notebook kernel</td>
-<td>Top-right kernel picker → choose correct env.</td>
-</tr>
-<tr>
-<td>Linting silent</td>
-<td>Check <strong>Settings → Python › Linting: Enabled</strong> &amp; Ruff extension status.</td>
-</tr>
-<tr>
-<td>Git commands greyed</td>
-<td>Ensure folder is a Git repo (<code>git status</code> works).</td>
-</tr>
-<tr>
-<td>AI tool silent</td>
-<td>Confirm sign-in, network access, extension status, and model entitlement.</td>
-</tr>
-<tr>
-<td>Agent makes huge edits</td>
-<td>Stop, revert the unwanted diff, and ask for a smaller patch with explicit files.</td>
-</tr>
-</tbody></table></div>
-<p>For Euler connection symptoms, use
-<a href="/reference/euler/troubleshooting/">Euler troubleshooting</a>. A first
-Remote-SSH connection installing VS Code Server under <code>~/.vscode-server</code> is
-normal.</p>
 <h2 id="verification">Verification<a class="heading-anchor" href="#verification" aria-label="Link to Verification">#</a></h2><ul>
-<li><strong>Help -&gt; About</strong> reports a VS Code version.</li>
-<li>The status bar identifies the expected local or remote context.</li>
-<li><code>python --version</code> and <code>python -m pip --version</code> identify the project
-environment.</li>
-<li>Repository lint/tests run from the integrated terminal.</li>
-<li>Source Control shows only intended changes.</li>
+<li>VS Code opens the intended repository root.</li>
+<li>The status bar and terminal identify the intended machine.</li>
+<li>The selected Python and pip belong to the project environment when relevant.</li>
+<li>The documented project check passes in the integrated terminal.</li>
+<li>Git shows only intended changes.</li>
+<li>AI and Remote-SSH were configured only after their prerequisite missions.</li>
 </ul>
-<h2 id="common-failure-and-safe-recovery">Common Failure And Safe Recovery<a class="heading-anchor" href="#common-failure-and-safe-recovery" aria-label="Link to Common Failure And Safe Recovery">#</a></h2><p>If VS Code uses the wrong machine, interpreter, or Git repository, stop running
-commands. Read the status bar and terminal prompt, close the remote window if
-necessary, reopen the intended folder, reselect the interpreter, and verify
-again. Do not solve context problems by reinstalling environments globally.</p>
-<h2 id="ask-for-help-when">Ask For Help When<a class="heading-anchor" href="#ask-for-help-when" aria-label="Link to Ask For Help When">#</a></h2><p>The repository requires undocumented extensions/settings, Remote-SSH works in a
-terminal but not VS Code, or an extension requests access beyond the project.</p>
-<hr>
-<p>Verified: 2026-08-26. Review by: 2026-11-26. Owner: lab software maintainer.</p>
-<!-- ===================================================================== -->
-</article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/reference/guides/git_workflow/">Git And GitHub Workflow</a><a href="/reference/guides/homebrew/">Homebrew On macOS (Optional)</a><a href="/reference/guides/hpc_euler/">Euler HPC Guide</a><a href="/reference/guides/nas_ideal/">Connect To The IDEAL Lab NAS</a><a href="/reference/guides/obsidian/">Obsidian (Optional Handbook View)</a><a href="/reference/guides/python_setup/">Python Environments With Miniforge</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current mission to practice, verify, and submit evidence.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 2.0.0 /exact source b93a95b</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+<h2 id="ask-for-help-when">Ask For Help When<a class="heading-anchor" href="#ask-for-help-when" aria-label="Link to Ask For Help When">#</a></h2><p>The required extension cannot be installed on a managed computer, the project
+instructions and selected interpreter disagree, the window connects to the
+wrong remote host, or recovery could discard unexplained Git changes. Share
+the VS Code version, operating system, named failed step, and sanitized error;
+never share a credential or private key.</p>
+<p>Verified: 2026-09-05. Review by: 2026-12-05. Owner: lab software maintainer.</p>
+</article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/reference/ai/">AI Coding Agents</a><a href="/reference/ai/vscode-copilot-student/">VS Code And GitHub Copilot Student</a><a href="/reference/euler/euler-tunnel/">Euler Tunnel And VS Code</a><a href="/reference/guides/git_workflow/">Git And GitHub Workflow</a><a href="/reference/guides/python_setup/">Python Environments With Miniforge</a><a href="/reference/guides/remote/">Remote Access: Blade, Lab Workstations, And Euler</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current mission to practice, verify, and submit evidence.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 2.1.0 /exact source 92b6d71c</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
 `).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
 `).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html>

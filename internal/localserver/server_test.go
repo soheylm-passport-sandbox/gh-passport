@@ -9,7 +9,9 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"testing/fstest"
@@ -41,6 +43,29 @@ type agentProjectRunner struct {
 	changed string
 }
 
+type pythonProjectRunner struct {
+	changed   string
+	testsPass bool
+}
+
+type aiConfigurationRunner struct {
+	root   string
+	status string
+	remote string
+}
+
+type sshConfigRunner struct {
+	output string
+	err    error
+}
+
+func (runner sshConfigRunner) Run(_ context.Context, _ string, name string, args ...string) ([]byte, error) {
+	if name == "ssh" && strings.Join(args, " ") == "-G euler" {
+		return []byte(runner.output), runner.err
+	}
+	return nil, errors.New("unexpected command")
+}
+
 func (runner agentProjectRunner) Run(_ context.Context, _ string, name string, args ...string) ([]byte, error) {
 	if strings.Join(append([]string{name}, args...), " ") == "git diff --name-only HEAD -- workspace/agent_task" {
 		return []byte(runner.changed), nil
@@ -48,13 +73,43 @@ func (runner agentProjectRunner) Run(_ context.Context, _ string, name string, a
 	return nil, errors.New("unexpected command")
 }
 
+func (runner pythonProjectRunner) Run(_ context.Context, _ string, name string, args ...string) ([]byte, error) {
+	command := strings.Join(args, " ")
+	if filepath.Base(name) == "python" && command == "-m unittest discover -s tests -v" {
+		if runner.testsPass {
+			return []byte("OK\n"), nil
+		}
+		return nil, errors.New("tests failed")
+	}
+	if name == "git" && command == "diff --name-only HEAD -- workspace/python_project" {
+		return []byte(runner.changed), nil
+	}
+	return nil, errors.New("unexpected command: " + name + " " + command)
+}
+
+func (runner aiConfigurationRunner) Run(_ context.Context, _ string, name string, args ...string) ([]byte, error) {
+	command := strings.Join(append([]string{name}, args...), " ")
+	switch command {
+	case "git rev-parse --show-toplevel":
+		return []byte(runner.root + "\n"), nil
+	case "git branch --show-current":
+		return []byte("practice/student\n"), nil
+	case "git remote -v":
+		return []byte(runner.remote), nil
+	case "git status --porcelain=v1 --untracked-files=all -- workspace/agent_task .vscode .zed .env .env.local":
+		return []byte(runner.status), nil
+	default:
+		return nil, errors.New("unexpected command: " + command)
+	}
+}
+
 func (runner gitEnvironmentRunner) Run(_ context.Context, _ string, name string, args ...string) ([]byte, error) {
 	command := strings.Join(append([]string{name}, args...), " ")
 	switch command {
 	case "git --version":
 		return []byte("git version 2.50.0\n"), nil
-	case "gh auth status --hostname github.com":
-		return []byte("Logged in\n"), nil
+	case "gh api user --jq .login":
+		return []byte("student\n"), nil
 	case "git config --get user.name":
 		return []byte(runner.name + "\n"), nil
 	case "git config --get user.email":
@@ -89,6 +144,289 @@ func TestGitEnvironmentUsesPracticeAndRejectsManagedTransportIdentity(t *testing
 	checks = server.verifyGitEnvironment()
 	if checks["identity_name"] || checks["identity_email"] {
 		t.Fatalf("managed transport identity satisfied the Git mission: %#v", checks)
+	}
+	server.repository.Passport.GitHubUser = "another-student"
+	server.runner = gitEnvironmentRunner{root: practice, name: "Student Name", email: "student@example.org"}
+	if checks = server.verifyGitEnvironment(); checks["github_auth"] {
+		t.Fatalf("wrong active GitHub account satisfied the Git mission: %#v", checks)
+	}
+}
+
+func TestPythonEnvironmentRequiresIgnoredCondaPrefixAndItsInterpreter(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("test fixture uses a POSIX executable")
+	}
+	parent := t.TempDir()
+	practice := filepath.Join(parent, "practice")
+	python := filepath.Join(practice, ".venv", "bin", "python")
+	pythonTarget := filepath.Join(practice, ".venv", "bin", "python3.11")
+	history := filepath.Join(practice, ".venv", "conda-meta", "history")
+	for _, directory := range []string{filepath.Dir(python), filepath.Dir(history)} {
+		if err := os.MkdirAll(directory, 0o700); err != nil {
+			t.Fatal(err)
+		}
+	}
+	interpreterProbe := "#!/bin/sh\ncase \"$*\" in *\"sys.version_info[:2] == (3, 11)\"*) exit 0;; *) exit 1;; esac\n"
+	if err := os.WriteFile(pythonTarget, []byte(interpreterProbe), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink("python3.11", python); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(history, []byte("# conda environment history\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(practice, ".gitignore"), []byte(".venv/\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(practice, "environment.yml"), []byte("channels:\n  - conda-forge\n  - nodefaults\ndependencies:\n  - python=3.11\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	command := exec.Command("git", "init", "--quiet", practice)
+	if output, err := command.CombinedOutput(); err != nil {
+		t.Fatalf("git init: %v: %s", err, output)
+	}
+	command = exec.Command("git", "-C", practice, "add", "environment.yml")
+	if output, err := command.CombinedOutput(); err != nil {
+		t.Fatalf("git add environment definition: %v: %s", err, output)
+	}
+	command = exec.Command(
+		"git", "-C", practice,
+		"-c", "user.name=Passport Test",
+		"-c", "user.email=passport@example.invalid",
+		"commit", "--quiet", "-m", "test: add environment definition",
+	)
+	if output, err := command.CombinedOutput(); err != nil {
+		t.Fatalf("git commit environment definition: %v: %s", err, output)
+	}
+	server := &Server{
+		repository: passportrepo.Repository{Root: filepath.Join(parent, ".transport")},
+		runner:     passportrepo.ExecRunner{},
+	}
+	checks := server.verifyPythonEnvironment()
+	for name, passed := range checks {
+		if !passed {
+			t.Fatalf("valid Conda environment check %s failed: %#v", name, checks)
+		}
+	}
+	if err := os.WriteFile(filepath.Join(practice, "environment.yml"), []byte("channels:\n  - defaults\ndependencies:\n  - python=3.12\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if checks = server.verifyPythonEnvironment(); checks["environment_definition"] {
+		t.Fatalf("changed environment definition passed: %#v", checks)
+	}
+	if err := os.WriteFile(filepath.Join(practice, "environment.yml"), []byte("channels:\n  - conda-forge\n  - nodefaults\ndependencies:\n  - python=3.11\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Remove(history); err != nil {
+		t.Fatal(err)
+	}
+	checks = server.verifyPythonEnvironment()
+	if checks["conda_environment"] {
+		t.Fatalf("environment without conda-meta/history passed: %#v", checks)
+	}
+	if err := os.Rename(filepath.Join(practice, ".venv"), filepath.Join(practice, ".venv-real")); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(".venv-real", filepath.Join(practice, ".venv")); err != nil {
+		t.Fatal(err)
+	}
+	checks = server.verifyPythonEnvironment()
+	if checks["venv_exists"] || checks["venv_interpreter"] {
+		t.Fatalf("symbolic-link environment passed: %#v", checks)
+	}
+}
+
+func TestPythonProjectVerifierMatchesTheTaughtChange(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("test fixture uses a POSIX environment path")
+	}
+	parent := t.TempDir()
+	practice := filepath.Join(parent, "practice")
+	project := filepath.Join(practice, "workspace", "python_project")
+	if err := os.MkdirAll(filepath.Join(project, "tests"), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	source := "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError('positive')\n    return cpus * memory_per_cpu_gib\n"
+	testSource := "from passport_example import total_memory_gib\n\ndef test_multiple_cpus():\n    self.assertEqual(total_memory_gib(4, 3), 12)\n"
+	if err := os.WriteFile(filepath.Join(project, "passport_example.py"), []byte(source), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(project, "tests", "test_passport_example.py"), []byte(testSource), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	server := &Server{repository: passportrepo.Repository{Root: filepath.Join(parent, ".transport")}}
+	server.runner = pythonProjectRunner{
+		testsPass: true,
+		changed: "workspace/python_project/tests/test_passport_example.py\n" +
+			"workspace/python_project/passport_example.py\n",
+	}
+	checks := server.verifyPythonProject()
+	for name, passed := range checks {
+		if !passed {
+			t.Fatalf("valid Python project check %s failed: %#v", name, checks)
+		}
+	}
+	server.runner = pythonProjectRunner{testsPass: true, changed: "workspace/python_project/passport_example.py\nnotes.txt\n"}
+	checks = server.verifyPythonProject()
+	if checks["bounded_diff"] {
+		t.Fatalf("extra changed path passed: %#v", checks)
+	}
+}
+
+func TestAIConfigurationVerifierScopesCleanlinessToAgentPaths(t *testing.T) {
+	parent := t.TempDir()
+	practice := filepath.Join(parent, "practice")
+	server := &Server{
+		repository: passportrepo.Repository{
+			Root:     filepath.Join(parent, ".transport"),
+			Passport: passportrepo.Passport{GitHubUser: "student"},
+		},
+	}
+	server.runner = aiConfigurationRunner{root: practice, remote: "origin\thttps://github.com/student/passport-exercises.git (fetch)\n"}
+	checks := server.verifyAIConfiguration()
+	for name, passed := range checks {
+		if !passed {
+			t.Fatalf("valid AI configuration check %s failed: %#v", name, checks)
+		}
+	}
+	server.runner = aiConfigurationRunner{root: practice, status: "?? .env\n", remote: "origin\thttps://github.com/student/passport-exercises.git (fetch)\n"}
+	checks = server.verifyAIConfiguration()
+	if checks["practice_paths_clean"] {
+		t.Fatalf("credential path passed scoped clean check: %#v", checks)
+	}
+}
+
+func TestSSHConfigVerifierKeepsAWorkingPrivateIdentityAndDisablesFallback(t *testing.T) {
+	valid := "hostname euler.ethz.ch\nport 22\nuser student\nidentityfile /home/student/.ssh/id_ed25519_euler\nidentitiesonly yes\npreferredauthentications publickey\npasswordauthentication no\nkbdinteractiveauthentication no\nforwardagent no\n"
+	server := &Server{repository: passportrepo.Repository{Root: t.TempDir()}, runner: sshConfigRunner{output: valid}}
+	checks := server.verifySSHConfig()
+	for name, passed := range checks {
+		if !passed {
+			t.Fatalf("valid SSH config check %s failed: %#v", name, checks)
+		}
+	}
+
+	unsafe := strings.Replace(valid, "passwordauthentication no", "passwordauthentication yes", 1)
+	server.runner = sshConfigRunner{output: unsafe}
+	checks = server.verifySSHConfig()
+	if checks["password_disabled"] {
+		t.Fatalf("password fallback passed: %#v", checks)
+	}
+
+	proxied := valid + "proxycommand ssh stale-tunnel connect\n"
+	server.runner = sshConfigRunner{output: proxied}
+	checks = server.verifySSHConfig()
+	if checks["direct_connection"] {
+		t.Fatalf("stale proxy command passed: %#v", checks)
+	}
+
+	existing := strings.Replace(valid, "id_ed25519_euler\nidentitiesonly yes", "existing_euler_key\nidentitiesonly no", 1)
+	server.runner = sshConfigRunner{output: existing}
+	checks = server.verifySSHConfig()
+	for name, passed := range checks {
+		if !passed {
+			t.Fatalf("working existing identity check %s failed: %#v", name, checks)
+		}
+	}
+
+	publicKey := strings.Replace(valid, "id_ed25519_euler\n", "id_ed25519_euler.pub\n", 1)
+	server.runner = sshConfigRunner{output: publicKey}
+	checks = server.verifySSHConfig()
+	if checks["private_identity_selection"] {
+		t.Fatalf("public key accepted as IdentityFile: %#v", checks)
+	}
+
+	noIdentity := strings.Replace(valid, "/home/student/.ssh/id_ed25519_euler", "none", 1)
+	server.runner = sshConfigRunner{output: noIdentity}
+	checks = server.verifySSHConfig()
+	if checks["private_identity_selection"] {
+		t.Fatalf("IdentityFile none passed: %#v", checks)
+	}
+}
+
+func TestSlurmArrayVerifierRequiresExactLimitAndTwoUniqueLogs(t *testing.T) {
+	parent := t.TempDir()
+	directory := filepath.Join(parent, "practice", "workspace", "slurm")
+	if err := os.MkdirAll(directory, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(directory, "array_job.slurm.txt")
+	valid := "#!/bin/bash\n#SBATCH --account=es_fuge\n#SBATCH --array=0-9%1\n#SBATCH --time=00:10:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem-per-cpu=1G\n#SBATCH --output=logs/%x_%A_%a.out\n#SBATCH --error=logs/%x_%A_%a.err\n"
+	if err := os.WriteFile(path, []byte(valid), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	server := &Server{repository: passportrepo.Repository{Root: filepath.Join(parent, ".transport")}}
+	checks := server.verifySlurmArray()
+	for name, passed := range checks {
+		if !passed {
+			t.Fatalf("valid Slurm array check %s failed: %#v", name, checks)
+		}
+	}
+	if err := os.WriteFile(path, []byte(strings.Replace(valid, "%x_%A_%a.err", "%x_%j.err", 1)), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if server.verifySlurmArray()["error_unique"] {
+		t.Fatal("non-unique array error log passed")
+	}
+}
+
+func TestGPUVerifierAcceptsDocumentedModelsAndRejectsExtraMemory(t *testing.T) {
+	parent := t.TempDir()
+	directory := filepath.Join(parent, "practice", "workspace", "slurm")
+	if err := os.MkdirAll(directory, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(directory, "gpu_job.slurm.txt")
+	server := &Server{repository: passportrepo.Repository{Root: filepath.Join(parent, ".transport")}}
+	for _, model := range []string{"rtx_4090", "rtx_3090", "pro_6000"} {
+		valid := "#!/bin/bash\n#SBATCH --account=es_fuge\n#SBATCH --gpus=" + model + ":1\n#SBATCH --cpus-per-task=4\n#SBATCH --mem-per-cpu=3G\n#SBATCH --time=00:30:00\n#SBATCH --output=logs/%x_%j.out\n#SBATCH --error=logs/%x_%j.err\n"
+		if err := os.WriteFile(path, []byte(valid), 0o600); err != nil {
+			t.Fatal(err)
+		}
+		checks := server.verifyGPUScript()
+		for name, passed := range checks {
+			if !passed {
+				t.Fatalf("valid %s GPU check %s failed: %#v", model, name, checks)
+			}
+		}
+		if err := os.WriteFile(path, []byte(valid+"#SBATCH --mem=12G\n"), 0o600); err != nil {
+			t.Fatal(err)
+		}
+		if server.verifyGPUScript()["memory_limit"] {
+			t.Fatalf("%s GPU script with two memory modes passed", model)
+		}
+	}
+}
+
+func TestHandoverVerifierRequiresFutureDeletionAndKnownLimitation(t *testing.T) {
+	parent := t.TempDir()
+	directory := filepath.Join(parent, "practice", "workspace", "handover")
+	if err := os.MkdirAll(directory, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(directory, "project-handover.md")
+	future := time.Now().UTC().AddDate(0, 0, 30).Format("2006-01-02")
+	valid := "Current owner: Student One\nAuthorized successor: Student Two\nRevision: " + strings.Repeat("a", 40) + "\nAuthoritative location: P:/Supervisor/student\nTemporary locations to remove: D:/student/tmp\nEnvironment definition: environment.yml\nVerification command: python -m unittest\nExpected result: OK\nAccess owner: Supervisor\nRetention owner: Supervisor\nTemporary-copy deletion date: " + future + "\nUnresolved risk or limitation: One synthetic limitation.\n"
+	if err := os.WriteFile(path, []byte(valid), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	server := &Server{repository: passportrepo.Repository{Root: filepath.Join(parent, ".transport")}}
+	checks := server.verifyHandover()
+	for name, passed := range checks {
+		if !passed {
+			t.Fatalf("valid handover check %s failed: %#v", name, checks)
+		}
+	}
+	yesterday := time.Now().UTC().AddDate(0, 0, -1).Format("2006-01-02")
+	invalid := strings.Replace(valid, future, yesterday, 1)
+	invalid = strings.Replace(invalid, "Unresolved risk or limitation: One synthetic limitation.\n", "", 1)
+	if err := os.WriteFile(path, []byte(invalid), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	checks = server.verifyHandover()
+	if checks["retention"] || checks["known_limitations"] {
+		t.Fatalf("invalid handover passed: %#v", checks)
 	}
 }
 

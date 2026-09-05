@@ -1,6 +1,7 @@
 package localserver
 
 import (
+	"bytes"
 	"context"
 	"crypto/rand"
 	"crypto/sha256"
@@ -726,9 +727,13 @@ func (server *Server) verifyGitEnvironment() map[string]bool {
 	root := server.practiceRoot()
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
+	activeUser, activeUserErr := server.runner.Run(ctx, root, "gh", "api", "user", "--jq", ".login")
 	checks := map[string]bool{
-		"git":         server.fixedCommandOK(root, 10*time.Second, "git", "--version"),
-		"github_auth": server.fixedCommandOK(root, 15*time.Second, "gh", "auth", "status", "--hostname", "github.com"),
+		"git": server.fixedCommandOK(root, 10*time.Second, "git", "--version"),
+		"github_auth": activeUserErr == nil && strings.EqualFold(
+			strings.TrimSpace(string(activeUser)),
+			server.repository.Passport.GitHubUser,
+		),
 	}
 	name, nameErr := server.runner.Run(ctx, root, "git", "config", "--get", "user.name")
 	email, emailErr := server.runner.Run(ctx, root, "git", "config", "--get", "user.email")
@@ -746,10 +751,90 @@ func (server *Server) verifyGitEnvironment() map[string]bool {
 	return checks
 }
 
+func (server *Server) verifyAIConfiguration() map[string]bool {
+	root := server.practiceRoot()
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	top, topErr := server.runner.Run(ctx, root, "git", "rev-parse", "--show-toplevel")
+	branch, branchErr := server.runner.Run(ctx, root, "git", "branch", "--show-current")
+	remotes, remotesErr := server.runner.Run(ctx, root, "git", "remote", "-v")
+	status, statusErr := server.runner.Run(
+		ctx,
+		root,
+		"git",
+		"status",
+		"--porcelain=v1",
+		"--untracked-files=all",
+		"--",
+		"workspace/agent_task",
+		".vscode",
+		".zed",
+		".env",
+		".env.local",
+	)
+	expectedBranch := "practice/" + strings.ToLower(server.repository.Passport.GitHubUser)
+	return map[string]bool{
+		"practice_repository":       topErr == nil && samePath(strings.TrimSpace(string(top)), root),
+		"practice_branch":           branchErr == nil && strings.TrimSpace(string(branch)) == expectedBranch,
+		"practice_paths_clean":      statusErr == nil && strings.TrimSpace(string(status)) == "",
+		"remote_credentials_absent": remotesErr == nil && remotesContainNoCredentials(string(remotes)),
+	}
+}
+
+func (server *Server) verifySSHConfig() map[string]bool {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	output, err := server.runner.Run(ctx, server.repository.Root, "ssh", "-G", "euler")
+	values := map[string]string{}
+	identities := []string{}
+	for _, line := range strings.Split(string(output), "\n") {
+		fields := strings.Fields(line)
+		if len(fields) < 2 {
+			continue
+		}
+		key := strings.ToLower(fields[0])
+		if key == "identityfile" {
+			identities = append(identities, strings.Join(fields[1:], " "))
+			continue
+		}
+		if _, exists := values[key]; !exists {
+			values[key] = strings.Join(fields[1:], " ")
+		}
+	}
+	privateIdentitySelection := len(identities) > 0
+	for _, rawIdentity := range identities {
+		identity := strings.ToLower(filepath.ToSlash(strings.TrimSpace(rawIdentity)))
+		if identity == "none" || strings.HasSuffix(identity, ".pub") {
+			privateIdentitySelection = false
+		}
+	}
+	user := values["user"]
+	identitiesOnly := values["identitiesonly"]
+	return map[string]bool{
+		"hostname":                   err == nil && strings.EqualFold(values["hostname"], "euler.ethz.ch"),
+		"direct_connection":          values["port"] == "22" && values["proxycommand"] == "" && values["proxyjump"] == "",
+		"short_username":             regexp.MustCompile(`^[A-Za-z0-9._-]+$`).MatchString(user),
+		"private_identity_selection": privateIdentitySelection,
+		"identity_policy_resolved":   strings.EqualFold(identitiesOnly, "yes") || strings.EqualFold(identitiesOnly, "no"),
+		"publickey_only":             strings.EqualFold(values["preferredauthentications"], "publickey"),
+		"password_disabled":          strings.EqualFold(values["passwordauthentication"], "no"),
+		"interactive_disabled":       strings.EqualFold(values["kbdinteractiveauthentication"], "no"),
+		"forward_agent_disabled":     strings.EqualFold(values["forwardagent"], "no"),
+	}
+}
+
 func (server *Server) localReceipt(mission missionverify.Mission, input map[string]string) (map[string]any, error) {
 	receipt, err := missionverify.ConfirmLive(mission, input)
 	if err != nil || receipt["passed"] != true {
 		return receipt, err
+	}
+	liveChecks := map[string]bool{}
+	if mission.Verification.RequiresLiveConfirmation {
+		var ok bool
+		liveChecks, ok = receipt["checks"].(map[string]bool)
+		if !ok || len(liveChecks) == 0 {
+			return receipt, errors.New("live confirmation result is incomplete")
+		}
 	}
 	verifier := mission.Verification.LocalVerifier
 	checks := map[string]bool{}
@@ -757,6 +842,8 @@ func (server *Server) localReceipt(mission missionverify.Mission, input map[stri
 	case "route_resume":
 		state, err := server.store.Load()
 		checks["resumed_session"] = err == nil && state.LaunchCount >= 2
+	case "ssh_config":
+		checks = server.verifySSHConfig()
 	case "git_environment":
 		checks = server.verifyGitEnvironment()
 	case "git_practice":
@@ -774,16 +861,21 @@ func (server *Server) localReceipt(mission missionverify.Mission, input map[stri
 		checks = server.verifyPythonEnvironment()
 	case "python_project":
 		checks = server.verifyPythonProject()
+	case "ai_configuration":
+		checks = server.verifyAIConfiguration()
 	case "ai_project":
 		checks = server.verifyAgentProject()
 	case "slurm_script":
-		checks = server.verifyTextFixture("workspace/slurm/array_job.slurm.txt", []string{"--array=0-9%1", "%A_%a"}, []string{"--array=0-99"})
+		checks = server.verifySlurmArray()
 	case "gpu_script":
-		checks = server.verifyTextFixture("workspace/slurm/gpu_job.slurm.txt", []string{"--account=es_fuge", "--gpus=rtx_4090:1", "--cpus-per-task=16", "--mem-per-cpu=3G"}, []string{"--partition="})
+		checks = server.verifyGPUScript()
 	case "handover_document":
 		checks = server.verifyHandover()
 	default:
 		return server.validateReceiptChecks(mission, receipt)
+	}
+	for name, value := range liveChecks {
+		checks[name] = value
 	}
 	passed := len(checks) > 0
 	for _, value := range checks {
@@ -880,23 +972,87 @@ func (server *Server) fixedCommandOutput(directory string, timeout time.Duration
 func (server *Server) practicePython() (string, string) {
 	root := server.practiceRoot()
 	if runtime.GOOS == "windows" {
-		return root, filepath.Join(root, ".venv", "Scripts", "python.exe")
+		return root, filepath.Join(root, ".venv", "python.exe")
 	}
 	return root, filepath.Join(root, ".venv", "bin", "python")
 }
 
 func (server *Server) verifyPythonEnvironment() map[string]bool {
 	root, python := server.practicePython()
-	info, err := os.Lstat(python)
-	ignored := server.fixedCommandOK(root, 5*time.Second, "git", "check-ignore", "--quiet", ".venv")
-	interpreter := err == nil && info.Mode().IsRegular() && server.fixedCommandOK(root, 10*time.Second, python, "-I", "-c", "import sys; assert '.venv' in sys.executable")
-	return map[string]bool{"venv_exists": err == nil && info.Mode().IsRegular(), "venv_ignored": ignored, "venv_interpreter": interpreter}
+	environmentPath := filepath.Join(root, ".venv")
+	environmentInfo, environmentErr := os.Lstat(environmentPath)
+	realEnvironment := environmentErr == nil && environmentInfo.IsDir() && environmentInfo.Mode()&os.ModeSymlink == 0
+	// Conda commonly installs bin/python as a relative symlink to python3.x.
+	// Follow that final link, then verify the interpreter from inside the env.
+	info, err := os.Stat(python)
+	condaHistory, condaErr := os.Lstat(filepath.Join(root, ".venv", "conda-meta", "history"))
+	definitionPath := filepath.Join(root, "environment.yml")
+	definitionInfo, definitionErr := os.Lstat(definitionPath)
+	definition, definitionReadErr := os.ReadFile(definitionPath)
+	definitionTracked := server.fixedCommandOK(root, 5*time.Second, "git", "ls-files", "--error-unmatch", "environment.yml")
+	definitionUnchanged := server.fixedCommandOK(root, 5*time.Second, "git", "diff", "--quiet", "HEAD", "--", "environment.yml")
+	ignored := server.fixedCommandOK(root, 5*time.Second, "git", "check-ignore", "--quiet", ".venv/conda-meta/history")
+	interpreter := realEnvironment && err == nil && info.Mode().IsRegular() && server.fixedCommandOK(
+		root,
+		10*time.Second,
+		python,
+		"-I",
+		"-c",
+		"import pathlib, sys; assert pathlib.Path(sys.prefix).resolve() == pathlib.Path(sys.argv[1]).resolve(); assert sys.version_info[:2] == (3, 11)",
+		environmentPath,
+	)
+	return map[string]bool{
+		"venv_exists":       realEnvironment && err == nil && info.Mode().IsRegular(),
+		"venv_ignored":      ignored,
+		"venv_interpreter":  interpreter,
+		"conda_environment": condaErr == nil && condaHistory.Mode().IsRegular(),
+		"environment_definition": definitionErr == nil && definitionInfo.Mode().IsRegular() &&
+			definitionInfo.Mode()&os.ModeSymlink == 0 && definitionReadErr == nil && len(definition) < 64<<10 &&
+			bytes.Contains(definition, []byte("conda-forge")) && bytes.Contains(definition, []byte("nodefaults")) &&
+			bytes.Contains(definition, []byte("python=3.11")) &&
+			definitionTracked && definitionUnchanged,
+	}
 }
 
 func (server *Server) verifyPythonProject() map[string]bool {
 	root, python := server.practicePython()
 	project := filepath.Join(root, "workspace", "python_project")
-	return map[string]bool{"visible_tests": server.fixedCommandOK(project, 20*time.Second, python, "-I", "-m", "unittest", "discover", "-s", "tests", "-v")}
+	source, sourceErr := os.ReadFile(filepath.Join(project, "passport_example.py"))
+	tests, testsErr := os.ReadFile(filepath.Join(project, "tests", "test_passport_example.py"))
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	changed, changedErr := server.runner.Run(
+		ctx,
+		root,
+		"git",
+		"diff",
+		"--name-only",
+		"HEAD",
+		"--",
+		"workspace/python_project",
+	)
+	changedPaths := strings.Fields(strings.TrimSpace(string(changed)))
+	allowedChanges := len(changedPaths) == 2 && onlyExpectedPaths(
+		string(changed),
+		map[string]bool{
+			"workspace/python_project/passport_example.py":            true,
+			"workspace/python_project/tests/test_passport_example.py": true,
+		},
+	)
+	sourceText := string(source)
+	testText := string(tests)
+	return map[string]bool{
+		"visible_tests": server.fixedCommandOK(project, 20*time.Second, python, "-m", "unittest", "discover", "-s", "tests", "-v"),
+		"regression_test": testsErr == nil && len(tests) < 100_000 && strings.Contains(
+			testText,
+			"self.assertEqual(total_memory_gib(4, 3), 12)",
+		),
+		"correct_behavior": sourceErr == nil && len(source) < 100_000 && regexp.MustCompile(
+			`(?m)^\s*return cpus \* memory_per_cpu_gib\s*$`,
+		).MatchString(sourceText),
+		"input_validation": sourceErr == nil && strings.Contains(sourceText, "if cpus < 1 or memory_per_cpu_gib < 1:") && strings.Contains(sourceText, "raise ValueError"),
+		"bounded_diff":     changedErr == nil && allowedChanges,
+	}
 }
 
 func (server *Server) verifyAgentProject() map[string]bool {
@@ -922,31 +1078,125 @@ func (server *Server) verifyAgentProject() map[string]bool {
 	}
 }
 
-func (server *Server) verifyTextFixture(relative string, required, forbidden []string) map[string]bool {
+func slurmDirectives(text string) map[string]string {
+	directives := map[string]string{}
+	for _, line := range strings.Split(text, "\n") {
+		line = strings.TrimSpace(line)
+		if !strings.HasPrefix(line, "#SBATCH ") {
+			continue
+		}
+		raw := strings.TrimSpace(strings.TrimPrefix(line, "#SBATCH "))
+		if key, value, found := strings.Cut(raw, "="); found {
+			directives[strings.TrimSpace(key)] = strings.TrimSpace(value)
+			continue
+		}
+		parts := strings.Fields(raw)
+		if len(parts) == 1 {
+			directives[parts[0]] = ""
+		} else if len(parts) > 1 {
+			directives[parts[0]] = strings.Join(parts[1:], " ")
+		}
+	}
+	return directives
+}
+
+func (server *Server) readPracticeFixture(relative string) ([]byte, map[string]string, bool) {
 	content, err := os.ReadFile(filepath.Join(server.practiceRoot(), filepath.FromSlash(relative)))
-	text := string(content)
-	checks := map[string]bool{"bounded_file": err == nil && len(content) < 100_000}
-	for index, value := range required {
-		checks[fmt.Sprintf("required_%d", index+1)] = strings.Contains(text, value)
+	return content, slurmDirectives(string(content)), err == nil && len(content) < 100_000
+}
+
+func logTemplateHas(value string, placeholders ...string) bool {
+	if value == "" {
+		return false
 	}
-	for index, value := range forbidden {
-		checks[fmt.Sprintf("forbidden_%d_absent", index+1)] = !strings.Contains(text, value)
+	for _, placeholder := range placeholders {
+		if !strings.Contains(value, placeholder) {
+			return false
+		}
 	}
-	return checks
+	return true
+}
+
+func (server *Server) verifySlurmArray() map[string]bool {
+	_, directives, bounded := server.readPracticeFixture("workspace/slurm/array_job.slurm.txt")
+	return map[string]bool{
+		"bounded_file":   bounded,
+		"account":        directives["--account"] == "es_fuge",
+		"array_exact":    directives["--array"] == "0-9%1",
+		"output_unique":  logTemplateHas(directives["--output"], "%A", "%a"),
+		"error_unique":   logTemplateHas(directives["--error"], "%A", "%a"),
+		"safe_resources": directives["--time"] == "00:10:00" && directives["--cpus-per-task"] == "1" && strings.EqualFold(directives["--mem-per-cpu"], "1G"),
+	}
+}
+
+func slurmSeconds(value string) (int, bool) {
+	match := regexp.MustCompile(`^(?:(\d+)-)?(\d{1,2}):(\d{2}):(\d{2})$`).FindStringSubmatch(value)
+	if match == nil {
+		return 0, false
+	}
+	numbers := make([]int, 4)
+	for index, raw := range match[1:] {
+		if raw == "" {
+			continue
+		}
+		parsed, err := strconv.Atoi(raw)
+		if err != nil {
+			return 0, false
+		}
+		numbers[index] = parsed
+	}
+	if numbers[2] >= 60 || numbers[3] >= 60 {
+		return 0, false
+	}
+	return numbers[0]*86400 + numbers[1]*3600 + numbers[2]*60 + numbers[3], true
+}
+
+func (server *Server) verifyGPUScript() map[string]bool {
+	_, directives, bounded := server.readPracticeFixture("workspace/slurm/gpu_job.slurm.txt")
+	gpuOK := regexp.MustCompile(`^(?:rtx_4090|rtx_3090|pro_6000):1$`).MatchString(directives["--gpus"])
+	cpus, cpuErr := strconv.Atoi(directives["--cpus-per-task"])
+	memoryMatch := regexp.MustCompile(`(?i)^([1-9]\d*)G$`).FindStringSubmatch(directives["--mem-per-cpu"])
+	memoryOK := false
+	if cpuErr == nil && 1 <= cpus && cpus <= 16 && memoryMatch != nil {
+		memory, err := strconv.Atoi(memoryMatch[1])
+		memoryOK = err == nil && cpus*memory <= 64
+	}
+	seconds, timeOK := slurmSeconds(directives["--time"])
+	_, hasMem := directives["--mem"]
+	return map[string]bool{
+		"bounded_file": bounded,
+		"account":      directives["--account"] == "es_fuge",
+		"gpu_model":    gpuOK,
+		"no_partition": func() bool { _, exists := directives["--partition"]; return !exists }(),
+		"cpu_limit":    cpuErr == nil && 1 <= cpus && cpus <= 16,
+		"memory_limit": memoryOK && !hasMem,
+		"time_limit":   timeOK && seconds > 0 && seconds <= 4*3600,
+		"output_log":   logTemplateHas(directives["--output"], "%x", "%j"),
+		"error_log":    logTemplateHas(directives["--error"], "%x", "%j"),
+	}
 }
 
 func (server *Server) verifyHandover() map[string]bool {
 	content, err := os.ReadFile(filepath.Join(server.practiceRoot(), "workspace", "handover", "project-handover.md"))
 	text := string(content)
 	has := func(pattern string) bool { return regexp.MustCompile(pattern).MatchString(text) }
+	dateMatch := regexp.MustCompile(`(?m)^Temporary-copy deletion date:\s*(20\d{2}-[01]\d-[0-3]\d)\s*$`).FindStringSubmatch(text)
+	futureDate := false
+	if dateMatch != nil {
+		if deletionDate, parseErr := time.Parse("2006-01-02", dateMatch[1]); parseErr == nil {
+			today := time.Now().UTC().Truncate(24 * time.Hour)
+			futureDate = deletionDate.After(today)
+		}
+	}
 	return map[string]bool{
-		"owners":          err == nil && has(`(?m)^Current owner:\s*\S.+$`) && has(`(?m)^Authorized successor:\s*\S.+$`),
-		"code_revision":   has(`(?m)^Revision:\s*[a-f0-9]{40}\s*$`),
-		"data_locations":  has(`(?m)^Authoritative location:\s*\S.+$`) && has(`(?m)^Temporary locations to remove:\s*\S.+$`),
-		"environment":     has(`(?m)^Environment definition:\s*\S.+$`),
-		"reproduction":    has(`(?m)^Verification command:\s*\S.+$`) && has(`(?m)^Expected result:\s*\S.+$`),
-		"retention":       has(`(?m)^Access owner:\s*\S.+$`) && has(`(?m)^Retention owner:\s*\S.+$`) && has(`(?m)^Temporary-copy deletion date:\s*20\d{2}-[01]\d-[0-3]\d\s*$`),
-		"no_placeholders": err == nil && !strings.Contains(text, "REPLACE_ME") && !strings.Contains(text, "REPLACE_WITH_"),
+		"owners":            err == nil && has(`(?m)^Current owner:\s*\S.+$`) && has(`(?m)^Authorized successor:\s*\S.+$`),
+		"code_revision":     has(`(?m)^Revision:\s*[a-f0-9]{40}\s*$`),
+		"data_locations":    has(`(?m)^Authoritative location:\s*\S.+$`) && has(`(?m)^Temporary locations to remove:\s*\S.+$`),
+		"environment":       has(`(?m)^Environment definition:\s*\S.+$`),
+		"reproduction":      has(`(?m)^Verification command:\s*\S.+$`) && has(`(?m)^Expected result:\s*\S.+$`),
+		"retention":         has(`(?m)^Access owner:\s*\S.+$`) && has(`(?m)^Retention owner:\s*\S.+$`) && futureDate,
+		"known_limitations": has(`(?m)^Unresolved risk or limitation:\s*\S.+$`),
+		"no_placeholders":   err == nil && !strings.Contains(text, "REPLACE_ME") && !strings.Contains(text, "REPLACE_WITH_"),
 	}
 }
 

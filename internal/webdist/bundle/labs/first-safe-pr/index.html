@@ -1,139 +1,103 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Goal: create a small, understandable, tested pull request without editing main directly."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Lab: First Safe Pull Request | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.BhM0eQ4y.css"></head><body data-curriculum-version="2.0.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / labs</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">labs</p><h1>Lab: First Safe Pull Request</h1><p>Goal: create a small, understandable, tested pull request without editing main directly.</p></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/b93a95b/docs/labs/first-safe-pr.md" rel="noreferrer">View exact source</a><a href="/passport/">Return to my dashboard</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><p><strong>Goal:</strong> create a small, understandable, tested pull request without editing
-<code>main</code> directly.</p>
-<p><strong>Prerequisites:</strong> Git installed, GitHub access working, and the
-<a href="/handbook/tracks/code-contributor/">Code Contributor Track</a> started.</p>
-<p><strong>Execution context:</strong> run Git commands on your <strong>local computer</strong>. They work in
-Windows PowerShell, macOS zsh, and Linux Bash. Do not run them on Euler unless
-the project intentionally lives there.</p>
-<h2 id="1-clone-the-training-repository">1. Clone The Training Repository<a class="heading-anchor" href="#1-clone-the-training-repository" aria-label="Link to 1. Clone The Training Repository">#</a></h2><p>Use the route matching the authentication method you configured. Do not try all
-routes or put a token in a URL.</p>
-<h3 id="vs-code-oauth-route">VS Code OAuth route<a class="heading-anchor" href="#vs-code-oauth-route" aria-label="Link to VS Code OAuth route">#</a></h3><ol>
-<li>Open the Command Palette and select <strong>Git: Clone</strong>.</li>
-<li>Enter <code>https://github.com/IDEALLab/FirstSteps.git</code>.</li>
-<li>Complete the browser sign-in if requested, choose a local parent folder, and
-open the cloned repository.</li>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Goal: make one small manual change, review it, commit it, and open a draft pull request without changing main."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Lab: First Safe Pull Request | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.GCBP_7Qu.css"></head><body data-curriculum-version="2.1.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / labs</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">labs</p><h1>Lab: First Safe Pull Request</h1><p>Goal: make one small manual change, review it, commit it, and open a draft pull request without changing main.</p></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/92b6d71c34be6661602449e40db04b36a4d61524/docs/labs/first-safe-pr.md" rel="noreferrer">View exact source</a><a href="/passport/">Return to my dashboard</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><p><strong>Goal:</strong> make one small manual change, review it, commit it, and open a draft
+pull request without changing <code>main</code>.</p>
+<p><strong>Prerequisites:</strong> your local Passport is open and the <strong>Git And GitHub Tools</strong>
+mission passes. Do not clone another training repository for this lab.</p>
+<p><strong>Execution context:</strong> use the same Windows PowerShell, macOS zsh, or Linux Bash
+terminal from which you opened the Passport.</p>
+<p>The <strong>Complete A Manual Pull Request Loop</strong> mission is the primary procedure.
+Its <strong>Prepare practice folder</strong> button creates or reopens a separate <code>practice</code>
+clone and displays the exact folder, branch, push command, and PR command for
+your account. The steps below explain what those commands do.</p>
+<h2 id="1-open-the-prepared-practice-clone">1. Open The Prepared Practice Clone<a class="heading-anchor" href="#1-open-the-prepared-practice-clone" aria-label="Link to 1. Open The Prepared Practice Clone">#</a></h2><ol>
+<li>Open the Git mission in your local Passport.</li>
+<li>Press <strong>Prepare practice folder</strong> once.</li>
+<li>Copy the displayed enter-folder command into your terminal.</li>
+<li>Keep that terminal open in the practice folder.</li>
 </ol>
-<h3 id="github-cli-route">GitHub CLI route<a class="heading-anchor" href="#github-cli-route" aria-label="Link to GitHub CLI route">#</a></h3><pre><code class="language-bash">gh auth status
-gh repo clone IDEALLab/FirstSteps
-cd FirstSteps
-</code></pre>
-<h3 id="github-ssh-route">GitHub SSH route<a class="heading-anchor" href="#github-ssh-route" aria-label="Link to GitHub SSH route">#</a></h3><p>Use this only after GitHub&#39;s SSH authentication test succeeds:</p>
-<pre><code class="language-bash">git clone git@github.com:IDEALLab/FirstSteps.git
-cd FirstSteps
-</code></pre>
-<p>For every route, run in the cloned repository:</p>
+<p>Run:</p>
 <pre><code class="language-bash">git status --short --branch
-git remote get-url origin
+git remote -v
 </code></pre>
-<p><strong>Expected result:</strong> Git reports the repository&#39;s default branch and a clean
-working tree. If authentication fails, use the GitHub authentication section of
-the <a href="/reference/guides/git_workflow/">Git guide</a>; do not put a token
-in the clone URL.</p>
-<h2 id="2-inspect-before-editing">2. Inspect Before Editing<a class="heading-anchor" href="#2-inspect-before-editing" aria-label="Link to 2. Inspect Before Editing">#</a></h2><pre><code class="language-bash">git status --short --branch
-git log --oneline -5
+<p><strong>Expected result:</strong> the branch starts with <code>practice/</code>, the remote is your
+Passport exercise repository, and no unexpected file is listed.</p>
+<p>If the button stops, run <code>gh passport doctor</code>. Do not create, delete, or rename
+practice folders to work around the error.</p>
+<h2 id="2-read-the-task-before-editing">2. Read The Task Before Editing<a class="heading-anchor" href="#2-read-the-task-before-editing" aria-label="Link to 2. Read The Task Before Editing">#</a></h2><p>Open:</p>
+<pre><code class="language-text">workspace/manual_task/README.md
+workspace/manual_task/project-note.md
 </code></pre>
-<p>Read the repository <code>README.md</code>, contribution instructions, tests, and agent
-instructions before changing files.</p>
-<p>Use this passport page as the canonical Git/authentication procedure. If the
-training README links an old handbook branch or shows a non-Conventional commit
-message, do not copy that stale instruction; report it as a documentation
-defect.</p>
-<p>Confirm that the repository declares how to install every required check. If
-Ruff, mypy, or pre-commit is requested but no reproducible development setup is
-declared, stop and open a documentation issue; do not install guessed global
-packages merely to make the exercise continue.</p>
-<p>Optional agent task:</p>
-<pre><code class="language-text">Goal: explain the training repository and current task without editing.
-Context: inspect README, contribution/agent instructions, source, and tests.
-Constraints: do not modify files or run network commands.
-Verification: list inspected files and the command that reproduces the issue.
-Output: explain the expected behavior and smallest safe next step.
-</code></pre>
-<h2 id="3-create-a-branch">3. Create A Branch<a class="heading-anchor" href="#3-create-a-branch" aria-label="Link to 3. Create A Branch">#</a></h2><h3 id="windows-laptop---powershell">Windows laptop - PowerShell<a class="heading-anchor" href="#windows-laptop---powershell" aria-label="Link to Windows laptop - PowerShell">#</a></h3><pre><code class="language-powershell">$EthUser = Read-Host &quot;ETH username&quot;
-if ($EthUser -notmatch &#39;^[A-Za-z0-9._-]+$&#39;) { throw &quot;Invalid ETH username&quot; }
-git switch -c &quot;onboarding/$EthUser-first-pr&quot;
-</code></pre>
-<h3 id="macos-or-linux-laptop---zshbash">macOS or Linux laptop - zsh/Bash<a class="heading-anchor" href="#macos-or-linux-laptop---zshbash" aria-label="Link to macOS or Linux laptop - zsh/Bash">#</a></h3><pre><code class="language-bash">read -r -p &quot;ETH username: &quot; eth_user
-case &quot;$eth_user&quot; in
-  &#39;&#39;|*[!A-Za-z0-9._-]*) printf &#39;STOP: invalid ETH username\n&#39; &gt;&amp;2 ;;
-  *) git switch -c &quot;onboarding/${eth_user}-first-pr&quot; ;;
-esac
-</code></pre>
-<p><strong>Expected result:</strong> <code>git status --short --branch</code> names the new branch.</p>
-<h2 id="4-reproduce-test-and-make-a-small-change">4. Reproduce, Test, And Make A Small Change<a class="heading-anchor" href="#4-reproduce-test-and-make-a-small-change" aria-label="Link to 4. Reproduce, Test, And Make A Small Change">#</a></h2><p>Run the repository&#39;s documented reproduction/test command. Add or adjust one
-test when appropriate, make the smallest fix, then inspect:</p>
+<p>The task asks for one <code>## Verification</code> heading and one sentence in
+<code>project-note.md</code>. Do this mission without an AI agent. The point is to learn
+the Git loop yourself before delegating Git work.</p>
+<h2 id="3-make-and-review-the-unstaged-change">3. Make And Review The Unstaged Change<a class="heading-anchor" href="#3-make-and-review-the-unstaged-change" aria-label="Link to 3. Make And Review The Unstaged Change">#</a></h2><p>Edit only <code>workspace/manual_task/project-note.md</code>, then run:</p>
 <pre><code class="language-bash">git status --short
-git diff --check
-git diff
+git diff -- workspace/manual_task/project-note.md
 </code></pre>
-<p>Do not stage until you can explain every line.</p>
-<h2 id="5-stage-and-commit-intentionally">5. Stage And Commit Intentionally<a class="heading-anchor" href="#5-stage-and-commit-intentionally" aria-label="Link to 5. Stage And Commit Intentionally">#</a></h2><p>For the current FirstSteps exercise, stage only the exercise file. If a future
-task legitimately changes more files, add their exact reviewed paths instead
-of using <code>git add -A</code>:</p>
-<pre><code class="language-bash">git add -- first_steps/execute_me.py
+<p><strong>Expected result:</strong> one modified file and only the lines you intended to add.
+Do not stage anything you cannot explain.</p>
+<h2 id="4-stage-exactly-one-file">4. Stage Exactly One File<a class="heading-anchor" href="#4-stage-exactly-one-file" aria-label="Link to 4. Stage Exactly One File">#</a></h2><pre><code class="language-bash">git add -- workspace/manual_task/project-note.md
+git diff --cached --check
 git diff --cached
-git commit -m &quot;chore(firststeps): format exercise code&quot;
 </code></pre>
-<p>The shown commit message matches a formatting-only diff. If your reviewed diff
-changes behavior, write an accurate <code>fix(firststeps): ...</code> summary instead.</p>
-<p>A Conventional Commit uses <code>type(scope): summary</code>. The scope identifies the
-affected component; it is not a version number. Common types include <code>fix</code>,
-<code>feat</code>, <code>docs</code>, <code>test</code>, <code>refactor</code>, and <code>chore</code>.</p>
-<h2 id="6-push-and-open-a-draft-pr">6. Push And Open A Draft PR<a class="heading-anchor" href="#6-push-and-open-a-draft-pr" aria-label="Link to 6. Push And Open A Draft PR">#</a></h2><h3 id="windows-laptop---powershell-1">Windows laptop - PowerShell<a class="heading-anchor" href="#windows-laptop---powershell-1" aria-label="Link to Windows laptop - PowerShell">#</a></h3><pre><code class="language-powershell">$Branch = git branch --show-current
-if ([string]::IsNullOrWhiteSpace($Branch) -or $Branch -in @(&#39;main&#39;, &#39;master&#39;)) {
-    throw &quot;STOP: create the onboarding branch before pushing&quot;
-}
-git push -u origin HEAD
+<p><code>git add</code> selects content for the next commit. <code>git diff --cached</code> shows that
+exact selection. A silent <code>git diff --cached --check</code> means Git found no
+whitespace error.</p>
+<p>If the wrong path is staged, keep the edit but remove it from the selection:</p>
+<pre><code class="language-bash">git restore --staged path/to/wrong-file
 </code></pre>
-<h3 id="macos-or-linux-laptop---zshbash-1">macOS or Linux laptop - zsh/Bash<a class="heading-anchor" href="#macos-or-linux-laptop---zshbash-1" aria-label="Link to macOS or Linux laptop - zsh/Bash">#</a></h3><pre><code class="language-bash">branch=&quot;$(git branch --show-current)&quot;
-case &quot;$branch&quot; in
-  &#39;&#39;|main|master) printf &#39;STOP: create the onboarding branch before pushing.\n&#39; &gt;&amp;2 ;;
-  *) git push -u origin HEAD ;;
-esac
+<p>Review again. Do not use <code>git reset --hard</code>.</p>
+<h2 id="5-create-a-conventional-commit">5. Create A Conventional Commit<a class="heading-anchor" href="#5-create-a-conventional-commit" aria-label="Link to 5. Create A Conventional Commit">#</a></h2><pre><code class="language-bash">git commit -m &quot;docs(practice): explain staged diff review&quot;
 </code></pre>
-<p>Open a draft pull request on GitHub. Include:</p>
-<pre><code class="language-text">Purpose:
-Changes:
-Interfaces or users affected:
-Verification actually run:
-Risks or limitations:
-AI assistance used:
-</code></pre>
-<p>An interface is a boundary another person or component relies on, such as a
-function signature, file format, command-line option, configuration key, API,
-or documented procedure. Write <code>None</code> when the change affects no interface;
-do not invent an impact. If it does, request review from the person responsible
-for that interface or its downstream use.</p>
-<p>Do not merge the FirstSteps training pull request. Request the named reviewer
-and leave the PR available as evidence.</p>
-<h2 id="verification">Verification<a class="heading-anchor" href="#verification" aria-label="Link to Verification">#</a></h2><ul>
-<li><code>git status --short</code> is clean after the commit.</li>
-<li>The branch is not <code>main</code>.</li>
-<li>The PR diff contains only intended source/test/documentation changes.</li>
-<li>The PR reports exact tests actually run.</li>
-<li>The PR identifies affected interfaces/users and an appropriate reviewer.</li>
-<li>No token, <code>.env</code>, dataset, checkpoint, cache, or generated result appears.</li>
+<p>The format is <code>type(scope): summary</code>:</p>
+<ul>
+<li><code>docs</code> describes the kind of change;</li>
+<li><code>practice</code> identifies the affected area;</li>
+<li>the summary states what changed.</li>
 </ul>
+<p>Conventional Commits make release history easier to classify. Semantic
+Versioning is the separate <code>MAJOR.MINOR.PATCH</code> release-number convention.</p>
+<h2 id="6-push-and-create-the-draft-pr">6. Push And Create The Draft PR<a class="heading-anchor" href="#6-push-and-create-the-draft-pr" aria-label="Link to 6. Push And Create The Draft PR">#</a></h2><p>Return to the command list displayed by <strong>Prepare practice folder</strong>. Run its
+exact <code>git push</code> command, then its exact <code>gh pr create ... --draft</code> command.
+Do not type a guessed repository name or branch.</p>
+<p><strong>Expected result:</strong> GitHub opens one draft PR from <code>practice/&lt;your-user&gt;</code> to
+<code>main</code> in your public exercise fork. This is the first PR you create knowingly.
+The Passport&#39;s transport machinery is separate and does not need to be
+understood for this exercise.</p>
+<p>If GitHub reports that the PR already exists, do not create another one. Run:</p>
+<pre><code class="language-bash">gh pr status
+</code></pre>
+<p>Open the existing draft PR and continue there.</p>
+<h2 id="7-review-what-github-received">7. Review What GitHub Received<a class="heading-anchor" href="#7-review-what-github-received" aria-label="Link to 7. Review What GitHub Received">#</a></h2><p>In <strong>Files changed</strong>, verify:</p>
+<ul>
+<li>the author is your GitHub account;</li>
+<li>the source branch starts with <code>practice/</code>;</li>
+<li>the target is <code>main</code>;</li>
+<li>exactly <code>workspace/manual_task/project-note.md</code> changed;</li>
+<li>the commit message matches the reviewed change;</li>
+<li>no secret, private data, environment, cache, or generated result appears.</li>
+</ul>
+<p>Leave the PR in draft and do not merge it. Return to the Passport and press
+<strong>Check my work</strong>. The verifier checks the branch, changed paths, commit format,
+and draft PR through Git and GitHub.</p>
 <h2 id="common-failures-and-safe-recovery">Common Failures And Safe Recovery<a class="heading-anchor" href="#common-failures-and-safe-recovery" aria-label="Link to Common Failures And Safe Recovery">#</a></h2><ul>
-<li><strong>Wrong files staged:</strong> use <code>git restore --staged &lt;path&gt;</code>; this unstages but
-keeps the local edit.</li>
-<li><strong>Agent changed too much:</strong> inspect <code>git diff</code>, then restore only understood
-unwanted paths. Do not use <code>git reset --hard</code>.</li>
-<li><strong>Push rejected:</strong> fetch and inspect remote changes before merging/rebasing.</li>
-<li><strong>Secret committed:</strong> revoke it immediately and report it before attempting
-history cleanup.</li>
+<li><strong>Unexpected local edits:</strong> inspect <code>git status</code> and each diff. Preserve work
+you understand; ask before discarding anything.</li>
+<li><strong>Wrong file staged:</strong> use <code>git restore --staged &lt;path&gt;</code>, then stage the exact
+intended path.</li>
+<li><strong>Push rejected:</strong> inspect the remote state; do not force-push.</li>
+<li><strong>Secret committed:</strong> revoke or rotate it immediately and report privately
+before attempting history cleanup.</li>
+<li><strong>PR merged accidentally:</strong> stop and ask the maintainer. Do not rewrite shared
+history.</li>
 </ul>
-<h2 id="understand-before-accepting-ai-output">Understand Before Accepting AI Output<a class="heading-anchor" href="#understand-before-accepting-ai-output" aria-label="Link to Understand Before Accepting AI Output">#</a></h2><ul>
-<li><input disabled="" type="checkbox"> I reproduced the behavior myself.</li>
-<li><input disabled="" type="checkbox"> I can explain every changed line.</li>
-<li><input disabled="" type="checkbox"> I know what the test proves.</li>
-<li><input disabled="" type="checkbox"> I checked the staged diff before committing.</li>
-<li><input disabled="" type="checkbox"> The PR does not claim checks I did not run.</li>
-</ul>
-<h2 id="evidence">Evidence<a class="heading-anchor" href="#evidence" aria-label="Link to Evidence">#</a></h2><p>Submit the PR URL, commit message, verification commands, and a short
-explanation of one AI suggestion you accepted or rejected and why.</p>
-<h2 id="ask-for-help-when">Ask For Help When<a class="heading-anchor" href="#ask-for-help-when" aria-label="Link to Ask For Help When">#</a></h2><p>The repository instructions conflict, a secret enters history, the default
-branch contains unexpected changes, or recovery would rewrite shared history.</p>
-</article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/labs/data-placement/">Lab: Data Placement</a><a href="/labs/euler-first-job/">Lab: First Euler CPU Job</a><a href="/labs/euler-gpu-review/">Lab: Euler GPU Resource Review</a><a href="/labs/euler-job-arrays/">Lab: Safe Euler Job Arrays</a><a href="/labs/euler-resource-optimization/">Lab: Euler Resource Optimization</a><a href="/labs/incident-scenarios/">Lab: Incident Scenarios</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current mission to practice, verify, and submit evidence.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 2.0.0 /exact source b93a95b</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+<h2 id="understand-before-accepting-ai-output">Understand Before Accepting AI Output<a class="heading-anchor" href="#understand-before-accepting-ai-output" aria-label="Link to Understand Before Accepting AI Output">#</a></h2><p>Do this first PR without an AI agent. If you use an AI tool only to explain an
+error message, do not run its proposed command until you know which files and
+remote state it can change. Recheck <code>git status</code>, the staged diff, and the
+GitHub PR yourself.</p>
+<h2 id="completion-gate">Completion Gate<a class="heading-anchor" href="#completion-gate" aria-label="Link to Completion Gate">#</a></h2><p>Continue only when the local Passport reports all four checks as passing and
+the draft PR still contains the one reviewed file.</p>
+<h2 id="ask-for-help-when">Ask For Help When<a class="heading-anchor" href="#ask-for-help-when" aria-label="Link to Ask For Help When">#</a></h2><p>The prepared folder or branch differs from the mission, authentication changes
+accounts, a secret enters history, or recovery could discard work.</p>
+</article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/labs/">Practical Labs</a><a href="/labs/euler-first-job/">Lab: First Euler CPU Job</a><a href="/labs/euler-gpu-review/">Lab: Euler GPU Resource Review</a><a href="/labs/manual-vs-agent/">Lab: Manual Versus Agent-Assisted Work</a><a href="/labs/reproducible-python/">Lab: Reproducible Python Environment</a><a href="/reference/guides/git_workflow/">Git And GitHub Workflow</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current mission to practice, verify, and submit evidence.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 2.1.0 /exact source 92b6d71c</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
 `).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
 `).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html>

@@ -1,0 +1,471 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Create or safely reuse a small Python environment on Euler and know how to activate it inside a Slurm script."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Create A Small Python Environment On Euler | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.GCBP_7Qu.css"></head><body data-curriculum-version="2.1.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Mission / Euler CPU</span></div><main id="main-content" class="page-shell"><header class="mission-hero"><div class="mission-kicker"><span data-mission-position>02 / 06</span><span>25 active minutes</span><span class="risk risk-local_change">local change</span></div><h1>Create A Small Python Environment On Euler</h1><p>Create or safely reuse a small Python environment on Euler and know how to activate it inside a Slurm script.</p><div class="machine-callout"><span>Work here</span><strong data-work-here>Euler login node / Bash</strong></div><ol class="mission-contract" aria-label="Mission stages"><li><span>1</span>Understand</li><li><span>2</span>Do</li><li><span>3</span>Check</li><li><span>4</span>Submit</li></ol></header><div class="mission-layout"><aside class="mission-aside"><nav class="mission-progress" aria-label="Euler CPU mission sequence" data-mission-progress data-current-id="euler-python-environment" data-base="/"><div class="progress-heading"><span data-progress-source>Curriculum preview</span><strong data-progress-title>Euler CPU</strong></div><ol><li><span>01</span><a href="/missions/euler-access-ssh/">Establish Safe Euler SSH Access</a></li><li class="active" aria-current="step"><span>02</span><a href="/missions/euler-python-environment/">Create A Small Python Environment On Euler</a></li><li><span>03</span><a href="/missions/euler-cpu-first-job/">Submit And Control A Tiny Euler CPU Job</a></li><li><span>04</span><a href="/missions/euler-cpu-accounting/">Measure And Right-Size An Euler Job</a></li><li><span>05</span><a href="/missions/euler-cpu-arrays/">Cap And Calculate Euler Job Arrays</a></li><li><span>06</span><a href="/missions/euler-storage-reproducibility/">Place Euler Data And Freeze Run Inputs</a></li></ol><p data-progress-note>This preview shows the complete topic. Your local passport shows only the missions assigned to your route.</p></nav><script>(function(){const contextEndpoint = "/__passport/v1/context";
+const missionIndex = [{"id":"ai-agent-baseline","title":"Use A Safe Agent Loop After The Manual Baseline","route":"/missions/ai-agent-baseline/","track":"ai_agents"},{"id":"ai-tool-configuration","title":"Choose And Configure An AI Access Route","route":"/missions/ai-tool-configuration/","track":"ai_agents"},{"id":"blade-access-storage","title":"Use Blade For GUI Work Without Losing Data","route":"/missions/blade-access-storage/","track":"blade"},{"id":"core-accounts-secrets","title":"Protect Accounts And Secrets","route":"/missions/core-accounts-secrets/","track":"core"},{"id":"core-incidents-ai-responsibility","title":"Respond To Incidents And Own Automated Work","route":"/missions/core-incidents-ai-responsibility/","track":"core"},{"id":"core-orientation","title":"Start And Resume Your Passport","route":"/missions/core-orientation/","track":"core"},{"id":"core-systems-data","title":"Map Systems And Research Data","route":"/missions/core-systems-data/","track":"core"},{"id":"data-collaboration","title":"Design Safe Shared Data Collaboration","route":"/missions/data-collaboration/","track":"data_steward"},{"id":"data-handover","title":"Create A Recoverable Project Handover","route":"/missions/data-handover/","track":"data_steward"},{"id":"data-placement","title":"Place Research Data Intentionally","route":"/missions/data-placement/","track":"data_steward"},{"id":"euler-access-ssh","title":"Establish Safe Euler SSH Access","route":"/missions/euler-access-ssh/","track":"euler_cpu"},{"id":"euler-cpu-accounting","title":"Measure And Right-Size An Euler Job","route":"/missions/euler-cpu-accounting/","track":"euler_cpu"},{"id":"euler-cpu-arrays","title":"Cap And Calculate Euler Job Arrays","route":"/missions/euler-cpu-arrays/","track":"euler_cpu"},{"id":"euler-cpu-first-job","title":"Submit And Control A Tiny Euler CPU Job","route":"/missions/euler-cpu-first-job/","track":"euler_cpu"},{"id":"euler-gpu-review","title":"Review A One-GPU Euler Plan","route":"/missions/euler-gpu-review/","track":"euler_gpu"},{"id":"euler-python-environment","title":"Create A Small Python Environment On Euler","route":"/missions/euler-python-environment/","track":"euler_cpu"},{"id":"euler-storage-reproducibility","title":"Place Euler Data And Freeze Run Inputs","route":"/missions/euler-storage-reproducibility/","track":"euler_cpu"},{"id":"git-manual-pr","title":"Complete A Manual Pull Request Loop","route":"/missions/git-manual-pr/","track":"git"},{"id":"git-tools-auth","title":"Configure Git Identity And GitHub Access","route":"/missions/git-tools-auth/","track":"git"},{"id":"nas-access-storage","title":"Verify Your Approved NAS Workspace","route":"/missions/nas-access-storage/","track":"nas"},{"id":"python-environment","title":"Create A Reproducible Python Environment","route":"/missions/python-environment/","track":"python"},{"id":"python-reproducible-change","title":"Make And Verify A Reproducible Python Change","route":"/missions/python-reproducible-change/","track":"python"},{"id":"supervisor-offboarding","title":"Plan Handover And Offboarding","route":"/missions/supervisor-offboarding/","track":"supervisor"},{"id":"supervisor-onboarding","title":"Assign A Researcher Route And Safe Project Environment","route":"/missions/supervisor-onboarding/","track":"supervisor"}];
+
+  const progress = document.querySelector("[data-mission-progress]");
+  const loadAssignedRoute = async () => {
+    if (!progress) return;
+    try {
+      const response = await fetch(contextEndpoint, { credentials: "same-origin", headers: { Accept: "application/json" } });
+      if (!response.ok) return;
+      const context = await response.json();
+      const ids = context?.repository?.passport?.missions;
+      const currentId = progress.dataset.currentId;
+      const index = new Map(missionIndex.map((item) => [item.id, item]));
+      if (!Array.isArray(ids) || !ids.includes(currentId) || ids.some((id) => !index.has(id))) return;
+      const base = String(progress.dataset.base || "/").replace(/\/$/, "");
+      const list = progress.querySelector("ol");
+      list.replaceChildren();
+      ids.forEach((id, position) => {
+        const mission = index.get(id);
+        const row = document.createElement("li");
+        const active = id === currentId;
+        row.classList.toggle("active", active);
+        if (active) row.setAttribute("aria-current", "step");
+        const number = document.createElement("span");
+        number.textContent = String(position + 1).padStart(2, "0");
+        const link = document.createElement("a");
+        link.href = `${base}${mission.route}`;
+        link.textContent = mission.title;
+        row.append(number, link);
+        list.append(row);
+      });
+      progress.querySelector("[data-progress-source]").textContent = "Your assigned route";
+      progress.querySelector("[data-progress-title]").textContent = `${ids.length} missions`;
+      progress.querySelector("[data-progress-note]").textContent = "This route comes from your generated passport. Controller status remains authoritative for completion.";
+    } catch {
+      // The route-specific Markdown and track sequence remain usable offline.
+    }
+  };
+  loadAssignedRoute();
+})();</script><div class="authority-note" data-authority-note><strong data-authority-title>Curriculum preview only</strong><p data-authority-copy>This sample page cannot record or submit progress.</p><a data-authority-link href="/getting-started/">Open my real passport</a></div></aside><div class="mission-content"><details class="learning-brief" open><summary><span>Short explanation</span><strong>Concept, example, common mistake, and recovery</strong></summary><article class="markdown-body mission-body" data-mission-id="euler-python-environment"><h2 id="outcome">Outcome<a class="heading-anchor" href="#outcome" aria-label="Link to Outcome">#</a></h2><p>Create or safely reuse a small Python environment on Euler and know how to
+activate it inside a Slurm script.</p>
+<h2 id="concept">Concept<a class="heading-anchor" href="#concept" aria-label="Link to Concept">#</a></h2><p>A Python environment contains operating-system-specific executables and paths.
+The environment on your laptop cannot be copied to Euler. Recreate it on Euler
+from a reviewed project definition, and make each batch script establish its
+own software context.</p>
+<h2 id="worked-example">Worked Example<a class="heading-anchor" href="#worked-example" aria-label="Link to Worked Example">#</a></h2><p>The training environment uses the documented Euler Python module, lives in the
+dedicated training folder under <code>$HOME</code>, and prints <code>euler-python-env-ok</code> after
+its path and version are verified.</p>
+<p>Check these points:</p>
+<ul>
+<li><strong>Can a laptop <code>.venv</code> be copied to Euler?</strong> No; recreate it on Euler.</li>
+<li><strong>Where does activation happen for a job?</strong> Inside the Slurm script.</li>
+</ul>
+<h2 id="common-trap">Common Trap<a class="heading-anchor" href="#common-trap" aria-label="Link to Common Trap">#</a></h2><p>Copying <code>.venv</code> from another machine, installing into a shared base
+environment, or activating Python only in the login shell and assuming the job
+will reproduce that setup.</p>
+<h2 id="if-blocked">If Blocked<a class="heading-anchor" href="#if-blocked" aria-label="Link to If Blocked">#</a></h2><p>Keep the first non-secret error. Use <code>module spider python</code> if the dated module
+cannot be loaded. Do not use <code>sudo</code>, delete an existing environment, copy a
+laptop environment, or install into <code>base</code>. See the
+<a href="/reference/euler/python-environments/">Euler Python environment reference</a>.</p>
+<h2 id="understand-before-accepting-ai-output">Understand Before Accepting AI Output<a class="heading-anchor" href="#understand-before-accepting-ai-output" aria-label="Link to Understand Before Accepting AI Output">#</a></h2><p>Personally verify the Python version, environment path, and the activation
+lines in the batch script. An agent must not choose a different module, delete
+an environment, or install packages without your review.</p>
+</article></details><script>
+        document.currentScript?.previousElementSibling?.removeAttribute("open");
+      </script><section class="activity-studio" data-activity-studio data-mission="euler-python-environment" data-verifier="euler_python" data-verify-endpoint="/__passport/v2/verify" data-submit-endpoint="/__passport/v2/submit" data-context-endpoint="/__passport/v1/context" data-state-endpoint="/__passport/v1/state" data-sync-endpoint="/__passport/v1/sync" data-passport-url="/passport/" data-practice-endpoint="/__passport/v2/practice"><header class="activity-heading"><div><p class="eyebrow">Do the mission</p><h2>Complete this mission</h2></div><span class="activity-threshold">Pass: 100% + every safety item</span></header><div class="activity-action"><span>Action</span><p>Create or safely reuse one small Euler-native Python virtual environment and verify how a Slurm job activates it.</p><strong>Expected</strong><p>Python 3.11.6 runs from the dedicated Euler environment, no existing directory is overwritten, and the learner can place the activation lines inside a batch script.</p></div><section class="mission-recipe" aria-labelledby="euler-python-environment-recipe" data-mission-recipe><div class="recipe-heading"><div><p class="eyebrow">Follow in order</p><h3 id="euler-python-environment-recipe">Steps</h3><p>Your laptop environment and Euler environment are separate. Run these steps on Euler after the SSH mission prints config-ok. This exercise creates no Slurm job and installs no project package.</p></div><div class="recipe-platform-picker" data-recipe-platform-picker aria-label="Show instructions for one operating system"><button type="button" data-recipe-select-platform="windows">Windows</button><button type="button" data-recipe-select-platform="macos">macOS</button><button type="button" data-recipe-select-platform="linux">Linux</button></div></div><ol class="recipe-steps"><li class="recipe-step" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>01</span><div><h4>Connect to Euler</h4><span class="recipe-machine">Your computer</span></div></header><p class="recipe-instruction">From the local terminal, connect with the verified euler alias. Run every later command in the Euler Bash shell that opens.</p><div class="recipe-commands"><article class="command-step" data-command-platform="windows" data-command-shell="powershell" data-command-mode="run"><div><span>Run</span><strong>windows / PowerShell</strong></div><pre><code>ssh euler</code><button type="button" data-copy-command>Copy</button></pre></article><article class="command-step" data-command-platform="macos" data-command-shell="zsh" data-command-mode="run"><div><span>Run</span><strong>macos / zsh</strong></div><pre><code>ssh euler</code><button type="button" data-copy-command>Copy</button></pre></article><article class="command-step" data-command-platform="linux" data-command-shell="bash" data-command-mode="run"><div><span>Run</span><strong>linux / Bash</strong></div><pre><code>ssh euler</code><button type="button" data-copy-command>Copy</button></pre></article></div><dl class="recipe-result"><div><dt>Expected</dt><dd>The prompt changes to an Euler login node.</dd></div><div class="success"><dt>Continue when</dt><dd>Check the documented Python module.</dd></div><div class="failure"><dt>If not</dt><dd>Return to the SSH mission. Do not run Euler commands in the local shell.</dd></div></dl></li><li class="recipe-step" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>02</span><div><h4>Check the Euler Python module</h4><span class="recipe-machine">Euler login node</span></div></header><p class="recipe-instruction">Load the dated Euler software stack used by this training release and verify the interpreter before creating anything. This affects only the current shell.</p><div class="recipe-links"><a href="/reference/euler/python-environments/">Euler Python environment reference</a></div><div class="recipe-commands"><article class="command-step" data-command-platform="euler" data-command-shell="bash" data-command-mode="run"><div><span>Run</span><strong>euler / Bash</strong></div><pre><code>(
+set -eu
+module purge
+module load stack/2024-06 python/3.11.6
+version=&quot;$(python --version 2&gt;&amp;1)&quot;
+printf &#39;%s\n&#39; &quot;$version&quot;
+[ &quot;$version&quot; = &quot;Python 3.11.6&quot; ] || { printf &#39;STOP: expected Python 3.11.6, got %s\n&#39; &quot;$version&quot; &gt;&amp;2; exit 1; }
+printf &#39;module-python-ok\n&#39;
+)</code><button type="button" data-copy-command>Copy</button></pre></article></div><dl class="recipe-result"><div><dt>Expected</dt><dd>The final two lines are Python 3.11.6 and module-python-ok.</dd></div><div class="success"><dt>Continue when</dt><dd>Inspect the dedicated environment path.</dd></div><div class="failure"><dt>If not</dt><dd>Run module spider python and use the help path with its non-secret output. Do not guess a replacement module.</dd></div></dl></li><li class="recipe-step" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>03</span><div><h4>Inspect before creating</h4><span class="recipe-machine">Euler login node</span></div></header><p class="recipe-instruction">Check the exact training path without changing it. A valid existing environment is kept. A symbolic link, incomplete directory, or different Python version stops the recipe instead of being replaced.</p><div class="recipe-commands"><article class="command-step" data-command-platform="euler" data-command-shell="bash" data-command-mode="run"><div><span>Run</span><strong>euler / Bash</strong></div><pre><code>(
+set -eu
+venv=&quot;$HOME/passport-euler/venvs/passport-python&quot;
+if [ -L &quot;$venv&quot; ]; then
+  printf &#39;STOP: %s is a symbolic link; nothing was changed.\n&#39; &quot;$venv&quot; &gt;&amp;2
+  exit 1
+elif [ ! -e &quot;$venv&quot; ]; then
+  printf &#39;environment-target-available\n&#39;
+elif [ -d &quot;$venv&quot; ] &amp;&amp; [ -x &quot;$venv/bin/python&quot; ]; then
+  version=&quot;$(&quot;$venv/bin/python&quot; -c &#39;import platform; print(platform.python_version())&#39;)&quot;
+  [ &quot;$version&quot; = &quot;3.11.6&quot; ] || { printf &#39;STOP: existing environment uses Python %s; nothing was changed.\n&#39; &quot;$version&quot; &gt;&amp;2; exit 1; }
+  printf &#39;existing-environment-ok\n&#39;
+else
+  printf &#39;STOP: %s exists but is not a complete environment; nothing was changed.\n&#39; &quot;$venv&quot; &gt;&amp;2
+  exit 1
+fi
+)</code><button type="button" data-copy-command>Copy</button></pre></article></div><dl class="recipe-result"><div><dt>Expected</dt><dd>The final line is environment-target-available or existing-environment-ok.</dd></div><div class="success"><dt>Continue when</dt><dd>Create only when absent, otherwise reuse it.</dd></div><div class="failure"><dt>If not</dt><dd>Do not delete or rename the existing path. Use the help route to identify its owner and purpose.</dd></div></dl></li><li class="recipe-step" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>04</span><div><h4>Create or reuse the environment</h4><span class="recipe-machine">Euler login node</span></div></header><p class="recipe-instruction">Run this after the inspection passes. The command creates into a private temporary directory and moves it into place only after Python and pip work. If the valid target already exists, it is reused without modification.</p><div class="recipe-commands"><article class="command-step" data-command-platform="euler" data-command-shell="bash" data-command-mode="run"><div><span>Run</span><strong>euler / Bash</strong></div><pre><code>(
+set -eu
+umask 077
+module purge
+module load stack/2024-06 python/3.11.6
+root=&quot;$HOME/passport-euler&quot;
+base=&quot;$root/venvs&quot;
+venv=&quot;$base/passport-python&quot;
+[ ! -L &quot;$root&quot; ] &amp;&amp; [ ! -L &quot;$base&quot; ] || { printf &#39;STOP: a training parent path is a symbolic link.\n&#39; &gt;&amp;2; exit 1; }
+mkdir -p &quot;$base&quot;
+if [ -L &quot;$venv&quot; ]; then
+  printf &#39;STOP: environment target is a symbolic link.\n&#39; &gt;&amp;2
+  exit 1
+elif [ -e &quot;$venv&quot; ]; then
+  [ -d &quot;$venv&quot; ] &amp;&amp; [ -x &quot;$venv/bin/python&quot; ] || { printf &#39;STOP: existing target is incomplete.\n&#39; &gt;&amp;2; exit 1; }
+  version=&quot;$(&quot;$venv/bin/python&quot; -c &#39;import platform; print(platform.python_version())&#39;)&quot;
+  [ &quot;$version&quot; = &quot;3.11.6&quot; ] || { printf &#39;STOP: existing environment uses Python %s.\n&#39; &quot;$version&quot; &gt;&amp;2; exit 1; }
+  printf &#39;existing-environment-kept\n&#39;
+else
+  tmp=&quot;$(mktemp -d &quot;$base/.passport-python.XXXXXX&quot;)&quot;
+  cleanup() { if [ -n &quot;${tmp:-}&quot; ] &amp;&amp; [ -d &quot;$tmp&quot; ]; then rm -r -- &quot;$tmp&quot;; fi; }
+  trap cleanup EXIT HUP INT TERM
+  python -m venv &quot;$tmp&quot;
+  &quot;$tmp/bin/python&quot; -m pip --version
+  mv &quot;$tmp&quot; &quot;$venv&quot;
+  tmp=&#39;&#39;
+  printf &#39;created-environment-ok\n&#39;
+fi
+)</code><button type="button" data-copy-command>Copy</button></pre></article></div><dl class="recipe-result"><div><dt>Expected</dt><dd>The command prints existing-environment-kept or created-environment-ok and does not overwrite an existing path.</dd></div><div class="success"><dt>Continue when</dt><dd>Activate and verify the exact interpreter.</dd></div><div class="failure"><dt>If not</dt><dd>Keep the first error. Do not rerun with sudo, remove the target, or install packages into base.</dd></div></dl></li><li class="recipe-step" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>05</span><div><h4>Verify the active interpreter</h4><span class="recipe-machine">Euler login node</span></div></header><p class="recipe-instruction">Activate the training environment, verify its exact path and Python version, then deactivate it. The marker is safe to enter in the Passport; do not paste the full private path into a submission.</p><div class="recipe-commands"><article class="command-step" data-command-platform="euler" data-command-shell="bash" data-command-mode="run"><div><span>Run</span><strong>euler / Bash</strong></div><pre><code>(
+set -eu
+module purge
+module load stack/2024-06 python/3.11.6
+venv=&quot;$HOME/passport-euler/venvs/passport-python&quot;
+[ -d &quot;$venv&quot; ] &amp;&amp; [ ! -L &quot;$venv&quot; ] &amp;&amp; [ -x &quot;$venv/bin/python&quot; ] || { printf &#39;STOP: training environment is missing or unsafe.\n&#39; &gt;&amp;2; exit 1; }
+. &quot;$venv/bin/activate&quot;
+python -c &#39;import pathlib, platform, sys; expected = pathlib.Path.home() / &quot;passport-euler&quot; / &quot;venvs&quot; / &quot;passport-python&quot;; assert pathlib.Path(sys.prefix) == expected; assert platform.python_version() == &quot;3.11.6&quot;; print(&quot;python_environment=passport-python&quot;); print(&quot;euler-python-env-ok&quot;)&#39;
+python -m pip --version
+deactivate
+)</code><button type="button" data-copy-command>Copy</button></pre></article></div><dl class="recipe-result"><div><dt>Expected</dt><dd>The output includes python_environment=passport-python, euler-python-env-ok, and pip from the same environment.</dd></div><div class="success"><dt>Continue when</dt><dd>Learn where these lines belong in a job.</dd></div><div class="failure"><dt>If not</dt><dd>Stop and inspect the reported interpreter. Do not repair it by copying your laptop environment.</dd></div></dl></li><li class="recipe-step" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>06</span><div><h4>Put setup inside the Slurm script</h4><span class="recipe-machine">Euler login node</span></div></header><p class="recipe-instruction">Read this batch-script fragment. Do not run a workload on the login node. Every Python job must load its module and activate its environment inside the submitted script before the Python command.</p><div class="recipe-commands"><article class="command-step" data-command-platform="all" data-command-shell="bash" data-command-mode="edit"><div><span>Put in file</span><strong>Bash file</strong></div><pre><code>module purge
+module load stack/2024-06 python/3.11.6
+. &quot;$HOME/passport-euler/venvs/passport-python/bin/activate&quot;
+python your_script.py</code><button type="button" data-copy-command>Copy</button></pre></article></div><dl class="recipe-result"><div><dt>Expected</dt><dd>You can identify the three environment lines that must precede the program in a Slurm script.</dd></div><div class="success"><dt>Continue when</dt><dd>Complete the questions and confirmation.</dd></div><div class="failure"><dt>If not</dt><dd>Do not rely on a login-shell activation to define an unattended job.</dd></div></dl></li><li class="recipe-step" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>07</span><div><h4>Confirm the safe marker</h4><span class="recipe-machine">Your computer</span></div></header><p class="recipe-instruction">Return to the local Passport, enter only euler-python-env-ok, complete the questions, and run Check my work.</p><dl class="recipe-result"><div><dt>Expected</dt><dd>The local check accepts the exact environment marker and all three safety decisions.</dd></div><div class="success"><dt>Continue when</dt><dd>Submit once and continue to the first CPU job.</dd></div><div class="failure"><dt>If not</dt><dd>Repeat only the verification step on Euler; do not recreate a working environment.</dd></div></dl></li></ol></section><form data-activity-form><div class="question-stack"><fieldset class="mission-question" data-question="local_portability" data-question-type="single"><legend><span>01</span>May you copy the .venv directory from your laptop to Euler?<em>Safety-critical</em></legend><div class="answer-options"><label><input type="radio" name="local_portability" value="correct" disabled><span>No. Recreate the environment on Euler from the project definition.</span></label><label><input type="radio" name="local_portability" value="wrong_a" disabled><span>Yes, a Python environment is portable between all operating systems.</span></label><label><input type="radio" name="local_portability" value="wrong_b" disabled><span>Yes, if the directory is committed to Git first.</span></label></div><p class="question-feedback" data-feedback-for="local_portability" hidden></p></fieldset><fieldset class="mission-question" data-question="environment_location" data-question-type="single"><legend><span>02</span>Where does this small training environment belong on Euler?<em>Safety-critical</em></legend><div class="answer-options"><label><input type="radio" name="environment_location" value="correct" disabled><span>In the dedicated $HOME/passport-euler/venvs folder used by this exercise.</span></label><label><input type="radio" name="environment_location" value="wrong_a" disabled><span>In the shared /cluster/work/fuge root.</span></label><label><input type="radio" name="environment_location" value="wrong_b" disabled><span>In $SCRATCH as the only copy.</span></label></div><p class="question-feedback" data-feedback-for="environment_location" hidden></p></fieldset><fieldset class="mission-question" data-question="batch_activation" data-question-type="single"><legend><span>03</span>Where must the module load and environment activation appear for a batch job?<em>Safety-critical</em></legend><div class="answer-options"><label><input type="radio" name="batch_activation" value="correct" disabled><span>Inside the Slurm script before the Python command.</span></label><label><input type="radio" name="batch_activation" value="wrong_a" disabled><span>Only in an earlier interactive login shell.</span></label><label><input type="radio" name="batch_activation" value="wrong_b" disabled><span>Only in the local laptop terminal.</span></label></div><p class="question-feedback" data-feedback-for="batch_activation" hidden></p></fieldset></div><fieldset class="live-confirmation" data-live-confirmation><legend>Confirm the result you personally observed</legend><p>These values are processed only by the local launcher. Private paths are not written to the public submission.</p><label>Exact safe marker printed by the environment check<input name="environment_marker" autocomplete="off" placeholder="euler-python-env-ok" disabled></label></fieldset><fieldset class="mission-attestation"><legend>Before submitting</legend><label><input type="checkbox" name="reviewed" disabled>I reviewed the answers and any changed practice files myself.</label><label><input type="checkbox" name="no_secrets" disabled>This public submission contains no credentials, private paths, real logs, or research data.</label><label><input type="checkbox" name="observed_result" disabled>I personally observed every result I claim.</label></fieldset><div class="activity-actions"><button class="button secondary" type="button" data-check-work disabled>Check my work</button><button class="button primary" type="button" data-submit-mission disabled>Submit mission</button><a class="button quiet" href="/getting-started/" data-start-passport>Open my real passport first</a></div><div class="activity-result" role="status" aria-live="polite" data-activity-result><strong>Preview only</strong><span>This page can be read, but it cannot store or submit an attempt.</span></div></form></section><script>(function(){const missionId = "euler-python-environment";
+
+  const studio = document.querySelector(`[data-activity-studio][data-mission="${missionId}"]`);
+  if (studio) {
+    const form = studio.querySelector("[data-activity-form]");
+    const resultBox = studio.querySelector("[data-activity-result]");
+    const checkButton = studio.querySelector("[data-check-work]");
+    const submitButton = studio.querySelector("[data-submit-mission]");
+    let context = null;
+    let lastReady = false;
+    const localShellFor = (platform) => platform === "windows" ? "powershell" : platform === "macos" ? "zsh" : "bash";
+    const applyRecipePlatform = (platform) => {
+      const localShell = localShellFor(platform);
+      let visibleIndex = 0;
+      for (const step of studio.querySelectorAll("[data-recipe-step]")) {
+        const platforms = (step.dataset.recipePlatforms || "all").split(",");
+        const visible = platforms.includes("all") || platforms.includes(platform);
+        step.hidden = !visible;
+        if (!visible) continue;
+        visibleIndex += 1;
+        const number = step.querySelector("[data-recipe-number]");
+        if (number) number.textContent = String(visibleIndex).padStart(2, "0");
+        for (const command of step.querySelectorAll("[data-command-platform]")) {
+          const target = command.dataset.commandPlatform;
+          const shell = command.dataset.commandShell;
+          const mode = command.dataset.commandMode;
+          command.hidden = !(mode === "edit" || mode === "prompt" || target === platform || target === "euler" || target === "blade" || (target === "all" && shell === localShell));
+        }
+      }
+      for (const button of studio.querySelectorAll("[data-recipe-select-platform]")) {
+        button.dataset.active = String(button.dataset.recipeSelectPlatform === platform);
+        button.setAttribute("aria-pressed", String(button.dataset.recipeSelectPlatform === platform));
+      }
+    };
+    const detectPlatform = () => {
+      let saved = null;
+      try { saved = window.localStorage.getItem("passport-recipe-platform"); } catch {}
+      if (["windows", "macos", "linux"].includes(saved)) return saved;
+      const value = String(navigator.userAgentData?.platform || navigator.platform || navigator.userAgent).toLowerCase();
+      return value.includes("win") ? "windows" : value.includes("mac") ? "macos" : "linux";
+    };
+    let displayedPlatform = detectPlatform();
+    applyRecipePlatform(displayedPlatform);
+    for (const button of studio.querySelectorAll("[data-recipe-select-platform]")) {
+      button.addEventListener("click", () => {
+        if (context) return;
+        displayedPlatform = button.dataset.recipeSelectPlatform;
+        try { window.localStorage.setItem("passport-recipe-platform", displayedPlatform); } catch {}
+        applyRecipePlatform(displayedPlatform);
+      });
+    }
+
+    const answers = () => {
+      const value = {};
+      for (const fieldset of form.querySelectorAll("[data-question]")) {
+        const id = fieldset.dataset.question;
+        if (fieldset.dataset.questionType === "order") {
+          value[id] = Array.from(fieldset.querySelectorAll("[data-order-position]")).map((item) => item.value).filter(Boolean);
+        } else {
+          value[id] = Array.from(fieldset.querySelectorAll("input:checked")).map((item) => item.value);
+        }
+      }
+      return value;
+    };
+    const localInput = () => Object.fromEntries(Array.from(form.querySelectorAll("[data-live-confirmation] input, [data-live-confirmation] select")).map((item) => [item.name, item.value]));
+    const attestation = () => Object.fromEntries(["reviewed", "no_secrets", "observed_result"].map((name) => [name, Boolean(form.elements[name]?.checked)]));
+    const payload = () => ({ mission: missionId, answers: answers(), local_input: localInput(), attestation: attestation() });
+    const setResult = (title, message, kind = "neutral") => {
+      resultBox.dataset.kind = kind;
+      resultBox.querySelector("strong").textContent = title;
+      resultBox.querySelector("span").textContent = message;
+    };
+    const installCopyButtons = (root = studio) => {
+      for (const button of root.querySelectorAll("[data-copy-command]:not([data-copy-ready])")) {
+        button.dataset.copyReady = "true";
+        button.addEventListener("click", async () => {
+          const command = button.closest("pre")?.querySelector("code")?.textContent || "";
+          try {
+            await navigator.clipboard.writeText(command);
+            button.textContent = "Copied";
+            window.setTimeout(() => { button.textContent = "Copy"; }, 1400);
+          } catch {
+            button.textContent = "Select text";
+          }
+        });
+      }
+    };
+    installCopyButtons();
+    const persistDraft = async () => {
+      if (!context?.local_state) return;
+      const state = structuredClone(context.local_state);
+      state.mission_drafts ||= {};
+      state.mission_drafts[missionId] = answers();
+      try {
+        const response = await fetch(studio.dataset.stateEndpoint, { method: "PUT", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify(state) });
+        if (response.ok) context.local_state = state;
+      } catch {}
+    };
+    const showFeedback = (feedback = []) => {
+      for (const node of form.querySelectorAll("[data-feedback-for]")) node.hidden = true;
+      for (const item of feedback) {
+        const node = form.querySelector(`[data-feedback-for="${item.question}"]`);
+        if (!node) continue;
+        node.hidden = false;
+        node.dataset.correct = String(Boolean(item.correct));
+        node.textContent = item.message;
+      }
+    };
+    const rotateForVariant = (items, variant) => {
+      items.forEach((item, index) => { item.dataset.variantOrigin ||= String(index); });
+      return items.sort((left, right) => {
+        const leftRank = (Number(left.dataset.variantOrigin) - variant + items.length) % items.length;
+        const rightRank = (Number(right.dataset.variantOrigin) - variant + items.length) % items.length;
+        return leftRank - rightRank;
+      });
+    };
+    const applyVariant = (variant, clear = false) => {
+      if (!Number.isInteger(variant) || variant < 1) return;
+      const stack = form.querySelector(".question-stack");
+      const questions = rotateForVariant(Array.from(stack.querySelectorAll(":scope > [data-question]")), variant);
+      questions.forEach((question, index) => {
+        const number = question.querySelector("legend > span");
+        if (number) number.textContent = String(index + 1).padStart(2, "0");
+        stack.append(question);
+        const choices = rotateForVariant(Array.from(question.querySelectorAll(".answer-options > label")), variant);
+        const choiceRoot = question.querySelector(".answer-options");
+        choices.forEach((choice) => choiceRoot?.append(choice));
+        for (const select of question.querySelectorAll("[data-order-position]")) {
+          const options = rotateForVariant(Array.from(select.querySelectorAll("option[value]:not([value=''])")), variant);
+          options.forEach((option) => select.append(option));
+        }
+      });
+      if (clear) {
+        for (const input of form.querySelectorAll("[data-question] input")) input.checked = false;
+        for (const select of form.querySelectorAll("[data-question] select")) select.value = "";
+        persistDraft();
+      }
+    };
+    const request = async (endpoint) => {
+      const response = await fetch(endpoint, { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(payload()) });
+      const value = await response.json().catch(() => ({}));
+      return { response, value };
+    };
+    const waitForController = async () => {
+      const deadline = Date.now() + 3 * 60 * 1000;
+      while (Date.now() < deadline) {
+        await new Promise((resolve) => window.setTimeout(resolve, 10000));
+        try {
+          const response = await fetch(studio.dataset.syncEndpoint, { method: "POST", credentials: "same-origin", headers: { Accept: "application/json" } });
+          if (!response.ok) continue;
+          const value = await response.json();
+          if (value.state === "verified" && value.official?.status?.head_sha) {
+            setResult("Automatic check received", "Opening your trusted passport status.", "success");
+            window.setTimeout(() => { window.location.href = studio.dataset.passportUrl; }, 700);
+            return;
+          }
+          if (value.state === "assessment_recovery_required") {
+            setResult("Safe recovery needed", "Your work remains saved. Open the dashboard for the exact recovery step.", "needs-work");
+            return;
+          }
+        } catch {}
+      }
+      setResult("Submitted; check still running", "You can close this page. Reopen with gh passport open and use Sync from GitHub later.", "neutral");
+    };
+    form.addEventListener("change", () => { lastReady = false; submitButton.disabled = true; persistDraft(); });
+    checkButton.addEventListener("click", async () => {
+      checkButton.disabled = true;
+      setResult("Checking this attempt", "The launcher is running only this mission's checks.");
+      try {
+        const { response, value } = await request(studio.dataset.verifyEndpoint);
+        if (!response.ok) throw new Error("The local verifier could not run safely.");
+        showFeedback(value.feedback);
+        lastReady = value.status === "ready_to_submit";
+        submitButton.disabled = !lastReady;
+        if (!lastReady) applyVariant(value.next_variant, true);
+        const retryMessage = " Review the feedback; the same skills are now presented in a different order.";
+        setResult(lastReady ? "Ready to submit" : "Revise and retry", `${value.score_percent}% score. ${value.critical_passed ? "Safety items passed." : "A safety-critical item needs correction."}${lastReady ? "" : retryMessage}`, lastReady ? "success" : "needs-work");
+      } catch (error) {
+        setResult("Check stopped safely", error.message || "Use the recovery section below.", "error");
+      } finally { checkButton.disabled = false; }
+    });
+    submitButton.addEventListener("click", async () => {
+      if (!lastReady) return;
+      submitButton.disabled = true;
+      setResult("Submitting once", "The launcher is generating and staging exactly one structured receipt.");
+      try {
+        const { response, value } = await request(studio.dataset.submitEndpoint);
+        if (!response.ok) throw new Error(value.detail || value.error || "Submission stopped safely.");
+        setResult("Submitted to GitHub", "The automatic check is running. Keep this page open or return later; do not submit again.", "success");
+        waitForController();
+      } catch (error) {
+        setResult("Nothing was published", error.message, "error");
+        submitButton.disabled = false;
+      }
+    });
+    const practiceButton = studio.querySelector("[data-prepare-practice]");
+    practiceButton?.addEventListener("click", async () => {
+      practiceButton.disabled = true;
+      try {
+        const response = await fetch(studio.dataset.practiceEndpoint, { method: "POST", credentials: "same-origin", headers: { Accept: "application/json" } });
+        const value = await response.json();
+        if (!response.ok) throw new Error(value.error || "practice setup stopped safely");
+        const panel = studio.querySelector("[data-practice-result]");
+        panel.hidden = false;
+        panel.querySelector("[data-practice-path]").textContent = `Folder: ${value.path}`;
+        const enter = context.repository.passport.platform === "windows"
+          ? `Set-Location -LiteralPath "${value.path}"`
+          : `cd -- "${value.path}"`;
+        const commands = [enter];
+        const list = panel.querySelector("[data-practice-commands]");
+        const commandItems = (items) => items.map((command, index) => {
+          const item = document.createElement("li");
+          const label = document.createElement("span");
+          label.textContent = `Step ${index + 1}`;
+          const pre = document.createElement("pre");
+          const code = document.createElement("code");
+          code.textContent = command;
+          const copy = document.createElement("button");
+          copy.type = "button";
+          copy.dataset.copyCommand = "";
+          copy.textContent = "Copy";
+          pre.append(code, copy);
+          item.append(label, pre);
+          return item;
+        });
+        list.replaceChildren(...commandItems(commands));
+        if (missionId === "git-manual-pr") {
+          const publish = studio.querySelector("[data-practice-publish]");
+          const publishList = publish?.querySelector("[data-practice-publish-commands]");
+          publishList?.replaceChildren(...commandItems([
+            `git push --set-upstream origin ${value.branch}`,
+            `gh pr create --repo ${context.repository.owner}/${context.repository.name} --base main --head ${value.branch} --draft --title "docs(practice): complete manual Git loop" --body "Synthetic IDEAL Lab Passport practice. No credentials, private data, or research data."`,
+          ]));
+          if (publish) publish.hidden = false;
+        }
+        installCopyButtons(panel);
+        const publish = studio.querySelector("[data-practice-publish]");
+        if (publish) installCopyButtons(publish);
+      } catch (error) {
+        setResult("Practice setup stopped safely", error.message, "error");
+        practiceButton.disabled = false;
+      }
+    });
+
+    fetch(studio.dataset.contextEndpoint, { credentials: "same-origin", headers: { Accept: "application/json" } }).then(async (response) => {
+      if (!response.ok) return;
+      context = await response.json();
+      if (!context?.repository?.passport?.missions?.includes(missionId)) return;
+      const assigned = context.repository.passport.missions;
+      const activeMission = context.official?.status?.current_mission || assigned[0];
+      if (missionId !== activeMission) {
+        setResult(
+          context.official?.status?.stage === "complete" ? "Route already complete" : "Mission locked",
+          context.official?.status?.stage === "complete"
+            ? "Return to the dashboard to open the trusted completion result."
+            : "Finish the current mission shown on your dashboard first.",
+          "neutral",
+        );
+        return;
+      }
+      const platform = context.repository.passport.platform;
+      applyRecipePlatform(platform);
+      const picker = studio.querySelector("[data-recipe-platform-picker]");
+      if (picker) picker.dataset.locked = "true";
+      for (const control of form.querySelectorAll("input, select, button")) control.disabled = false;
+      submitButton.disabled = true;
+      studio.querySelector("[data-start-passport]").hidden = true;
+      applyVariant(context.local_state?.attempt_counts?.[missionId] || 0);
+      const draft = context.local_state?.mission_drafts?.[missionId] || {};
+      for (const [question, values] of Object.entries(draft)) {
+        const fieldset = form.querySelector(`[data-question="${question}"]`);
+        if (!fieldset || !Array.isArray(values)) continue;
+        if (fieldset.dataset.questionType === "order") {
+          Array.from(fieldset.querySelectorAll("[data-order-position]")).forEach((select, index) => { select.value = values[index] || ""; });
+        } else {
+          for (const input of fieldset.querySelectorAll("input")) input.checked = values.includes(input.value);
+        }
+      }
+      setResult("Attempt saved on this computer", "Follow the steps, check your work, then submit once.");
+    }).catch(() => {});
+  }
+})();</script></div></div><nav class="mission-footer-nav" aria-label="Mission navigation" data-mission-footer><a href="/missions/euler-access-ssh/" data-previous-mission><span>Previous in route</span><strong>Establish Safe Euler SSH Access</strong></a><a class="source-link" href="https://github.com/IDEALLab/onboarding-IT/blob/92b6d71c34be6661602449e40db04b36a4d61524/curriculum/missions/euler-python-environment/README.md" rel="noreferrer">View exact source</a><a class="next" href="/missions/euler-cpu-first-job/" data-next-mission><span>Next in route</span><strong>Submit And Control A Tiny Euler CPU Job</strong></a></nav></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 2.1.0 /exact source 92b6d71c</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+`).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
+`).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html><script>(function(){const missionId = "euler-python-environment";
+const contextEndpoint = "/__passport/v1/context";
+const stateEndpoint = "/__passport/v1/state";
+const basePath = "/";
+const missionIndex = [{"id":"ai-agent-baseline","title":"Use A Safe Agent Loop After The Manual Baseline","route":"/missions/ai-agent-baseline/","machine":"local"},{"id":"ai-tool-configuration","title":"Choose And Configure An AI Access Route","route":"/missions/ai-tool-configuration/","machine":"local"},{"id":"blade-access-storage","title":"Use Blade For GUI Work Without Losing Data","route":"/missions/blade-access-storage/","machine":"blade"},{"id":"core-accounts-secrets","title":"Protect Accounts And Secrets","route":"/missions/core-accounts-secrets/","machine":"browser"},{"id":"core-incidents-ai-responsibility","title":"Respond To Incidents And Own Automated Work","route":"/missions/core-incidents-ai-responsibility/","machine":"browser"},{"id":"core-orientation","title":"Start And Resume Your Passport","route":"/missions/core-orientation/","machine":"browser"},{"id":"core-systems-data","title":"Map Systems And Research Data","route":"/missions/core-systems-data/","machine":"browser"},{"id":"data-collaboration","title":"Design Safe Shared Data Collaboration","route":"/missions/data-collaboration/","machine":"browser"},{"id":"data-handover","title":"Create A Recoverable Project Handover","route":"/missions/data-handover/","machine":"browser"},{"id":"data-placement","title":"Place Research Data Intentionally","route":"/missions/data-placement/","machine":"browser"},{"id":"euler-access-ssh","title":"Establish Safe Euler SSH Access","route":"/missions/euler-access-ssh/","machine":"local"},{"id":"euler-cpu-accounting","title":"Measure And Right-Size An Euler Job","route":"/missions/euler-cpu-accounting/","machine":"euler"},{"id":"euler-cpu-arrays","title":"Cap And Calculate Euler Job Arrays","route":"/missions/euler-cpu-arrays/","machine":"local"},{"id":"euler-cpu-first-job","title":"Submit And Control A Tiny Euler CPU Job","route":"/missions/euler-cpu-first-job/","machine":"euler"},{"id":"euler-gpu-review","title":"Review A One-GPU Euler Plan","route":"/missions/euler-gpu-review/","machine":"local"},{"id":"euler-python-environment","title":"Create A Small Python Environment On Euler","route":"/missions/euler-python-environment/","machine":"euler"},{"id":"euler-storage-reproducibility","title":"Place Euler Data And Freeze Run Inputs","route":"/missions/euler-storage-reproducibility/","machine":"browser"},{"id":"git-manual-pr","title":"Complete A Manual Pull Request Loop","route":"/missions/git-manual-pr/","machine":"local"},{"id":"git-tools-auth","title":"Configure Git Identity And GitHub Access","route":"/missions/git-tools-auth/","machine":"local"},{"id":"nas-access-storage","title":"Verify Your Approved NAS Workspace","route":"/missions/nas-access-storage/","machine":"nas"},{"id":"python-environment","title":"Create A Reproducible Python Environment","route":"/missions/python-environment/","machine":"local"},{"id":"python-reproducible-change","title":"Make And Verify A Reproducible Python Change","route":"/missions/python-reproducible-change/","machine":"local"},{"id":"supervisor-offboarding","title":"Plan Handover And Offboarding","route":"/missions/supervisor-offboarding/","machine":"browser"},{"id":"supervisor-onboarding","title":"Assign A Researcher Route And Safe Project Environment","route":"/missions/supervisor-onboarding/","machine":"browser"}];
+
+  const rememberMission = async () => {
+    try {
+      const response = await fetch(contextEndpoint, { credentials: "same-origin", headers: { Accept: "application/json" } });
+      if (!response.ok) return;
+      const context = await response.json();
+      const route = context?.repository?.passport?.missions;
+      const state = context?.local_state;
+      if (!Array.isArray(route) || !route.includes(missionId) || !state) return;
+      const authority = document.querySelector("[data-authority-note]");
+      if (authority) {
+        authority.querySelector("[data-authority-title]").textContent = "Your local passport";
+        authority.querySelector("[data-authority-copy]").textContent = "Draft answers stay on this computer. Only generated receipts are submitted.";
+        const link = authority.querySelector("[data-authority-link]");
+        link.href = `${String(basePath || "/").replace(/\/$/, "")}/passport/`;
+        link.textContent = "Return to my dashboard";
+      }
+      const index = new Map(missionIndex.map((item) => [item.id, item]));
+      if (route.some((id) => !index.has(id))) return;
+      const current = route.indexOf(missionId);
+      const position = document.querySelector("[data-mission-position]");
+      if (position) position.textContent = `${String(current + 1).padStart(2, "0")} / ${String(route.length).padStart(2, "0")}`;
+      const workHere = document.querySelector("[data-work-here]");
+      if (workHere) {
+        const platform = context.repository.passport.platform;
+        const shell = platform === "windows" ? "PowerShell" : platform === "macos" ? "zsh" : "bash";
+        const mission = index.get(missionId);
+        const location = mission?.machine === "euler" ? "Euler / bash"
+          : mission?.machine === "blade" ? "Blade / PowerShell"
+          : mission?.machine === "nas" ? `Approved NAS folder / ${shell}`
+          : mission?.machine === "browser" ? "This browser"
+          : `Your computer / ${shell}`;
+        workHere.textContent = location;
+      }
+      const base = String(basePath || "/").replace(/\/$/, "");
+      const setFooter = (selector, item, fallback) => {
+        const anchor = document.querySelector(selector);
+        if (!anchor) return;
+        if (!item) {
+          if (fallback) { anchor.hidden = false; anchor.href = `${base}/passport/`; anchor.querySelector("span").textContent = "Route status"; anchor.querySelector("strong").textContent = "Return to dashboard"; }
+          else anchor.hidden = true;
+          return;
+        }
+        anchor.hidden = false; anchor.href = `${base}${item.route}`; anchor.querySelector("strong").textContent = item.title;
+      };
+      setFooter("[data-previous-mission]", index.get(route[current - 1]), false);
+      setFooter("[data-next-mission]", index.get(route[current + 1]), true);
+      if (state.last_opened_mission === missionId) return;
+      await fetch(stateEndpoint, { method: "PUT", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...state, last_opened_mission: missionId }) });
+    } catch {}
+  };
+  rememberMission();
+})();</script>

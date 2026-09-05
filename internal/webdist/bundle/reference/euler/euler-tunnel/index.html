@@ -1,8 +1,8 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Goal: connect VS Code or SSH to a Slurm compute allocation instead of doing computation on an Euler login node."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Euler Tunnel And VS Code | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.BhM0eQ4y.css"></head><body data-curriculum-version="2.0.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / reference</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">reference</p><h1>Euler Tunnel And VS Code</h1><p>Goal: connect VS Code or SSH to a Slurm compute allocation instead of doing computation on an Euler login node.</p></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/b93a95b/docs/reference/euler/euler-tunnel.md" rel="noreferrer">View exact source</a><a href="/passport/">Return to my dashboard</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><p><strong>Goal:</strong> connect VS Code or SSH to a Slurm compute allocation instead of doing
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Goal: connect VS Code or SSH to a Slurm compute allocation instead of doing computation on an Euler login node."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Euler Tunnel And VS Code | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.GCBP_7Qu.css"></head><body data-curriculum-version="2.1.0"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / reference</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">reference</p><h1>Euler Tunnel And VS Code</h1><p>Goal: connect VS Code or SSH to a Slurm compute allocation instead of doing computation on an Euler login node.</p></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/92b6d71c34be6661602449e40db04b36a4d61524/docs/reference/euler/euler-tunnel.md" rel="noreferrer">View exact source</a><a href="/passport/">Return to my dashboard</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><p><strong>Goal:</strong> connect VS Code or SSH to a Slurm compute allocation instead of doing
 computation on an Euler login node.</p>
-<p><strong>Prerequisites:</strong> the public-key-only <code>key-ok</code> test in
-<a href="/reference/euler/access-and-ssh/">Euler access</a> passes. Do not continue if Euler still needs
-the ETH password for that test.</p>
+<p><strong>Prerequisites:</strong> the final public-key-only <code>config-ok</code> alias test in
+<a href="/reference/euler/access-and-ssh/">Euler access</a> passes. Do not continue if <code>ssh euler</code> still
+needs the ETH password.</p>
 <p><strong>Execution context:</strong> <code>euler-tunnel config/start/status/stop</code> run on an Euler
 login-node Bash prompt. SSH files and the tunnel hostname test run on the local
 computer in the explicitly labelled PowerShell or zsh/Bash block.</p>
@@ -83,66 +83,123 @@ not append a duplicate.</p>
 )
 </code></pre>
 <p><strong>Expected result:</strong> <code>ssh-keygen</code> prints one <code>euler-tunnel</code> host-key entry.</p>
-<h2 id="3-add-the-tunnel-host-in-the-existing-include-directory">3. Add The Tunnel Host In The Existing Include Directory<a class="heading-anchor" href="#3-add-the-tunnel-host-in-the-existing-include-directory" aria-label="Link to 3. Add The Tunnel Host In The Existing Include Directory">#</a></h2><p>The Euler access procedure created <code>~/.ssh/config.d/</code>. Use a separate file so
+<h2 id="3-add-the-tunnel-host-in-the-existing-include-directory">3. Add The Tunnel Host In The Existing Include Directory<a class="heading-anchor" href="#3-add-the-tunnel-host-in-the-existing-include-directory" aria-label="Link to 3. Add The Tunnel Host In The Existing Include Directory">#</a></h2><p>The Euler access procedure created <code>~/.ssh/passport.d/</code>. Use a separate file so
 the <code>Host euler</code> block cannot be joined accidentally to the tunnel block.</p>
 <h3 id="windows-laptop---powershell-1">Windows laptop - PowerShell<a class="heading-anchor" href="#windows-laptop---powershell-1" aria-label="Link to Windows laptop - PowerShell">#</a></h3><pre><code class="language-powershell">&amp; {
-    $User = Read-Host &quot;ETH username&quot;
-    if ($User -notmatch &#39;^[A-Za-z0-9._-]+$&#39;) { throw &quot;Invalid ETH username&quot; }
     $SshDir = Join-Path $env:USERPROFILE &quot;.ssh&quot;
-    $IncludeDir = Join-Path $SshDir &quot;config.d&quot;
-    $KeyPath = Join-Path $SshDir &quot;id_ed25519_euler&quot;
+    $IncludeDir = Join-Path $SshDir &quot;passport.d&quot;
+    $BackupDir = Join-Path $SshDir &quot;passport-backups&quot;
     $TunnelConfig = Join-Path $IncludeDir &quot;euler-tunnel.conf&quot;
-    if (-not (Test-Path $KeyPath)) { throw &quot;Missing private key: $KeyPath&quot; }
-    New-Item -ItemType Directory -Force $IncludeDir | Out-Null
+    $TunnelTemporary = &quot;$TunnelConfig.passport-new&quot;
+
+    $Resolved = @(ssh -G euler 2&gt;$null)
+    if ($LASTEXITCODE -ne 0) { throw &quot;STOP: the euler alias does not parse&quot; }
+    $UserMatch = $Resolved | Select-String &#39;^user\s+&#39; | Select-Object -First 1
+    $EulerUser = if ($UserMatch) { ($UserMatch.Line -split &#39;\s+&#39;, 2)[1] } else { &quot;&quot; }
+    $IdentityFiles = @($Resolved | ForEach-Object { if ($_ -match &#39;^identityfile\s+(.+)$&#39;) { $Matches[1] } })
+    $IdentitiesOnlyMatch = $Resolved | Select-String &#39;^identitiesonly\s+&#39; | Select-Object -First 1
+    $IdentitiesOnly = if ($IdentitiesOnlyMatch) { ($IdentitiesOnlyMatch.Line -split &#39;\s+&#39;, 2)[1] } else { &quot;&quot; }
+    if ($EulerUser -notmatch &#39;^[A-Za-z0-9._-]+$&#39;) { throw &quot;STOP: the euler alias has no valid short username&quot; }
+    if ($IdentityFiles.Count -eq 0 -or @($IdentityFiles | Where-Object { $_ -eq &#39;none&#39; -or $_ -match &#39;\.pub$&#39; }).Count -gt 0) { throw &quot;STOP: the euler alias has no safe private identity selection&quot; }
+    if ($IdentitiesOnly -notin @(&#39;yes&#39;, &#39;no&#39;)) { throw &quot;STOP: the euler alias has no valid identity policy&quot; }
+    $MarkerLines = @(ssh -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no euler &quot;echo config-ok&quot;)
+    $Marker = if ($MarkerLines.Count -gt 0) { ([string]$MarkerLines[-1]).Trim() } else { &quot;&quot; }
+    if ($LASTEXITCODE -ne 0 -or $Marker -ne &#39;config-ok&#39;) { throw &quot;STOP: the required config-ok alias test failed&quot; }
+
+    New-Item -ItemType Directory -Force $IncludeDir, $BackupDir | Out-Null
     if (Test-Path $TunnelConfig) {
-        Copy-Item $TunnelConfig &quot;$TunnelConfig.backup.$(Get-Date -Format yyyyMMdd-HHmmss)&quot;
+        Copy-Item $TunnelConfig (Join-Path $BackupDir &quot;euler-tunnel.conf.$(Get-Date -Format yyyyMMdd-HHmmss)&quot;)
     }
 
-    @&quot;
-Host euler-tunnel
-  User $User
-  IdentityFile ~/.ssh/id_ed25519_euler
-  IdentitiesOnly yes
-  ServerAliveInterval 10
-  ServerAliveCountMax 10
-  ProxyCommand ssh euler euler-tunnel connect
-&quot;@ | Set-Content $TunnelConfig -Encoding ascii
+    $Lines = @(&quot;Host euler-tunnel&quot;, &quot;  User $EulerUser&quot;)
+    foreach ($Identity in $IdentityFiles) {
+        if ($Identity.Contains(&#39;&quot;&#39;)) { throw &quot;STOP: unsupported quote in resolved identity path&quot; }
+        $Lines += &#39;  IdentityFile &quot;&#39; + $Identity + &#39;&quot;&#39;
+    }
+    $Lines += @(
+        &quot;  IdentitiesOnly $IdentitiesOnly&quot;,
+        &quot;  PreferredAuthentications publickey&quot;,
+        &quot;  PasswordAuthentication no&quot;,
+        &quot;  KbdInteractiveAuthentication no&quot;,
+        &quot;  ForwardAgent no&quot;,
+        &quot;  ServerAliveInterval 10&quot;,
+        &quot;  ServerAliveCountMax 10&quot;,
+        &quot;  ProxyCommand ssh -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no euler euler-tunnel connect&quot;
+    )
+    $Lines | Set-Content $TunnelTemporary -Encoding ascii
 
-    ssh -G euler-tunnel | Select-String &#39;^(user|identityfile|proxycommand) &#39;
+    ssh -F $TunnelTemporary -G euler-tunnel | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        Remove-Item $TunnelTemporary -ErrorAction SilentlyContinue
+        throw &quot;STOP: generated tunnel config is invalid; the existing file is unchanged&quot;
+    }
+    Move-Item -Force $TunnelTemporary $TunnelConfig
+    ssh -G euler-tunnel | Select-String &#39;^(user|identityfile|identitiesonly|preferredauthentications|passwordauthentication|kbdinteractiveauthentication|forwardagent|proxycommand) &#39;
+    if ($LASTEXITCODE -ne 0) { throw &quot;STOP: tunnel alias is invalid; restore the timestamped backup&quot; }
 }
 </code></pre>
 <p>Do not add the generated <code>ControlMaster</code>, <code>ControlPath</code>, or <code>ControlPersist</code>
 lines on Windows; they use Unix sockets.</p>
 <h3 id="macos-or-linux-laptop---zshbash-1">macOS or Linux laptop - zsh/Bash<a class="heading-anchor" href="#macos-or-linux-laptop---zshbash-1" aria-label="Link to macOS or Linux laptop - zsh/Bash">#</a></h3><pre><code class="language-bash">(
 set -eu
-printf &#39;ETH username: &#39;
-read -r eth_user
-case &quot;$eth_user&quot; in
-  &#39;&#39;|*[!A-Za-z0-9._-]*) printf &#39;STOP: invalid ETH username\n&#39; &gt;&amp;2; exit 1 ;;
-esac
-include_dir=&quot;$HOME/.ssh/config.d&quot;
+include_dir=&quot;$HOME/.ssh/passport.d&quot;
+backup_dir=&quot;$HOME/.ssh/passport-backups&quot;
 tunnel_config=&quot;$include_dir/euler-tunnel.conf&quot;
-test -f &quot;$HOME/.ssh/id_ed25519_euler&quot;
-mkdir -p &quot;$include_dir&quot;
-if [ -f &quot;$tunnel_config&quot; ]; then
-  cp -p &quot;$tunnel_config&quot; &quot;$tunnel_config.backup.$(date +%Y%m%d-%H%M%S)&quot;
+tunnel_temporary=&quot;$tunnel_config.passport-new&quot;
+
+resolved=&quot;$(ssh -G euler 2&gt;/dev/null)&quot; || { printf &#39;STOP: the euler alias does not parse\n&#39; &gt;&amp;2; exit 1; }
+eth_user=&quot;$(printf &#39;%s\n&#39; &quot;$resolved&quot; | awk &#39;$1 == &quot;user&quot; { print $2; exit }&#39;)&quot;
+case &quot;$eth_user&quot; in &#39;&#39;|*[!A-Za-z0-9._-]*) printf &#39;STOP: the euler alias has no valid short username\n&#39; &gt;&amp;2; exit 1;; esac
+identity_files=&quot;$(printf &#39;%s\n&#39; &quot;$resolved&quot; | awk &#39;$1 == &quot;identityfile&quot; { $1=&quot;&quot;; sub(/^[[:space:]]+/, &quot;&quot;); print }&#39;)&quot;
+[ -n &quot;$identity_files&quot; ] || { printf &#39;STOP: the euler alias has no identity selection\n&#39; &gt;&amp;2; exit 1; }
+if printf &#39;%s\n&#39; &quot;$identity_files&quot; | awk &#39;$0 == &quot;none&quot; || $0 ~ /[.]pub$/ { bad=1 } END { exit !bad }&#39;; then
+  printf &#39;STOP: the euler alias has no safe private identity selection\n&#39; &gt;&amp;2
+  exit 1
 fi
-cat &gt; &quot;$tunnel_config&quot; &lt;&lt;EOF
-Host euler-tunnel
-  User $eth_user
-  IdentityFile ~/.ssh/id_ed25519_euler
-  IdentitiesOnly yes
-  ServerAliveInterval 10
-  ServerAliveCountMax 10
-  ProxyCommand ssh euler euler-tunnel connect
-  ControlMaster auto
-  ControlPath ~/.ssh/cs-%r@%h:%p
-  ControlPersist 15
+identities_only=&quot;$(printf &#39;%s\n&#39; &quot;$resolved&quot; | awk &#39;$1 == &quot;identitiesonly&quot; { print $2; exit }&#39;)&quot;
+case &quot;$identities_only&quot; in yes|no) ;; *) printf &#39;STOP: the euler alias has no valid identity policy\n&#39; &gt;&amp;2; exit 1;; esac
+marker=&quot;$(ssh -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no euler &#39;echo config-ok&#39;)&quot; || {
+  printf &#39;STOP: the required config-ok alias test failed\n&#39; &gt;&amp;2
+  exit 1
+}
+[ &quot;$marker&quot; = config-ok ] || { printf &#39;STOP: the required config-ok marker was not returned\n&#39; &gt;&amp;2; exit 1; }
+
+mkdir -p &quot;$include_dir&quot; &quot;$backup_dir&quot;
+chmod 700 &quot;$include_dir&quot; &quot;$backup_dir&quot;
+if [ -f &quot;$tunnel_config&quot; ]; then
+  cp -p &quot;$tunnel_config&quot; &quot;$backup_dir/euler-tunnel.conf.$(date +%Y%m%d-%H%M%S)&quot;
+fi
+{
+  printf &#39;Host euler-tunnel\n  User %s\n&#39; &quot;$eth_user&quot;
+  while IFS= read -r identity; do
+    [ -n &quot;$identity&quot; ] || continue
+    case &quot;$identity&quot; in *&#39;&quot;&#39;*) printf &#39;STOP: unsupported quote in resolved identity path\n&#39; &gt;&amp;2; exit 1;; esac
+    printf &#39;  IdentityFile &quot;%s&quot;\n&#39; &quot;$identity&quot;
+  done &lt;&lt;EOF
+$identity_files
 EOF
-chmod 600 &quot;$tunnel_config&quot;
-ssh -G euler-tunnel | grep -E &#39;^(user|identityfile|proxycommand) &#39;
+  printf &#39;  IdentitiesOnly %s\n&#39; &quot;$identities_only&quot;
+  printf &#39;  PreferredAuthentications publickey\n  PasswordAuthentication no\n  KbdInteractiveAuthentication no\n  ForwardAgent no\n&#39;
+  printf &#39;  ServerAliveInterval 10\n  ServerAliveCountMax 10\n&#39;
+  printf &#39;  ProxyCommand ssh -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no euler euler-tunnel connect\n&#39;
+  printf &#39;  ControlMaster auto\n  ControlPath ~/.ssh/cs-%%r@%%h:%%p\n  ControlPersist 15\n&#39;
+} &gt; &quot;$tunnel_temporary&quot;
+chmod 600 &quot;$tunnel_temporary&quot;
+ssh -F &quot;$tunnel_temporary&quot; -G euler-tunnel &gt;/dev/null || {
+  rm -f &quot;$tunnel_temporary&quot;
+  printf &#39;STOP: generated tunnel config is invalid; the existing file is unchanged\n&#39; &gt;&amp;2
+  exit 1
+}
+mv &quot;$tunnel_temporary&quot; &quot;$tunnel_config&quot;
+ssh -G euler-tunnel | grep -E &#39;^(user|identityfile|identitiesonly|preferredauthentications|passwordauthentication|kbdinteractiveauthentication|forwardagent|proxycommand) &#39;
 )
 </code></pre>
+<p><strong>Expected result:</strong> the resolved user, private identity selection, and
+<code>identitiesonly</code> policy match the tested <code>euler</code> alias; password and
+keyboard-interactive authentication are <code>no</code>, forwarding is <code>no</code>, and the
+proxy command reaches the existing <code>euler</code> alias. If a tunnel
+configuration already existed, it was backed up and replaced only after the
+new file parsed successfully.</p>
 <h2 id="4-start-the-smallest-suitable-allocation">4. Start The Smallest Suitable Allocation<a class="heading-anchor" href="#4-start-the-smallest-suitable-allocation" aria-label="Link to 4. Start The Smallest Suitable Allocation">#</a></h2><p>Run these only on an <strong>Euler login node - Bash</strong>.</p>
 <h3 id="cpu-only-interactive-work-on-esfuge">CPU-only interactive work on <code>es_fuge</code><a class="heading-anchor" href="#cpu-only-interactive-work-on-esfuge" aria-label="Link to CPU-only interactive work on es_fuge">#</a></h3><pre><code class="language-bash">euler-tunnel start --account=es_fuge --cpus-per-task=2 --mem-per-cpu=4G --time=02:00:00
 </code></pre>
@@ -181,7 +238,8 @@ that test succeeds but VS Code does not connect:</p>
 <ol>
 <li>In VS Code, open <strong>View &gt; Output</strong> and select <strong>Remote - SSH</strong>.</li>
 <li>Check which local SSH configuration file the log says it is using.</li>
-<li>If it is not the existing user file that contains <code>Include config.d/*</code>, open
+<li>If it is not the existing user file that contains
+<code>Include ~/.ssh/passport.d/*.conf</code>, open
 local <strong>User Settings</strong>, search for <strong>Remote.SSH: Config File</strong>, and enter the
 full path to that same existing file (normally <code>~/.ssh/config</code>).</li>
 <li>Retry <strong>Remote-SSH: Connect to Host... &gt; euler-tunnel</strong>.</li>
@@ -198,7 +256,7 @@ echo &quot;$SLURM_JOB_ID&quot;
 <pre><code class="language-bash">euler-tunnel stop
 </code></pre>
 <h2 id="common-failures-and-safe-recovery">Common Failures And Safe Recovery<a class="heading-anchor" href="#common-failures-and-safe-recovery" aria-label="Link to Common Failures And Safe Recovery">#</a></h2><ul>
-<li><strong>Tunnel asks for ETH password:</strong> repeat the public-key-only <code>key-ok</code> test.</li>
+<li><strong>Tunnel asks for ETH password:</strong> repeat the public-key-only <code>config-ok</code> alias test.</li>
 <li><strong><code>Host euler-tunnel</code> is malformed:</strong> run <code>ssh -G euler-tunnel</code>; each SSH
 keyword must be on its own line.</li>
 <li><strong>Private-key warning names <code>.pub</code>:</strong> remove <code>.pub</code> from <code>IdentityFile</code>.</li>
@@ -208,7 +266,7 @@ startup. This is normal on first connection.</li>
 step 6; do not regenerate a working SSH key.</li>
 <li><strong>No tunnel job exists:</strong> start it on the Euler login node before connecting.</li>
 </ul>
-<h2 id="ask-for-help-when">Ask For Help When<a class="heading-anchor" href="#ask-for-help-when" aria-label="Link to Ask For Help When">#</a></h2><p><code>key-ok</code> succeeds and <code>euler-tunnel status</code> shows a running job, but the local
+<h2 id="ask-for-help-when">Ask For Help When<a class="heading-anchor" href="#ask-for-help-when" aria-label="Link to Ask For Help When">#</a></h2><p><code>config-ok</code> succeeds and <code>euler-tunnel status</code> shows a running job, but the local
 SSH tunnel test still fails. Share sanitized <code>ssh -v euler-tunnel hostname</code>
 output, never key contents.</p>
 <h2 id="primary-source">Primary Source<a class="heading-anchor" href="#primary-source" aria-label="Link to Primary Source">#</a></h2><ul>
@@ -216,6 +274,6 @@ output, never key contents.</p>
 <li><a href="https://code.visualstudio.com/docs/remote/ssh" rel="noreferrer" data-external-link>VS Code Remote - SSH configuration</a></li>
 </ul>
 <p>Verified: 2026-08-04. Review by: 2026-11-04. Owner: IDEAL Lab IT.</p>
-</article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/reference/euler/">Euler Reference</a><a href="/reference/euler/access-and-ssh/">Euler Access And Safe SSH Key Setup</a><a href="/reference/euler/paraview/">ParaView 6.0.0 Client/Server On Euler</a><a href="/reference/euler/slurm/">Slurm Job Lifecycle And Resource Optimization</a><a href="/reference/euler/storage/">Euler Storage And Data Lifecycle</a><a href="/reference/euler/troubleshooting/">Euler Troubleshooting By Symptom</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current mission to practice, verify, and submit evidence.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 2.0.0 /exact source b93a95b</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+</article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/reference/euler/">Euler Reference</a><a href="/reference/euler/access-and-ssh/">Euler Access And Safe SSH Key Setup</a><a href="/reference/euler/slurm/">Slurm Job Lifecycle And Resource Optimization</a><a href="/reference/euler/troubleshooting/">Euler Troubleshooting By Symptom</a><a href="/reference/guides/remote/">Remote Access: Blade, Lab Workstations, And Euler</a><a href="/reference/guides/vscode/">Visual Studio Code Setup And Use</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current mission to practice, verify, and submit evidence.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 2.1.0 /exact source 92b6d71c</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
 `).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
 `).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html>
