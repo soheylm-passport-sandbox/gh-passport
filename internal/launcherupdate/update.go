@@ -22,15 +22,16 @@ import (
 )
 
 const (
-	TrustedOwner      = "soheylm-passport-sandbox"
-	TrustedRepository = "gh-passport"
-	TrustedHost       = "github.com"
-	ReadyFileEnv      = "IDEAL_PASSPORT_UPDATE_READY_FILE"
-	ReadyTokenEnv     = "IDEAL_PASSPORT_UPDATE_READY_TOKEN"
-	maxReleasePayload = 4 << 20
-	maxManifestSize   = 16 << 10
-	maxLauncherSize   = 128 << 20
-	reopenTimeout     = 15 * time.Second
+	TrustedOwner       = "soheylm-passport-sandbox"
+	TrustedRepository  = "gh-passport"
+	TrustedHost        = "github.com"
+	ReadyFileEnv       = "IDEAL_PASSPORT_UPDATE_READY_FILE"
+	ReadyTokenEnv      = "IDEAL_PASSPORT_UPDATE_READY_TOKEN"
+	maxReleasePayload  = 4 << 20
+	maxManifestSize    = 16 << 10
+	maxLauncherSize    = 128 << 20
+	reopenTimeout      = 15 * time.Second
+	darwinCodeSignPath = "/usr/bin/codesign"
 )
 
 var (
@@ -452,16 +453,24 @@ func Apply(planPath string) error {
 		return err
 	}
 	time.Sleep(750 * time.Millisecond)
-	install := exec.Command(
-		plan.GitHubCLIPath,
-		"extension", "install", TrustedOwner+"/"+TrustedRepository,
-		"--force", "--pin", plan.Candidate.Version,
-	)
-	install.Dir = plan.RepositoryRoot
-	install.Env = append(os.Environ(), "GH_PAGER=cat", "NO_COLOR=1")
-	output, installErr := install.CombinedOutput()
+	verifiedAsset, output, installErr := stageReleaseAsset(plan)
 	if installErr == nil {
-		installErr = verifyInstalled(plan)
+		install := exec.Command(
+			plan.GitHubCLIPath,
+			"extension", "install", TrustedOwner+"/"+TrustedRepository,
+			"--force", "--pin", plan.Candidate.Version,
+		)
+		install.Dir = plan.RepositoryRoot
+		install.Env = append(os.Environ(), "GH_PAGER=cat", "NO_COLOR=1")
+		var installOutput []byte
+		installOutput, installErr = install.CombinedOutput()
+		if len(output) > 0 && len(installOutput) > 0 {
+			output = append(output, '\n')
+		}
+		output = append(output, installOutput...)
+	}
+	if installErr == nil {
+		installErr = verifyInstalled(plan, verifiedAsset)
 	}
 	if installErr != nil {
 		rollbackErr := restoreAndReopen(plan, "The update did not pass its safety checks. The previous launcher was restored.")
@@ -491,10 +500,51 @@ func Apply(planPath string) error {
 	return nil
 }
 
-func verifyInstalled(plan updatePlan) error {
-	digest, err := fileSHA256(plan.ExecutablePath)
+func stageReleaseAsset(plan updatePlan) (string, []byte, error) {
+	directory := filepath.Join(filepath.Dir(plan.LogPath), "release-asset")
+	if err := ensurePrivateDirectory(directory); err != nil {
+		return "", nil, errors.New("could not create the private release workspace")
+	}
+	path := filepath.Join(directory, plan.Candidate.AssetName)
+	if err := removeRegularIfPresent(path); err != nil {
+		return "", nil, errors.New("the private release workspace is unsafe")
+	}
+	command := exec.Command(
+		plan.GitHubCLIPath,
+		"release", "download", plan.Candidate.Version,
+		"--repo", TrustedOwner+"/"+TrustedRepository,
+		"--pattern", plan.Candidate.AssetName,
+		"--dir", directory,
+	)
+	command.Dir = plan.RepositoryRoot
+	command.Env = append(os.Environ(), "GH_PAGER=cat", "NO_COLOR=1")
+	output, err := command.CombinedOutput()
+	if err != nil {
+		return "", output, errors.New("the trusted release asset could not be downloaded")
+	}
+	if err := verifyReleaseAsset(plan, path); err != nil {
+		return "", output, err
+	}
+	return path, output, nil
+}
+
+func verifyReleaseAsset(plan updatePlan, path string) error {
+	info, err := os.Lstat(path)
+	if err != nil || !info.Mode().IsRegular() || info.Mode()&os.ModeSymlink != 0 || info.Size() != plan.Candidate.Size {
+		return errors.New("downloaded launcher size does not match the trusted release")
+	}
+	digest, err := fileSHA256(path)
 	if err != nil || digest != plan.Candidate.Digest {
-		return errors.New("installed launcher checksum does not match the trusted release")
+		return errors.New("downloaded launcher checksum does not match the trusted release")
+	}
+	return nil
+}
+
+func verifyInstalled(plan updatePlan, verifiedAsset string) error {
+	if err := verifyInstalledArtifactForPlatform(
+		plan, verifiedAsset, runtime.GOOS, runtime.GOARCH, codeSignDarwinBinary,
+	); err != nil {
+		return err
 	}
 	command := exec.Command(plan.ExecutablePath, "version", "--json")
 	command.Dir = plan.RepositoryRoot
@@ -515,6 +565,68 @@ func verifyInstalled(plan updatePlan) error {
 	manifest, err := readManifest(plan.ManifestPath)
 	if err != nil || manifest["owner"] != TrustedOwner || manifest["name"] != TrustedRepository || manifest["host"] != TrustedHost || manifest["tag"] != plan.Candidate.Version || !samePath(manifest["path"], plan.ExecutablePath) {
 		return errors.New("installed extension manifest is not trusted")
+	}
+	return nil
+}
+
+func verifyInstalledArtifactForPlatform(
+	plan updatePlan,
+	verifiedAsset string,
+	operatingSystem string,
+	architecture string,
+	signDarwin func(string) error,
+) error {
+	// Verify the untouched release bytes again before deriving the form that
+	// GitHub CLI installs. This closes the gap between download and install.
+	if err := verifyReleaseAsset(plan, verifiedAsset); err != nil {
+		return err
+	}
+	expectedDigest := plan.Candidate.Digest
+	if operatingSystem == "darwin" && architecture == "arm64" {
+		directory := filepath.Join(filepath.Dir(plan.LogPath), "expected-install")
+		if err := ensurePrivateDirectory(directory); err != nil {
+			return errors.New("could not create the private macOS verification workspace")
+		}
+		expectedPath := filepath.Join(directory, filepath.Base(plan.ExecutablePath))
+		if err := removeRegularIfPresent(expectedPath); err != nil {
+			return errors.New("the private macOS verification workspace is unsafe")
+		}
+		if err := copyRegular(verifiedAsset, expectedPath, 0o700); err != nil {
+			return errors.New("could not prepare the macOS verification copy")
+		}
+		if signDarwin == nil || signDarwin(expectedPath) != nil {
+			return errors.New("could not reproduce GitHub CLI macOS signing")
+		}
+		var err error
+		expectedDigest, err = fileSHA256(expectedPath)
+		if err != nil {
+			return errors.New("could not verify the expected macOS launcher")
+		}
+	}
+	installedDigest, err := fileSHA256(plan.ExecutablePath)
+	if err != nil || installedDigest != expectedDigest {
+		return errors.New("installed launcher does not match the verified release artifact")
+	}
+	return nil
+}
+
+func codeSignDarwinBinary(path string) error {
+	codesign, err := resolveRegularExecutable(darwinCodeSignPath)
+	if err != nil {
+		return err
+	}
+	command := exec.Command(
+		codesign,
+		"--sign", "-", "--force",
+		"--preserve-metadata=entitlements,requirements,flags,runtime",
+		path,
+	)
+	if output, err := command.CombinedOutput(); err != nil {
+		return fmt.Errorf("codesign failed: %s", strings.TrimSpace(string(output)))
+	}
+	verify := exec.Command(codesign, "--verify", "--strict", path)
+	if output, err := verify.CombinedOutput(); err != nil {
+		return fmt.Errorf("codesign verification failed: %s", strings.TrimSpace(string(output)))
 	}
 	return nil
 }
@@ -662,6 +774,10 @@ func readPlan(path string) (updatePlan, error) {
 	}
 	if !validAsset(plan.Candidate.Version, asset) {
 		return updatePlan{}, errors.New("update plan has invalid release metadata")
+	}
+	expectedAsset, err := platformAssetName(runtime.GOOS, runtime.GOARCH)
+	if err != nil || plan.Candidate.AssetName != expectedAsset {
+		return updatePlan{}, errors.New("update plan targets the wrong platform asset")
 	}
 	directory := filepath.Dir(absolute)
 	for _, path := range []string{plan.RollbackBinary, plan.RollbackManifest, plan.LogPath} {

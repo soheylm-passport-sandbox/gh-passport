@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -28,6 +29,27 @@ func TestMain(m *testing.M) {
 			os.Exit(2)
 		}
 		switch os.Args[1] {
+		case "release":
+			if mode == "download-fail" {
+				os.Exit(2)
+			}
+			directory := testArgument("--dir")
+			assetName := testArgument("--pattern")
+			if directory == "" || assetName == "" || os.MkdirAll(directory, 0o700) != nil {
+				os.Exit(2)
+			}
+			source, _ := os.Executable()
+			raw, err := os.ReadFile(source)
+			if err != nil {
+				os.Exit(2)
+			}
+			if mode == "corrupt-download" {
+				raw = append(raw, []byte("corrupt")...)
+			}
+			if os.WriteFile(filepath.Join(directory, assetName), raw, 0o700) != nil {
+				os.Exit(2)
+			}
+			os.Exit(0)
 		case "extension":
 			if mode == "fail" {
 				os.Exit(2)
@@ -44,6 +66,27 @@ func TestMain(m *testing.M) {
 			)
 			if os.WriteFile(os.Getenv("PASSPORT_UPDATE_TEST_MANIFEST"), []byte(manifest), 0o600) != nil {
 				os.Exit(2)
+			}
+			if runtime.GOOS == "darwin" && runtime.GOARCH == "arm64" {
+				command := exec.Command(
+					darwinCodeSignPath,
+					"--sign", "-", "--force",
+					"--preserve-metadata=entitlements,requirements,flags,runtime",
+					os.Getenv("PASSPORT_UPDATE_TEST_TARGET"),
+				)
+				if command.Run() != nil {
+					os.Exit(2)
+				}
+			}
+			if mode == "tamper-installed" {
+				file, err := os.OpenFile(os.Getenv("PASSPORT_UPDATE_TEST_TARGET"), os.O_APPEND|os.O_WRONLY, 0)
+				if err != nil {
+					os.Exit(2)
+				}
+				_, writeErr := file.WriteString("tampered")
+				if closeErr := file.Close(); writeErr != nil || closeErr != nil {
+					os.Exit(2)
+				}
 			}
 			os.Exit(0)
 		case "version":
@@ -64,6 +107,15 @@ func TestMain(m *testing.M) {
 		}
 	}
 	os.Exit(m.Run())
+}
+
+func testArgument(name string) string {
+	for index := 1; index+1 < len(os.Args); index++ {
+		if os.Args[index] == name {
+			return os.Args[index+1]
+		}
+	}
+	return ""
 }
 
 func marker(t *testing.T, version string, curricula ...string) string {
@@ -243,15 +295,6 @@ func TestPrepareCreatesPrivatePlanFromTrustedRelease(t *testing.T) {
 
 func TestApplyVerifiesInstalledBinaryAndRecordsSuccess(t *testing.T) {
 	planPath, plan := updateFixture(t)
-	testBinary, err := os.Executable()
-	if err != nil {
-		t.Fatal(err)
-	}
-	digest, err := fileSHA256(testBinary)
-	if err != nil {
-		t.Fatal(err)
-	}
-	plan.Candidate.Digest = digest
 	if err := writePrivateJSON(planPath, plan); err != nil {
 		t.Fatal(err)
 	}
@@ -266,9 +309,133 @@ func TestApplyVerifiesInstalledBinaryAndRecordsSuccess(t *testing.T) {
 	if result == nil || result.Status != "updated" || result.Version != plan.Candidate.Version {
 		t.Fatalf("unexpected update result: %#v", result)
 	}
-	installedDigest, err := fileSHA256(plan.ExecutablePath)
-	if err != nil || installedDigest != digest {
-		t.Fatalf("installed digest = %q, %v", installedDigest, err)
+	verifiedAsset := filepath.Join(filepath.Dir(plan.LogPath), "release-asset", plan.Candidate.AssetName)
+	if err := verifyInstalledArtifactForPlatform(
+		plan, verifiedAsset, runtime.GOOS, runtime.GOARCH, codeSignDarwinBinary,
+	); err != nil {
+		t.Fatalf("installed release verification failed: %v", err)
+	}
+}
+
+func TestVerifyInstalledArtifactAcceptsExpectedDarwinResignature(t *testing.T) {
+	root := t.TempDir()
+	verifiedAsset := filepath.Join(root, "gh-passport-darwin-arm64")
+	installed := filepath.Join(root, "extension", "gh-passport")
+	if err := os.MkdirAll(filepath.Dir(installed), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	raw := []byte("verified release bytes")
+	if err := os.WriteFile(verifiedAsset, raw, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	digest, err := fileSHA256(verifiedAsset)
+	if err != nil {
+		t.Fatal(err)
+	}
+	plan := updatePlan{
+		ExecutablePath: installed,
+		LogPath:        filepath.Join(root, "update.log"),
+		Candidate: Candidate{
+			Digest: digest,
+			Size:   int64(len(raw)),
+		},
+	}
+	fakeSign := func(path string) error {
+		file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0)
+		if err != nil {
+			return err
+		}
+		_, writeErr := file.WriteString("-github-cli-adhoc-signature")
+		if closeErr := file.Close(); writeErr != nil {
+			return writeErr
+		} else {
+			return closeErr
+		}
+	}
+	if err := copyRegular(verifiedAsset, installed, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := fakeSign(installed); err != nil {
+		t.Fatal(err)
+	}
+	if err := verifyInstalledArtifactForPlatform(plan, verifiedAsset, "darwin", "arm64", fakeSign); err != nil {
+		t.Fatalf("expected macOS resignature was rejected: %v", err)
+	}
+	file, err := os.OpenFile(installed, os.O_APPEND|os.O_WRONLY, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, writeErr := file.WriteString("-unexpected-change")
+	if closeErr := file.Close(); writeErr != nil || closeErr != nil {
+		t.Fatalf("could not tamper with installed fixture: %v, %v", writeErr, closeErr)
+	}
+	if err := verifyInstalledArtifactForPlatform(plan, verifiedAsset, "darwin", "arm64", fakeSign); err == nil {
+		t.Fatal("an installed binary changed beyond the expected macOS signature was accepted")
+	}
+}
+
+func TestVerifyInstalledArtifactRejectsCorruptReleaseBeforeSigning(t *testing.T) {
+	root := t.TempDir()
+	verifiedAsset := filepath.Join(root, "gh-passport-darwin-arm64")
+	installed := filepath.Join(root, "gh-passport")
+	if err := os.WriteFile(verifiedAsset, []byte("corrupt"), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(installed, []byte("installed"), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	called := false
+	plan := updatePlan{
+		ExecutablePath: installed,
+		LogPath:        filepath.Join(root, "update.log"),
+		Candidate: Candidate{
+			Digest: strings.Repeat("a", 64),
+			Size:   int64(len("corrupt")),
+		},
+	}
+	err := verifyInstalledArtifactForPlatform(plan, verifiedAsset, "darwin", "arm64", func(string) error {
+		called = true
+		return nil
+	})
+	if err == nil || called {
+		t.Fatalf("corrupt release result = %v, signer called = %v", err, called)
+	}
+}
+
+func TestApplyRestoresPreviousBinaryWhenInstalledAssetIsAltered(t *testing.T) {
+	planPath, plan := updateFixture(t)
+	if err := writePrivateJSON(planPath, plan); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("PASSPORT_UPDATE_TEST_MODE", "tamper-installed")
+	t.Setenv("PASSPORT_UPDATE_TEST_TARGET", plan.ExecutablePath)
+	t.Setenv("PASSPORT_UPDATE_TEST_MANIFEST", plan.ManifestPath)
+	t.Setenv("PASSPORT_UPDATE_TEST_VERSION", plan.Candidate.Version)
+	if err := Apply(planPath); err == nil {
+		t.Fatal("an altered installed launcher should trigger rollback")
+	}
+	raw, err := os.ReadFile(plan.ExecutablePath)
+	if err != nil || string(raw) != "previous launcher" {
+		t.Fatalf("rollback binary = %q, %v", raw, err)
+	}
+}
+
+func TestApplyRestoresPreviousBinaryWhenDownloadedAssetIsCorrupt(t *testing.T) {
+	planPath, plan := updateFixture(t)
+	if err := writePrivateJSON(planPath, plan); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("PASSPORT_UPDATE_TEST_MODE", "corrupt-download")
+	if err := Apply(planPath); err == nil {
+		t.Fatal("a corrupt downloaded launcher should trigger rollback")
+	}
+	raw, err := os.ReadFile(plan.ExecutablePath)
+	if err != nil || string(raw) != "previous launcher" {
+		t.Fatalf("rollback binary = %q, %v", raw, err)
+	}
+	result := readResult(plan.StatusPath)
+	if result == nil || result.Status != "rolled_back" {
+		t.Fatalf("unexpected rollback result: %#v", result)
 	}
 }
 
@@ -342,6 +509,16 @@ func TestReadPlanRejectsPathAndRollbackTampering(t *testing.T) {
 	if _, err := readPlan(planPath); err == nil {
 		t.Fatal("a tampered rollback launcher should fail")
 	}
+
+	planPath, plan = updateFixture(t)
+	plan.Candidate.AssetName = "gh-passport-linux-arm64"
+	plan.Candidate.DownloadURL = "https://github.com/" + TrustedOwner + "/" + TrustedRepository + "/releases/download/" + plan.Candidate.Version + "/" + plan.Candidate.AssetName
+	if err := writePrivateJSON(planPath, plan); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := readPlan(planPath); err == nil {
+		t.Fatal("a release asset for another platform should fail")
+	}
 }
 
 func updateFixture(t *testing.T) (string, updatePlan) {
@@ -399,6 +576,14 @@ func updateFixture(t *testing.T) (string, updatePlan) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	candidateDigest, err := fileSHA256(testBinary)
+	if err != nil {
+		t.Fatal(err)
+	}
+	candidateInfo, err := os.Stat(testBinary)
+	if err != nil {
+		t.Fatal(err)
+	}
 	plan := updatePlan{
 		SchemaVersion:     1,
 		RepositoryRoot:    root,
@@ -416,8 +601,8 @@ func updateFixture(t *testing.T) (string, updatePlan) {
 			Version:     "v0.4.3",
 			AssetName:   name,
 			DownloadURL: "https://github.com/" + TrustedOwner + "/" + TrustedRepository + "/releases/download/v0.4.3/" + name,
-			Digest:      strings.Repeat("c", 64),
-			Size:        12345,
+			Digest:      candidateDigest,
+			Size:        candidateInfo.Size(),
 		},
 	}
 	return filepath.Join(directory, "plan.json"), plan
