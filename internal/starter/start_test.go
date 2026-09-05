@@ -212,7 +212,7 @@ func TestResolveMissionsAddsUniversalAndTransitiveTracksInCatalogOrder(t *testin
 func TestDecodeCatalogAcceptsAdditiveTeachingMetadata(t *testing.T) {
 	raw := []byte(`{
   "schema_version": 2,
-  "curriculum_version": "2.1.1",
+  "curriculum_version": "2.1.2",
   "source_repository": "soheylm-passport-sandbox/passport-exercises",
   "platforms": ["windows", "macos", "linux"],
   "universal_tracks": ["core"],

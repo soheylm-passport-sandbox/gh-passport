@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="This is the IDEAL Lab's practical onboarding for GitHub, Python, research data, AI coding agents, Blade, and Euler. You can read this page on GitHub before installing Git, Obsidian, Python, or an editor."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>IDEAL Lab IT &amp; Research Computing Passport | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.Cucgs2aC.css"></head><body data-curriculum-version="2.1.1"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Explore routes</a><a data-mission-navigation href="/missions/core-orientation/">Sample missions</a><a href="/reference/">Reference</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a mission or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search missions, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Missions</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Curriculum preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r} on ${i}. Keep this terminal running while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my dashboard`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Dashboard`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current mission`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / handbook</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">handbook</p><h1>IDEAL Lab IT &amp; Research Computing Passport</h1><p>This is the IDEAL Lab&#39;s practical onboarding for GitHub, Python, research data, AI coding agents, Blade, and Euler. You can read this page on GitHub before installing Git, Obsidian, Python, or an editor.</p></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/5cb7376ef93c6d9723014341b26615d1e9fac633/README.md" rel="noreferrer">View exact source</a><a href="/passport/">Return to my dashboard</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><p>This is the IDEAL Lab&#39;s practical onboarding for GitHub, Python, research
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="This is the IDEAL Lab's practical onboarding for GitHub, Python, research data, AI coding agents, Blade, and Euler. You can read this page on GitHub before installing Git, Obsidian, Python, or an editor."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>IDEAL Lab IT &amp; Research Computing Passport | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.BSIZvOzH.css"></head><body data-curriculum-version="2.1.2"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Choose lessons</a><a data-mission-navigation href="/missions/core-orientation/">Sample lesson</a><a href="/reference/">Guides &amp; terms</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Choose lessons</a><a data-mission-navigation href="/missions/core-orientation/">Sample lesson</a><a href="/reference/">Guides &amp; terms</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a lesson or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search lessons, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Lessons</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Public course preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r}. Keep the terminal window that launched the Passport open while you work. The Git lesson later explains how GitHub stores the submitted work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my progress`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`My progress`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current lesson`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / handbook</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">handbook</p><h1>IDEAL Lab IT &amp; Research Computing Passport</h1></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/2a3653b84b56fbb2460ac1c78ebdd34825376873/README.md" rel="noreferrer">View this page on GitHub</a><a href="/passport/">Return to my progress</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><div class="reference-markdown"><p>This is the IDEAL Lab&#39;s practical onboarding for GitHub, Python, research
 data, AI coding agents, Blade, and Euler. You can read this page on GitHub
 before installing Git, Obsidian, Python, or an editor.</p>
 <p>The main systems have separate jobs:</p>
@@ -11,11 +11,11 @@ before installing Git, Obsidian, Python, or an editor.</p>
 </thead>
 <tbody><tr>
 <td>Git and GitHub</td>
-<td>Git records file history on your computer; GitHub stores shared repositories and reviews.</td>
+<td>Git records file history on your computer; GitHub stores shared project folders and reviews.</td>
 </tr>
 <tr>
 <td>Python</td>
-<td>A programming language; the Passport teaches you to isolate each project&#39;s packages.</td>
+<td>A programming language; the Passport teaches you to keep each project&#39;s reusable software separate.</td>
 </tr>
 <tr>
 <td>IDEAL Lab NAS</td>
@@ -27,7 +27,7 @@ before installing Git, Obsidian, Python, or an editor.</p>
 </tr>
 <tr>
 <td>Euler</td>
-<td>ETH Zurich&#39;s shared research-computing cluster for scheduled CPU and GPU jobs.</td>
+<td>ETH Zurich&#39;s service made of many managed computers. You submit long CPU or GPU programs instead of running them on your laptop.</td>
 </tr>
 <tr>
 <td>AI coding agent</td>
@@ -39,20 +39,29 @@ selects only the relevant topics and introduces each one before use.</p>
 <blockquote>
 <p>[!NOTE]
 For the 2026 semester, this handbook remains in <code>IDEALLab/onboarding-IT</code>,
-while the official exercise, launcher, and private controller services run
-in the maintainer-owned <code>soheylm-passport-sandbox</code> organization. Despite its
-name, this is the active semester deployment. Students do not join that
-organization; their generated public learning record remains attached to
-their own GitHub account.</p>
+while the official exercises and launcher run in the maintainer-owned
+<code>soheylm-passport-sandbox</code> GitHub group. Despite its name, this is the active
+semester deployment. Students continue with their personal GitHub accounts
+and do not join that group. Each generated public learning record belongs to
+the student&#39;s own GitHub account.</p>
 </blockquote>
 <h2 id="new-to-the-lab-start-here">New To The Lab? Start Here<a class="heading-anchor" href="#new-to-the-lab-start-here" aria-label="Link to New To The Lab? Start Here">#</a></h2><blockquote>
 <p>[!IMPORTANT]
-Use one route only. Open the
-<strong><a href="/workbook/">first-contact guide</a></strong>,
+Use one starting guide only. Open the
+<strong><a href="https://ideal-passport.pages.dev/getting-started/" rel="noreferrer" data-external-link>illustrated first-contact guide</a></strong>,
 then run the real guide locally with <code>gh passport start</code>. Do not begin by
 browsing folders or cloning this handbook.</p>
 </blockquote>
-<p>The first-contact sequence is below. Run one step at a time.</p>
+<p>The illustrated guide starts by showing how to open a terminal and run a
+command on Windows, macOS, or Linux. A terminal is a text application;
+PowerShell, zsh, and Bash are shells inside it that read commands. If those
+words are new, use that guide rather than starting with the command blocks
+below. On macOS and Linux, open the application named Terminal; it starts zsh
+or Bash for you. Do not look for a separate Bash application. The
+<a href="/workbook/">text-only first-contact guide</a> gives the same
+sequence when JavaScript is unavailable.</p>
+<p>The abbreviated first-contact sequence is below for readers who already know
+how to use a terminal. Run one step at a time.</p>
 <ol>
 <li>Check the active GitHub account before changing any login:</li>
 </ol>
@@ -73,7 +82,7 @@ gh auth status --active --hostname github.com
 <ol start="3">
 <li>Install the tested Passport launcher:</li>
 </ol>
-<pre><code class="language-text">gh extension install soheylm-passport-sandbox/gh-passport --force --pin v0.4.3
+<pre><code class="language-text">gh extension install soheylm-passport-sandbox/gh-passport --force --pin v0.5.0
 </code></pre>
 <p>This command is needed for the first installation. Future compatible launcher
 updates appear inside the local Passport as <strong>Update and reopen</strong>. The update
@@ -85,15 +94,15 @@ keeps the current lesson, draft answers, and GitHub submissions.</p>
 </code></pre>
 <p>After you confirm what will be public, the launcher creates or safely reuses:</p>
 <ul>
-<li>a local browser interface with one current mission;</li>
-<li>a private-to-your-computer resume record;</li>
+<li>a local browser interface with one current lesson;</li>
+<li>a resume record stored only on your computer;</li>
 <li>a public learning record in your own GitHub account containing only generated
-answers and synthetic exercise files;</li>
-<li>a separate visible practice folder when a mission needs real files.</li>
+answers and fictional exercise files;</li>
+<li>a separate visible practice folder when a lesson needs real files.</li>
 </ul>
 <p>The learning record is public. Your GitHub username is necessarily visible
 because it owns the record. Beyond that public identity, use only fictional
-exercise values and sanitized results. Never submit credentials, ETH usernames or email
+exercise values and results with private information removed. Never submit credentials, ETH usernames or email
 addresses, student numbers, other private identifiers, real logs, screenshots
 with private information, research data, or confidential project details.</p>
 <h2 id="returning-later">Returning Later<a class="heading-anchor" href="#returning-later" aria-label="Link to Returning Later">#</a></h2><p>Open PowerShell on Windows or a terminal on macOS/Linux. From any folder, run:</p>
@@ -116,42 +125,38 @@ with private information, research data, or confidential project details.</p>
 <td>Draft work; not submitted</td>
 </tr>
 <tr>
-<td>Public learning record</td>
-<td>Generated submission source and audit trail</td>
+<td>Public GitHub learning record</td>
+<td>Only the generated exercise answers and safe practice files you submit</td>
 </tr>
 <tr>
-<td>Controller Check Run</td>
-<td>Objective result for one exact commit</td>
+<td>Automatic Passport check on GitHub</td>
+<td>The official result for the submitted work</td>
 </tr>
 <tr>
 <td>Operational approval, when named</td>
 <td>Separate access or ownership decision; not a training score</td>
 </tr>
-<tr>
-<td>Private control registry</td>
-<td>Minimal completion record</td>
-</tr>
 </tbody></table></div>
-<p>Every mission ends with the same visible loop:</p>
+<p>Every lesson ends with the same visible loop:</p>
 <ol>
 <li>complete the assigned exercise;</li>
 <li>use <strong>Check my work</strong> and correct any local finding;</li>
 <li>review the generated public content and confirm it contains no sensitive data;</li>
-<li>use <strong>Submit mission</strong> once;</li>
+<li>use <strong>Submit lesson</strong> once;</li>
 <li>continue when the trusted automatic result appears.</li>
 </ol>
-<p>The launcher manages the background learning record. The Git mission introduces
+<p>The launcher manages the background learning record. The Git lesson introduces
 each Git concept and command only when you need it; no Git knowledge is assumed
 before then.</p>
 <p>The supervisor and reviewer act asynchronously. Nobody must remain online
 while a learner works.</p>
-<h2 id="routes-match-responsibilities">Routes Match Responsibilities<a class="heading-anchor" href="#routes-match-responsibilities" aria-label="Link to Routes Match Responsibilities">#</a></h2><p>Everyone completes the universal safety core. <code>gh passport start</code> asks which
-activities apply and adds prerequisites automatically.</p>
+<h2 id="lessons-match-your-work">Lessons Match Your Work<a class="heading-anchor" href="#lessons-match-your-work" aria-label="Link to Lessons Match Your Work">#</a></h2><p>Everyone completes the universal safety core. <code>gh passport start</code> asks which
+activities apply and adds any earlier lessons they require automatically.</p>
 <div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
 <thead>
 <tr>
 <th>Activity</th>
-<th>Competency track</th>
+<th>Lesson group</th>
 </tr>
 </thead>
 <tbody><tr>
@@ -187,16 +192,16 @@ activities apply and adds prerequisites automatically.</p>
 <td><a href="/handbook/tracks/supervisor-staff/">Supervisor/Staff</a></td>
 </tr>
 </tbody></table></div>
-<p>Degree and job title do not determine the route.</p>
+<p>Degree and job title do not determine your lesson list.</p>
 <h2 id="five-rules-that-prevent-most-incidents">Five Rules That Prevent Most Incidents<a class="heading-anchor" href="#five-rules-that-prevent-most-incidents" aria-label="Link to Five Rules That Prevent Most Incidents">#</a></h2><ol>
 <li>Never share an ETH password, token, SSH private key, recovery code, or
 confidential personal data with another person or an AI tool.</li>
-<li>Never commit datasets, checkpoints, generated results, <code>.env</code> files, local
-settings, or real system logs unless the project explicitly requires and
-protects them.</li>
+<li>Never add datasets, saved model states (checkpoints), generated results,
+local secret files such as <code>.env</code>, personal settings, or real system logs
+to Git history unless the project explicitly requires and protects them.</li>
 <li>Check the machine and shell label before pasting a command.</li>
-<li>On Euler, request the smallest reasonable CPU, memory, GPU, and time; inspect
-<code>sacct</code>/<code>seff</code> after completion before increasing resources.</li>
+<li>On Euler, request the smallest reasonable CPU, memory, GPU, and time; use the
+accounting checks taught in the Euler lessons before increasing resources.</li>
 <li>Review every AI-generated diff and command. Work performed under your
 account remains your responsibility.</li>
 </ol>
@@ -204,18 +209,22 @@ account remains your responsibility.</li>
 <pre><code class="language-text">gh passport doctor
 </code></pre>
 <p>Keep the exact non-secret error. Do not change SSH keys, permissions,
-PowerShell policy, antivirus settings, branches, or remotes unless the linked
+PowerShell policy, antivirus settings, or Git settings unless the linked
 recovery guide explicitly tells you to. Use the
 <a href="/help/">symptom-based troubleshooting index</a> or the
-asynchronous help link shown by the local dashboard.</p>
+asynchronous help link shown on the local progress page.</p>
 <h2 id="reference-after-onboarding">Reference After Onboarding<a class="heading-anchor" href="#reference-after-onboarding" aria-label="Link to Reference After Onboarding">#</a></h2><div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
 <thead>
 <tr>
 <th>Need</th>
-<th>Canonical guide</th>
+<th>Main guide</th>
 </tr>
 </thead>
 <tbody><tr>
+<td>Terminal, shell, and commands</td>
+<td><a href="/core/command-line-basics/">Terminal and command basics</a></td>
+</tr>
+<tr>
 <td>Git and GitHub</td>
 <td><a href="/reference/guides/git_workflow/">Git workflow</a></td>
 </tr>
@@ -267,6 +276,6 @@ repositories and launcher builds must match that profile.</p>
 <a href="/maintainers/automated-validation/">release qualification</a>. Human-only
 claims remain explicitly separated in the
 <a href="/maintainers/pilot-checklist/">pilot checklist</a>.</p>
-</article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/experienced/">Experienced Fast-Path Diagnostic</a><a href="/handbook/tracks/code-contributor/">Code Contributor Track</a><a href="/handbook/tracks/data-steward/">Data Steward Track</a><a href="/handbook/tracks/euler-cpu/">Euler CPU Track</a><a href="/handbook/tracks/supervisor-staff/">Supervisor And Staff Track</a><a href="/workbook/">Start The IDEAL Lab IT Passport</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current mission to practice, verify, and submit evidence.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practice safely. Verify independently. Keep GitHub as the audit trail.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Curriculum 2.1.1 /exact source 5cb7376e</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+</div></article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/experienced/">Experienced Fast-Path Diagnostic</a><a href="/handbook/tracks/code-contributor/">Code Contributor Track</a><a href="/handbook/tracks/data-steward/">Data Steward Track</a><a href="/handbook/tracks/euler-cpu/">Euler CPU Track</a><a href="/reference/ai/">AI Coding Agents</a><a href="/reference/guides/remote/">Remote Access: Blade, Lab Workstations, And Euler</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current lesson to practise, verify, and submit the result.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practise safely, check the result yourself, and keep a verifiable record on GitHub.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Course version 2.1.2 /published version 2a3653b8</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
 `).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
 `).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html>
