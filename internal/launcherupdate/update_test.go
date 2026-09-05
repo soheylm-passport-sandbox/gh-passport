@@ -90,7 +90,10 @@ func TestMain(m *testing.M) {
 			}
 			os.Exit(0)
 		case "version":
-			fmt.Printf("{\"version\":%q,\"curriculum_version\":%q}\n", os.Getenv("PASSPORT_UPDATE_TEST_VERSION"), "2.1.1")
+			fmt.Printf(
+				"{\"version\":%q,\"curriculum_version\":%q,\"controller_app_id\":%q,\"bridge_contract\":1}\n",
+				os.Getenv("PASSPORT_UPDATE_TEST_VERSION"), "2.1.1", "4827197",
+			)
 			os.Exit(0)
 		case "open":
 			if mode == "open-fail" {
@@ -412,6 +415,30 @@ func TestVerifyInstalledArtifactAcceptsExpectedDarwinResignature(t *testing.T) {
 	}
 	if err := verifyInstalledArtifactForPlatform(plan, verifiedAsset, "darwin", "arm64", fakeSign); err == nil {
 		t.Fatal("an installed binary changed beyond the expected macOS signature was accepted")
+	}
+}
+
+func TestVersionOutputMatchesLauncherContract(t *testing.T) {
+	plan := updatePlan{
+		CurriculumVersion: "2.1.2",
+		Candidate:         Candidate{Version: "v0.5.5"},
+	}
+	valid := []byte(`{"version":"v0.5.5","curriculum_version":"2.1.2","controller_app_id":"4827197","bridge_contract":1}`)
+	if err := verifyVersionOutput(valid, plan); err != nil {
+		t.Fatalf("current launcher contract was rejected: %v", err)
+	}
+
+	invalid := [][]byte{
+		[]byte(`{"version":"v0.5.5","curriculum_version":"2.1.2"}`),
+		[]byte(`{"version":"v0.5.5","curriculum_version":"2.1.2","controller_app_id":"not-an-id","bridge_contract":1}`),
+		[]byte(`{"version":"v0.5.5","curriculum_version":"2.1.2","controller_app_id":"4827197","bridge_contract":2}`),
+		[]byte(`{"version":"v0.5.5","curriculum_version":"2.1.2","controller_app_id":"4827197","bridge_contract":1,"unexpected":true}`),
+		[]byte(`{"version":"v0.5.5","curriculum_version":"2.1.2","controller_app_id":"4827197","bridge_contract":1}{}`),
+	}
+	for _, output := range invalid {
+		if err := verifyVersionOutput(output, plan); err == nil {
+			t.Fatalf("invalid launcher contract was accepted: %s", output)
+		}
 	}
 }
 

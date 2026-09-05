@@ -133,6 +133,8 @@ type updatePlan struct {
 type versionOutput struct {
 	Version           string `json:"version"`
 	CurriculumVersion string `json:"curriculum_version"`
+	ControllerAppID   string `json:"controller_app_id"`
+	BridgeContract    int    `json:"bridge_contract"`
 }
 
 type readyMarker struct {
@@ -552,21 +554,37 @@ func verifyInstalled(plan updatePlan, verifiedAsset string) error {
 	if err != nil || len(output) > 16<<10 {
 		return errors.New("installed launcher did not report its version")
 	}
-	decoder := json.NewDecoder(strings.NewReader(string(output)))
-	decoder.DisallowUnknownFields()
-	var reported versionOutput
-	if err := decoder.Decode(&reported); err != nil || reported.Version != plan.Candidate.Version || reported.CurriculumVersion != plan.CurriculumVersion {
-		return errors.New("installed launcher is not compatible with this Passport")
-	}
-	var extra any
-	if err := decoder.Decode(&extra); !errors.Is(err, io.EOF) {
-		return errors.New("installed launcher returned unexpected version data")
+	if err := verifyVersionOutput(output, plan); err != nil {
+		return err
 	}
 	manifest, err := readManifest(plan.ManifestPath)
 	if err != nil || manifest["owner"] != TrustedOwner || manifest["name"] != TrustedRepository || manifest["host"] != TrustedHost || manifest["tag"] != plan.Candidate.Version || !samePath(manifest["path"], plan.ExecutablePath) {
 		return errors.New("installed extension manifest is not trusted")
 	}
 	return nil
+}
+
+func verifyVersionOutput(output []byte, plan updatePlan) error {
+	decoder := json.NewDecoder(strings.NewReader(string(output)))
+	decoder.DisallowUnknownFields()
+	var reported versionOutput
+	if err := decoder.Decode(&reported); err != nil ||
+		reported.Version != plan.Candidate.Version ||
+		reported.CurriculumVersion != plan.CurriculumVersion ||
+		!validControllerAppID(reported.ControllerAppID) ||
+		reported.BridgeContract != 1 {
+		return errors.New("installed launcher is not compatible with this Passport")
+	}
+	var extra any
+	if err := decoder.Decode(&extra); !errors.Is(err, io.EOF) {
+		return errors.New("installed launcher returned unexpected version data")
+	}
+	return nil
+}
+
+func validControllerAppID(value string) bool {
+	parsed, err := strconv.ParseInt(value, 10, 64)
+	return err == nil && parsed > 0
 }
 
 func verifyInstalledArtifactForPlatform(
