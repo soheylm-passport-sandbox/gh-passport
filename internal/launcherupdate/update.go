@@ -165,7 +165,7 @@ func (service *Service) Check(ctx context.Context) Status {
 		State:             "unavailable",
 		CurrentVersion:    service.CurrentVersion,
 		CurriculumVersion: service.CurriculumVersion,
-		LastResult:        readResult(service.statusPath()),
+		LastResult:        readCurrentResult(service.statusPath(), service.CurrentVersion),
 	}
 	candidate, err := service.discover(ctx)
 	if err != nil {
@@ -836,6 +836,14 @@ func readResult(path string) *Result {
 		return nil
 	}
 	return &result
+}
+
+func readCurrentResult(path, currentVersion string) *Result {
+	result := readResult(path)
+	if result == nil || result.Version != currentVersion {
+		return nil
+	}
+	return result
 }
 
 func writeResult(path string, result Result) error {

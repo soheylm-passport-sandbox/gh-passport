@@ -9,7 +9,7 @@ First install [GitHub CLI](https://cli.github.com/) and authenticate:
 
 ```text
 gh auth login --web --git-protocol https
-gh extension install soheylm-passport-sandbox/gh-passport --force --pin v0.5.2
+gh extension install soheylm-passport-sandbox/gh-passport --force --pin v0.5.3
 ```
 
 Then start the local setup wizard:
@@ -46,7 +46,9 @@ the updater reproduces that transformation on a private copy and requires the
 installed binary to match it exactly. It then checks the reported launcher and
 curriculum versions before reopening the same Passport folder. Local
 navigation, draft answers, and GitHub submissions are not changed. If any check
-fails, it restores and reopens the previous launcher. A curriculum-version
+fails, it restores and reopens the previous launcher. The dashboard shows that
+rollback only while the restored launcher is still installed; a later manual
+installation does not keep displaying an obsolete failure. A curriculum-version
 change requires a separately tested migration and is never treated as an
 ordinary launcher update.
 
