@@ -541,7 +541,7 @@ func TestHandoverVerifierRequiresFutureDeletionAndKnownLimitation(t *testing.T) 
 	}
 	path := filepath.Join(directory, "project-handover.md")
 	future := time.Now().UTC().AddDate(0, 0, 30).Format("2006-01-02")
-	valid := "Current owner: Student One\nAuthorized successor: Student Two\nRevision: " + strings.Repeat("a", 40) + "\nAuthoritative location: P:/Supervisor/student\nTemporary locations to remove: D:/student/tmp\nEnvironment definition: environment.yml\nVerification command: python -m unittest\nExpected result: OK\nAccess owner: Supervisor\nRetention owner: Supervisor\nTemporary-copy deletion date: " + future + "\nUnresolved risk or limitation: One synthetic limitation.\n"
+	valid := "Current owner: Student One\nAuthorized successor: Student Two\nRevision: " + strings.Repeat("a", 40) + "\nMain approved data location: P:/Supervisor/student\nTemporary locations to remove: D:/student/tmp\nEnvironment definition: environment.yml\nVerification command: python -m unittest\nExpected result: OK\nAccess owner: Supervisor\nRetention owner: Supervisor\nTemporary-copy deletion date: " + future + "\nUnresolved risk or limitation: One synthetic limitation.\n"
 	if err := os.WriteFile(path, []byte(valid), 0o600); err != nil {
 		t.Fatal(err)
 	}
