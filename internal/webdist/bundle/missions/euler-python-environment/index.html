@@ -66,61 +66,197 @@ version=&quot;$(python --version 2&gt;&amp;1)&quot;
 printf &#39;%s\n&#39; &quot;$version&quot;
 [ &quot;$version&quot; = &quot;Python 3.11.6&quot; ] || { printf &#39;STOP: expected Python 3.11.6, got %s\n&#39; &quot;$version&quot; &gt;&amp;2; exit 1; }
 printf &#39;module-python-ok\n&#39;
-)</code><button type="button" data-copy-command>Copy</button></pre></article></div><dl class="recipe-result"><div><dt>Expected</dt><dd>The final two lines are Python 3.11.6 and module-python-ok.</dd></div><div class="success"><dt>Continue when</dt><dd>Inspect the dedicated environment path.</dd></div><div class="failure"><dt>If not</dt><dd>Run module spider python and use the help path with its non-secret output. Do not guess a replacement module.</dd></div></dl></li><li class="recipe-step" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>04</span><div><h4>Inspect before creating</h4><span class="recipe-machine">Use Euler after you connect from your computer</span></div></header><p class="recipe-instruction">Check the exact training path without changing it. A valid existing environment is kept. A symbolic link, incomplete directory, or different Python version stops the recipe instead of being replaced.</p><div class="recipe-commands"><article class="command-step" data-command-platform="euler" data-command-shell="bash" data-command-mode="run"><div><span>Run</span><strong>This text window after SSH connects to Euler</strong></div><pre><code>(
-set -eu
-venv=&quot;$HOME/passport-euler/venvs/passport-python&quot;
-if [ -L &quot;$venv&quot; ]; then
-  printf &#39;STOP: %s is a symbolic link; nothing was changed.\n&#39; &quot;$venv&quot; &gt;&amp;2
-  exit 1
-elif [ ! -e &quot;$venv&quot; ]; then
-  printf &#39;environment-target-available\n&#39;
-elif [ -d &quot;$venv&quot; ] &amp;&amp; [ -x &quot;$venv/bin/python&quot; ]; then
-  version=&quot;$(&quot;$venv/bin/python&quot; -c &#39;import platform; print(platform.python_version())&#39;)&quot;
-  [ &quot;$version&quot; = &quot;3.11.6&quot; ] || { printf &#39;STOP: existing environment uses Python %s; nothing was changed.\n&#39; &quot;$version&quot; &gt;&amp;2; exit 1; }
-  printf &#39;existing-environment-ok\n&#39;
-else
-  printf &#39;STOP: %s exists but is not a complete environment; nothing was changed.\n&#39; &quot;$venv&quot; &gt;&amp;2
-  exit 1
-fi
-)</code><button type="button" data-copy-command>Copy</button></pre></article></div><dl class="recipe-result"><div><dt>Expected</dt><dd>The final line is environment-target-available or existing-environment-ok.</dd></div><div class="success"><dt>Continue when</dt><dd>Create only when absent, otherwise reuse it.</dd></div><div class="failure"><dt>If not</dt><dd>Do not delete or rename the existing path. Use the help route to identify its owner and purpose.</dd></div></dl></li><li class="recipe-step" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>05</span><div><h4>Create or reuse the environment</h4><span class="recipe-machine">Use Euler after you connect from your computer</span></div></header><p class="recipe-instruction">Run this after the inspection passes. The command creates into a private temporary directory and moves it into place only after Python and pip work. If the valid target already exists, it is reused without modification.</p><div class="recipe-commands"><article class="command-step" data-command-platform="euler" data-command-shell="bash" data-command-mode="run"><div><span>Run</span><strong>This text window after SSH connects to Euler</strong></div><pre><code>(
+)</code><button type="button" data-copy-command>Copy</button></pre></article></div><dl class="recipe-result"><div><dt>Expected</dt><dd>The final two lines are Python 3.11.6 and module-python-ok.</dd></div><div class="success"><dt>Continue when</dt><dd>Inspect the dedicated environment path.</dd></div><div class="failure"><dt>If not</dt><dd>Run module spider python and use the help path with its non-secret output. Do not guess a replacement module.</dd></div></dl></li><li class="recipe-step" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>04</span><div><h4>Inspect before creating</h4><span class="recipe-machine">Use Euler after you connect from your computer</span></div></header><p class="recipe-instruction">Inspect the exact training path. This checks ownership, activation, the selected Python, and both ways of starting pip. It keeps a valid environment and stops if an old moved environment or an incomplete directory is found.</p><div class="recipe-links"><a href="/reference/euler/python-environments/#recover-a-broken-passport-training-environment">Recover an affected training environment safely</a></div><div class="recipe-commands"><article class="command-step" data-command-platform="euler" data-command-shell="bash" data-command-mode="run"><div><span>Run</span><strong>This text window after SSH connects to Euler</strong></div><pre><code>(
 set -eu
 umask 077
 module purge
 module load stack/2024-06 python/3.11.6
+[ &quot;$(python -c &#39;import platform; print(platform.python_version())&#39;)&quot; = 3.11.6 ] || {
+  printf &#39;STOP: the loaded module must provide Python 3.11.6.\n&#39; &gt;&amp;2; exit 1
+}
 root=&quot;$HOME/passport-euler&quot;
 base=&quot;$root/venvs&quot;
 venv=&quot;$base/passport-python&quot;
-[ ! -L &quot;$root&quot; ] &amp;&amp; [ ! -L &quot;$base&quot; ] || { printf &#39;STOP: a training parent path is a symbolic link.\n&#39; &gt;&amp;2; exit 1; }
-mkdir -p &quot;$base&quot;
-if [ -L &quot;$venv&quot; ]; then
-  printf &#39;STOP: environment target is a symbolic link.\n&#39; &gt;&amp;2
-  exit 1
-elif [ -e &quot;$venv&quot; ]; then
-  [ -d &quot;$venv&quot; ] &amp;&amp; [ -x &quot;$venv/bin/python&quot; ] || { printf &#39;STOP: existing target is incomplete.\n&#39; &gt;&amp;2; exit 1; }
-  version=&quot;$(&quot;$venv/bin/python&quot; -c &#39;import platform; print(platform.python_version())&#39;)&quot;
-  [ &quot;$version&quot; = &quot;3.11.6&quot; ] || { printf &#39;STOP: existing environment uses Python %s.\n&#39; &quot;$version&quot; &gt;&amp;2; exit 1; }
-  printf &#39;existing-environment-kept\n&#39;
+# &lt;!-- passport-snippet:euler-environment-check --&gt;
+check_directories() {
+  python - &quot;$@&quot; &lt;&lt;&#39;PY&#39;
+import os, stat, sys
+for name in sys.argv[1:]:
+    info = os.lstat(name)
+    if not stat.S_ISDIR(info.st_mode) or info.st_uid != os.getuid() or info.st_mode &amp; 0o022:
+        raise SystemExit(&quot;STOP: training paths must be real directories owned by you, without group/other write access.&quot;)
+PY
+}
+verify_environment() (
+  check_directories &quot;$root&quot; &quot;$base&quot; &quot;$venv&quot; &quot;$venv/bin&quot; || exit 1
+  [ -f &quot;$venv/pyvenv.cfg&quot; ] &amp;&amp; [ ! -L &quot;$venv/pyvenv.cfg&quot; ] &amp;&amp;
+    [ -f &quot;$venv/bin/activate&quot; ] &amp;&amp; [ ! -L &quot;$venv/bin/activate&quot; ] &amp;&amp;
+    [ -x &quot;$venv/bin/python&quot; ] &amp;&amp; [ -x &quot;$venv/bin/pip&quot; ] || {
+    printf &#39;STOP: the training environment is incomplete or unsafe.\n&#39; &gt;&amp;2; exit 1
+  }
+  . &quot;$venv/bin/activate&quot; || exit 1
+  [ &quot;${VIRTUAL_ENV:-}&quot; = &quot;$venv&quot; ] &amp;&amp; [ &quot;$(command -v python)&quot; = &quot;$venv/bin/python&quot; ] || {
+    printf &#39;STOP: activation points to another location; use the training-environment recovery instructions.\n&#39; &gt;&amp;2; exit 1
+  }
+  python - &quot;$venv&quot; &lt;&lt;&#39;PY&#39; || exit 1
+import pathlib, platform, sys
+import pip
+expected = pathlib.Path(sys.argv[1])
+assert pathlib.Path(sys.prefix).resolve() == expected.resolve(), &quot;wrong environment prefix&quot;
+assert pathlib.Path(sys.executable).parent.resolve() == (expected / &quot;bin&quot;).resolve(), &quot;wrong interpreter directory&quot;
+assert pathlib.Path(sys.executable).name == &quot;python&quot;, &quot;wrong interpreter&quot;
+assert platform.python_version() == &quot;3.11.6&quot;, &quot;wrong Python version&quot;
+assert expected.resolve() in pathlib.Path(pip.__file__).resolve().parents, &quot;pip belongs to another environment&quot;
+PY
+  module_pip=&quot;$(python -m pip --version)&quot; || exit 1
+  entry_pip=&quot;$(&quot;$venv/bin/pip&quot; --version)&quot; || exit 1
+  [ &quot;$module_pip&quot; = &quot;$entry_pip&quot; ] || { printf &#39;STOP: pip entrypoint uses another environment.\n&#39; &gt;&amp;2; exit 1; }
+  printf &#39;%s\n&#39; &quot;$module_pip&quot;
+  deactivate
+)
+# &lt;!-- /passport-snippet:euler-environment-check --&gt;
+for directory in &quot;$root&quot; &quot;$base&quot;; do
+  if [ -e &quot;$directory&quot; ] || [ -L &quot;$directory&quot; ]; then check_directories &quot;$directory&quot;; fi
+done
+if [ ! -e &quot;$venv&quot; ] &amp;&amp; [ ! -L &quot;$venv&quot; ]; then
+  printf &#39;environment-target-available\n&#39;
 else
-  tmp=&quot;$(mktemp -d &quot;$base/.passport-python.XXXXXX&quot;)&quot;
-  cleanup() { if [ -n &quot;${tmp:-}&quot; ] &amp;&amp; [ -d &quot;$tmp&quot; ]; then rm -r -- &quot;$tmp&quot;; fi; }
-  trap cleanup EXIT HUP INT TERM
-  python -m venv &quot;$tmp&quot;
-  &quot;$tmp/bin/python&quot; -m pip --version
-  mv &quot;$tmp&quot; &quot;$venv&quot;
-  tmp=&#39;&#39;
-  printf &#39;created-environment-ok\n&#39;
+  [ ! -e &quot;$venv/.passport-create-in-progress&quot; ] || {
+    printf &#39;STOP: a creation may still be running; do not move this environment. Ask lab IT if interrupted.\n&#39; &gt;&amp;2; exit 1
+  }
+  verify_environment
+  printf &#39;existing-environment-ok\n&#39;
 fi
-)</code><button type="button" data-copy-command>Copy</button></pre></article></div><dl class="recipe-result"><div><dt>Expected</dt><dd>The command prints existing-environment-kept or created-environment-ok and does not overwrite an existing path.</dd></div><div class="success"><dt>Continue when</dt><dd>Activate and verify the exact interpreter.</dd></div><div class="failure"><dt>If not</dt><dd>Keep the first error. Do not rerun with sudo, remove the target, or install packages into base.</dd></div></dl></li><li class="recipe-step" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>06</span><div><h4>Verify the active interpreter</h4><span class="recipe-machine">Use Euler after you connect from your computer</span></div></header><p class="recipe-instruction">Activate the training environment, verify its exact path and Python version, then deactivate it. The marker is safe to enter in the Passport; do not paste the full private path into a submission.</p><div class="recipe-commands"><article class="command-step" data-command-platform="euler" data-command-shell="bash" data-command-mode="run"><div><span>Run</span><strong>This text window after SSH connects to Euler</strong></div><pre><code>(
+)</code><button type="button" data-copy-command>Copy</button></pre></article></div><dl class="recipe-result"><div><dt>Expected</dt><dd>The final line is environment-target-available or existing-environment-ok.</dd></div><div class="success"><dt>Continue when</dt><dd>Create only when absent, otherwise reuse it.</dd></div><div class="failure"><dt>If not</dt><dd>Follow the linked recovery procedure only for this Passport training environment. Leave unfamiliar paths, shared permissions, and in-progress creations for lab IT to inspect.</dd></div></dl></li><li class="recipe-step" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>05</span><div><h4>Create or reuse the environment</h4><span class="recipe-machine">Use Euler after you connect from your computer</span></div></header><p class="recipe-instruction">Create the environment directly at its final path, after exclusively claiming an empty directory. A valid existing environment is checked and kept. A failed creation is retained for recovery; nothing is recursively deleted or overwritten.</p><div class="recipe-links"><a href="/reference/euler/python-environments/#recover-a-broken-passport-training-environment">Recover an affected training environment safely</a></div><div class="recipe-commands"><article class="command-step" data-command-platform="euler" data-command-shell="bash" data-command-mode="run"><div><span>Run</span><strong>This text window after SSH connects to Euler</strong></div><pre><code>(
 set -eu
+umask 077
 module purge
 module load stack/2024-06 python/3.11.6
-venv=&quot;$HOME/passport-euler/venvs/passport-python&quot;
-[ -d &quot;$venv&quot; ] &amp;&amp; [ ! -L &quot;$venv&quot; ] &amp;&amp; [ -x &quot;$venv/bin/python&quot; ] || { printf &#39;STOP: training environment is missing or unsafe.\n&#39; &gt;&amp;2; exit 1; }
-. &quot;$venv/bin/activate&quot;
-python -c &#39;import pathlib, platform, sys; expected = pathlib.Path.home() / &quot;passport-euler&quot; / &quot;venvs&quot; / &quot;passport-python&quot;; assert pathlib.Path(sys.prefix) == expected; assert platform.python_version() == &quot;3.11.6&quot;; print(&quot;python_environment=passport-python&quot;); print(&quot;euler-python-env-ok&quot;)&#39;
-python -m pip --version
-deactivate
-)</code><button type="button" data-copy-command>Copy</button></pre></article></div><dl class="recipe-result"><div><dt>Expected</dt><dd>The output includes python_environment=passport-python, euler-python-env-ok, and pip from the same environment.</dd></div><div class="success"><dt>Continue when</dt><dd>Learn where these lines belong in a job.</dd></div><div class="failure"><dt>If not</dt><dd>Stop and inspect the reported interpreter. Do not repair it by copying your laptop environment.</dd></div></dl></li><li class="recipe-step" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>07</span><div><h4>Put setup inside the Slurm script</h4><span class="recipe-machine">Use Euler after you connect from your computer</span></div></header><p class="recipe-instruction">Read this batch-script fragment. Do not run a workload on the login node. Every Python job must load its module and activate its environment inside the submitted script before the Python command.</p><div class="recipe-commands"><article class="command-step" data-command-platform="all" data-command-shell="bash" data-command-mode="edit"><div><span>Put in file</span><strong>Bash file</strong></div><pre><code>module purge
+[ &quot;$(python -c &#39;import platform; print(platform.python_version())&#39;)&quot; = 3.11.6 ] || {
+  printf &#39;STOP: the loaded module must provide Python 3.11.6.\n&#39; &gt;&amp;2; exit 1
+}
+root=&quot;$HOME/passport-euler&quot;
+base=&quot;$root/venvs&quot;
+venv=&quot;$base/passport-python&quot;
+# &lt;!-- passport-snippet:euler-environment-check --&gt;
+check_directories() {
+  python - &quot;$@&quot; &lt;&lt;&#39;PY&#39;
+import os, stat, sys
+for name in sys.argv[1:]:
+    info = os.lstat(name)
+    if not stat.S_ISDIR(info.st_mode) or info.st_uid != os.getuid() or info.st_mode &amp; 0o022:
+        raise SystemExit(&quot;STOP: training paths must be real directories owned by you, without group/other write access.&quot;)
+PY
+}
+verify_environment() (
+  check_directories &quot;$root&quot; &quot;$base&quot; &quot;$venv&quot; &quot;$venv/bin&quot; || exit 1
+  [ -f &quot;$venv/pyvenv.cfg&quot; ] &amp;&amp; [ ! -L &quot;$venv/pyvenv.cfg&quot; ] &amp;&amp;
+    [ -f &quot;$venv/bin/activate&quot; ] &amp;&amp; [ ! -L &quot;$venv/bin/activate&quot; ] &amp;&amp;
+    [ -x &quot;$venv/bin/python&quot; ] &amp;&amp; [ -x &quot;$venv/bin/pip&quot; ] || {
+    printf &#39;STOP: the training environment is incomplete or unsafe.\n&#39; &gt;&amp;2; exit 1
+  }
+  . &quot;$venv/bin/activate&quot; || exit 1
+  [ &quot;${VIRTUAL_ENV:-}&quot; = &quot;$venv&quot; ] &amp;&amp; [ &quot;$(command -v python)&quot; = &quot;$venv/bin/python&quot; ] || {
+    printf &#39;STOP: activation points to another location; use the training-environment recovery instructions.\n&#39; &gt;&amp;2; exit 1
+  }
+  python - &quot;$venv&quot; &lt;&lt;&#39;PY&#39; || exit 1
+import pathlib, platform, sys
+import pip
+expected = pathlib.Path(sys.argv[1])
+assert pathlib.Path(sys.prefix).resolve() == expected.resolve(), &quot;wrong environment prefix&quot;
+assert pathlib.Path(sys.executable).parent.resolve() == (expected / &quot;bin&quot;).resolve(), &quot;wrong interpreter directory&quot;
+assert pathlib.Path(sys.executable).name == &quot;python&quot;, &quot;wrong interpreter&quot;
+assert platform.python_version() == &quot;3.11.6&quot;, &quot;wrong Python version&quot;
+assert expected.resolve() in pathlib.Path(pip.__file__).resolve().parents, &quot;pip belongs to another environment&quot;
+PY
+  module_pip=&quot;$(python -m pip --version)&quot; || exit 1
+  entry_pip=&quot;$(&quot;$venv/bin/pip&quot; --version)&quot; || exit 1
+  [ &quot;$module_pip&quot; = &quot;$entry_pip&quot; ] || { printf &#39;STOP: pip entrypoint uses another environment.\n&#39; &gt;&amp;2; exit 1; }
+  printf &#39;%s\n&#39; &quot;$module_pip&quot;
+  deactivate
+)
+# &lt;!-- /passport-snippet:euler-environment-check --&gt;
+for directory in &quot;$root&quot; &quot;$base&quot;; do
+  if [ ! -e &quot;$directory&quot; ] &amp;&amp; [ ! -L &quot;$directory&quot; ]; then
+    mkdir -m 700 -- &quot;$directory&quot; || { printf &#39;STOP: a training parent appeared concurrently; inspect again.\n&#39; &gt;&amp;2; exit 1; }
+  fi
+  check_directories &quot;$directory&quot;
+done
+if [ -e &quot;$venv&quot; ] || [ -L &quot;$venv&quot; ]; then
+  [ ! -e &quot;$venv/.passport-create-in-progress&quot; ] || {
+    printf &#39;STOP: a creation may still be running; do not move this environment. Ask lab IT if interrupted.\n&#39; &gt;&amp;2; exit 1
+  }
+  verify_environment
+  printf &#39;existing-environment-kept\n&#39;
+else
+  # Claim the final directory exclusively; never run venv over an existing target.
+  mkdir -m 700 -- &quot;$venv&quot; || { printf &#39;STOP: the target appeared concurrently; inspect again.\n&#39; &gt;&amp;2; exit 1; }
+  mkdir -- &quot;$venv/.passport-create-in-progress&quot;
+  trap &#39;rmdir -- &quot;$venv/.passport-create-in-progress&quot;&#39; EXIT
+  trap &#39;exit 1&#39; HUP INT TERM
+  printf &#39;passport-python-training-v1\n&#39; &gt; &quot;$venv/.passport-training-environment&quot;
+  # venv records absolute paths. Create and test it at its permanent location.
+  python -m venv &quot;$venv&quot; || {
+    printf &#39;STOP: creation failed; the partial training directory was kept for safe recovery.\n&#39; &gt;&amp;2; exit 1
+  }
+  verify_environment
+  printf &#39;created-environment-ok\n&#39;
+fi
+)</code><button type="button" data-copy-command>Copy</button></pre></article></div><dl class="recipe-result"><div><dt>Expected</dt><dd>The command prints existing-environment-kept or created-environment-ok and does not overwrite an existing path.</dd></div><div class="success"><dt>Continue when</dt><dd>Activate and verify the exact interpreter.</dd></div><div class="failure"><dt>If not</dt><dd>Keep the first error and follow the linked recovery procedure. Do not rerun venv over an existing target, use sudo, or install into base.</dd></div></dl></li><li class="recipe-step" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>06</span><div><h4>Verify the active interpreter</h4><span class="recipe-machine">Use Euler after you connect from your computer</span></div></header><p class="recipe-instruction">Activate the training environment in this temporary shell and check its activation path, selected interpreter, Python version, and pip entrypoint. The success marker appears only after every check passes. Enter only that marker in the Passport.</p><div class="recipe-links"><a href="/reference/euler/python-environments/#recover-a-broken-passport-training-environment">Recover an affected training environment safely</a></div><div class="recipe-commands"><article class="command-step" data-command-platform="euler" data-command-shell="bash" data-command-mode="run"><div><span>Run</span><strong>This text window after SSH connects to Euler</strong></div><pre><code>(
+set -eu
+umask 077
+module purge
+module load stack/2024-06 python/3.11.6
+[ &quot;$(python -c &#39;import platform; print(platform.python_version())&#39;)&quot; = 3.11.6 ] || {
+  printf &#39;STOP: the loaded module must provide Python 3.11.6.\n&#39; &gt;&amp;2; exit 1
+}
+root=&quot;$HOME/passport-euler&quot;
+base=&quot;$root/venvs&quot;
+venv=&quot;$base/passport-python&quot;
+# &lt;!-- passport-snippet:euler-environment-check --&gt;
+check_directories() {
+  python - &quot;$@&quot; &lt;&lt;&#39;PY&#39;
+import os, stat, sys
+for name in sys.argv[1:]:
+    info = os.lstat(name)
+    if not stat.S_ISDIR(info.st_mode) or info.st_uid != os.getuid() or info.st_mode &amp; 0o022:
+        raise SystemExit(&quot;STOP: training paths must be real directories owned by you, without group/other write access.&quot;)
+PY
+}
+verify_environment() (
+  check_directories &quot;$root&quot; &quot;$base&quot; &quot;$venv&quot; &quot;$venv/bin&quot; || exit 1
+  [ -f &quot;$venv/pyvenv.cfg&quot; ] &amp;&amp; [ ! -L &quot;$venv/pyvenv.cfg&quot; ] &amp;&amp;
+    [ -f &quot;$venv/bin/activate&quot; ] &amp;&amp; [ ! -L &quot;$venv/bin/activate&quot; ] &amp;&amp;
+    [ -x &quot;$venv/bin/python&quot; ] &amp;&amp; [ -x &quot;$venv/bin/pip&quot; ] || {
+    printf &#39;STOP: the training environment is incomplete or unsafe.\n&#39; &gt;&amp;2; exit 1
+  }
+  . &quot;$venv/bin/activate&quot; || exit 1
+  [ &quot;${VIRTUAL_ENV:-}&quot; = &quot;$venv&quot; ] &amp;&amp; [ &quot;$(command -v python)&quot; = &quot;$venv/bin/python&quot; ] || {
+    printf &#39;STOP: activation points to another location; use the training-environment recovery instructions.\n&#39; &gt;&amp;2; exit 1
+  }
+  python - &quot;$venv&quot; &lt;&lt;&#39;PY&#39; || exit 1
+import pathlib, platform, sys
+import pip
+expected = pathlib.Path(sys.argv[1])
+assert pathlib.Path(sys.prefix).resolve() == expected.resolve(), &quot;wrong environment prefix&quot;
+assert pathlib.Path(sys.executable).parent.resolve() == (expected / &quot;bin&quot;).resolve(), &quot;wrong interpreter directory&quot;
+assert pathlib.Path(sys.executable).name == &quot;python&quot;, &quot;wrong interpreter&quot;
+assert platform.python_version() == &quot;3.11.6&quot;, &quot;wrong Python version&quot;
+assert expected.resolve() in pathlib.Path(pip.__file__).resolve().parents, &quot;pip belongs to another environment&quot;
+PY
+  module_pip=&quot;$(python -m pip --version)&quot; || exit 1
+  entry_pip=&quot;$(&quot;$venv/bin/pip&quot; --version)&quot; || exit 1
+  [ &quot;$module_pip&quot; = &quot;$entry_pip&quot; ] || { printf &#39;STOP: pip entrypoint uses another environment.\n&#39; &gt;&amp;2; exit 1; }
+  printf &#39;%s\n&#39; &quot;$module_pip&quot;
+  deactivate
+)
+# &lt;!-- /passport-snippet:euler-environment-check --&gt;
+[ ! -e &quot;$venv/.passport-create-in-progress&quot; ] || {
+  printf &#39;STOP: a creation may still be running; wait for it or ask lab IT.\n&#39; &gt;&amp;2; exit 1
+}
+verify_environment
+printf &#39;python_environment=passport-python\neuler-python-env-ok\n&#39;
+)</code><button type="button" data-copy-command>Copy</button></pre></article></div><dl class="recipe-result"><div><dt>Expected</dt><dd>The output includes python_environment=passport-python, euler-python-env-ok, and pip from the same environment.</dd></div><div class="success"><dt>Continue when</dt><dd>Learn where these lines belong in a job.</dd></div><div class="failure"><dt>If not</dt><dd>Use the linked recovery procedure if this is the training environment affected by the earlier recipe. Do not copy a laptop environment or change shell startup files.</dd></div></dl></li><li class="recipe-step" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>07</span><div><h4>Put setup inside the Slurm script</h4><span class="recipe-machine">Use Euler after you connect from your computer</span></div></header><p class="recipe-instruction">Read this batch-script fragment. Do not run a workload on the login node. Every Python job must load its module and activate its environment inside the submitted script before the Python command.</p><div class="recipe-commands"><article class="command-step" data-command-platform="all" data-command-shell="bash" data-command-mode="edit"><div><span>Put in file</span><strong>Bash file</strong></div><pre><code>module purge
 module load stack/2024-06 python/3.11.6
 . &quot;$HOME/passport-euler/venvs/passport-python/bin/activate&quot;
 python your_script.py</code><button type="button" data-copy-command>Copy</button></pre></article></div><dl class="recipe-result"><div><dt>Expected</dt><dd>You can identify the three environment lines that must precede the program in a Slurm script.</dd></div><div class="success"><dt>Continue when</dt><dd>Complete the questions and confirmation.</dd></div><div class="failure"><dt>If not</dt><dd>Do not rely on a login-shell activation to define an unattended job.</dd></div></dl></li><li class="recipe-step" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>08</span><div><h4>Confirm the safe marker</h4><span class="recipe-machine">Use the laptop or desktop in front of you</span></div></header><p class="recipe-instruction">Return to the local Passport, enter only euler-python-env-ok, complete the questions, and run Check my work.</p><dl class="recipe-result"><div><dt>Expected</dt><dd>The local check accepts the exact environment marker and all three safety decisions.</dd></div><div class="success"><dt>Continue when</dt><dd>Submit once and continue to the first CPU job.</dd></div><div class="failure"><dt>If not</dt><dd>Repeat only the verification step on Euler; do not recreate a working environment.</dd></div></dl></li></ol></section><form data-activity-form><div class="question-stack"><fieldset class="mission-question" data-question="local_portability" data-question-type="single"><legend><span>01</span>May you copy the .venv directory from your laptop to Euler?<em>Safety-critical</em></legend><div class="answer-options"><label><input type="radio" name="local_portability" value="correct" disabled><span>No. Recreate the environment on Euler from the project definition.</span></label><label><input type="radio" name="local_portability" value="wrong_a" disabled><span>Yes, a Python environment is portable between all operating systems.</span></label><label><input type="radio" name="local_portability" value="wrong_b" disabled><span>Yes, if the directory is committed to Git first.</span></label></div><p class="question-feedback" data-feedback-for="local_portability" hidden></p></fieldset><fieldset class="mission-question" data-question="environment_location" data-question-type="single"><legend><span>02</span>Where does this small training environment belong on Euler?<em>Safety-critical</em></legend><div class="answer-options"><label><input type="radio" name="environment_location" value="correct" disabled><span>In the dedicated $HOME/passport-euler/venvs folder used by this exercise.</span></label><label><input type="radio" name="environment_location" value="wrong_a" disabled><span>In the shared /cluster/work/fuge root.</span></label><label><input type="radio" name="environment_location" value="wrong_b" disabled><span>In $SCRATCH as the only copy.</span></label></div><p class="question-feedback" data-feedback-for="environment_location" hidden></p></fieldset><fieldset class="mission-question" data-question="batch_activation" data-question-type="single"><legend><span>03</span>Where must the module load and environment activation appear for a batch job?<em>Safety-critical</em></legend><div class="answer-options"><label><input type="radio" name="batch_activation" value="correct" disabled><span>Inside the Slurm script before the Python command.</span></label><label><input type="radio" name="batch_activation" value="wrong_a" disabled><span>Only in an earlier interactive login shell.</span></label><label><input type="radio" name="batch_activation" value="wrong_b" disabled><span>Only in the local laptop terminal.</span></label></div><p class="question-feedback" data-feedback-for="batch_activation" hidden></p></fieldset></div><fieldset class="live-confirmation" data-live-confirmation><legend>Confirm the result you personally observed</legend><p>These values are processed only by the local launcher. Private paths are not written to the public submission.</p><label>Exact safe marker printed by the environment check<input name="environment_marker" autocomplete="off" placeholder="euler-python-env-ok" disabled></label></fieldset><fieldset class="mission-attestation"><legend>Before submitting</legend><label><input type="checkbox" name="reviewed" disabled>I reviewed the answers and any changed practice files myself.</label><label><input type="checkbox" name="no_secrets" disabled>This public submission contains no credentials, private paths, real logs, or research data.</label><label><input type="checkbox" name="observed_result" disabled>I personally observed every result I claim.</label></fieldset><div class="activity-actions"><button class="button secondary" type="button" data-check-work disabled>Check my work</button><button class="button primary" type="button" data-submit-mission disabled>Submit lesson</button><a class="button quiet" href="/getting-started/" data-start-passport>Open my real passport first</a></div><p class="activity-submit-explanation"><strong>Check my work</strong> checks this lesson on your computer. <strong>Submit lesson</strong> sends only the generated exercise result described above to GitHub; it does not upload your terminal history or unrelated files.</p><div class="activity-result" role="status" aria-live="polite" data-activity-result><strong>Preview only</strong><span>You can try the questions here. This page does not store or submit your answers.</span></div><section class="local-check-results" data-local-check-results hidden aria-live="polite"><strong data-local-check-summary>Checks on this computer</strong><p>These checks are separate from the questions above.</p><ul data-local-check-list></ul></section></form></section><script>(function(){const missionId = "euler-python-environment";
@@ -601,7 +737,7 @@ laptop environment, or install into <code>base</code>. See the
 <h2 id="understand-before-accepting-ai-output">Understand Before Accepting AI Output<a class="heading-anchor" href="#understand-before-accepting-ai-output" aria-label="Link to Understand Before Accepting AI Output">#</a></h2><p>Personally verify the Python version, environment path, and the activation
 lines in the batch script. An agent must not choose a different module, delete
 an environment, or install packages without your review.</p>
-</article></details></div></div><nav class="mission-footer-nav" aria-label="Lesson navigation" data-mission-footer><a href="/missions/euler-access-ssh/" data-previous-mission><span>Previous lesson</span><strong>Establish Safe Euler SSH Access</strong></a><a class="source-link" href="https://github.com/IDEALLab/onboarding-IT/blob/7d01f57cf771b5f64db9722ae7ef193108556fc9/curriculum/missions/euler-python-environment/README.md" rel="noreferrer">View this lesson on GitHub</a><a class="next" href="/missions/euler-cpu-first-job/" data-next-mission><span>Next lesson</span><strong>Submit And Control A Tiny Euler CPU Job</strong></a></nav></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practise safely, check the result yourself, and keep a verifiable record on GitHub.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Course version 2.1.2 /published version 7d01f57c</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+</article></details></div></div><nav class="mission-footer-nav" aria-label="Lesson navigation" data-mission-footer><a href="/missions/euler-access-ssh/" data-previous-mission><span>Previous lesson</span><strong>Establish Safe Euler SSH Access</strong></a><a class="source-link" href="https://github.com/IDEALLab/onboarding-IT/blob/cab866cdf5eeba757da580c4c8d1713baf0ead5e/curriculum/missions/euler-python-environment/README.md" rel="noreferrer">View this lesson on GitHub</a><a class="next" href="/missions/euler-cpu-first-job/" data-next-mission><span>Next lesson</span><strong>Submit And Control A Tiny Euler CPU Job</strong></a></nav></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practise safely, check the result yourself, and keep a verifiable record on GitHub.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Course version 2.1.2 /published version cab866cd</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
 `).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
 `).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html><script>(function(){const missionId = "euler-python-environment";
 const contextEndpoint = "/__passport/v1/context";
