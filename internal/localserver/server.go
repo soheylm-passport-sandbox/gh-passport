@@ -1328,7 +1328,7 @@ func (server *Server) verifyHandover() map[string]bool {
 	return map[string]bool{
 		"owners":            err == nil && has(`(?m)^Current owner:\s*\S.+$`) && has(`(?m)^Authorized successor:\s*\S.+$`),
 		"code_revision":     has(`(?m)^Revision:\s*[a-f0-9]{40}\s*$`),
-		"data_locations":    has(`(?m)^Authoritative location:\s*\S.+$`) && has(`(?m)^Temporary locations to remove:\s*\S.+$`),
+		"data_locations":    has(`(?m)^Main approved data location:\s*\S.+$`) && has(`(?m)^Temporary locations to remove:\s*\S.+$`),
 		"environment":       has(`(?m)^Environment definition:\s*\S.+$`),
 		"reproduction":      has(`(?m)^Verification command:\s*\S.+$`) && has(`(?m)^Expected result:\s*\S.+$`),
 		"retention":         has(`(?m)^Access owner:\s*\S.+$`) && has(`(?m)^Retention owner:\s*\S.+$`) && futureDate,

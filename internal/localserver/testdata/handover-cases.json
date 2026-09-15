@@ -1,0 +1,12 @@
+[
+  {"name": "lesson", "failed_checks": []},
+  {"name": "windows-line-endings", "crlf": true, "failed_checks": []},
+  {"name": "no-final-newline", "no_final_newline": true, "failed_checks": []},
+  {"name": "existing-duplicate-label-workaround", "append": "Authoritative location: P:\\ExampleSupervisor\\example-user\\synthetic-project\n", "failed_checks": []},
+  {"name": "legacy-label-only", "replace": ["Main approved data location:", "Authoritative location:"], "failed_checks": ["data_locations"]},
+  {"name": "missing-main-location", "remove_prefix": "Main approved data location:", "failed_checks": ["data_locations"]},
+  {"name": "missing-temporary-location", "remove_prefix": "Temporary locations to remove:", "failed_checks": ["data_locations"]},
+  {"name": "unfinished-template", "append": "REPLACE_ME\n", "failed_checks": ["no_placeholders"]},
+  {"name": "missing-deletion-date", "remove_prefix": "Temporary-copy deletion date:", "failed_checks": ["retention"]},
+  {"name": "missing-known-limitation", "remove_prefix": "Unresolved risk or limitation:", "failed_checks": ["known_limitations"]}
+]
