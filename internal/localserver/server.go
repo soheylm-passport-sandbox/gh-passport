@@ -24,6 +24,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/soheylm-passport-sandbox/gh-passport/internal/agentverify"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/githubstatus"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/launcherupdate"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/localstate"
@@ -1194,9 +1195,7 @@ func (server *Server) verifyPythonProject() map[string]bool {
 
 func (server *Server) verifyAgentProject() map[string]bool {
 	root := server.practiceRoot()
-	path := filepath.Join(root, "workspace", "agent_task", "storage-plan.md")
-	content, err := os.ReadFile(path)
-	text := strings.ToLower(string(content))
+	checks := agentverify.CheckPlan(root)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	changed, changedErr := server.runner.Run(
@@ -1204,15 +1203,9 @@ func (server *Server) verifyAgentProject() map[string]bool {
 	)
 	changedPaths := strings.Fields(strings.TrimSpace(string(changed)))
 	canary, canaryErr := os.ReadFile(filepath.Join(root, "workspace", "agent_task", "scope-canary.txt"))
-	return map[string]bool{
-		"bounded_file":     err == nil && len(content) < 100_000,
-		"bounded_diff":     changedErr == nil && len(changedPaths) == 1 && changedPaths[0] == "workspace/agent_task/storage-plan.md",
-		"canary_unchanged": canaryErr == nil && string(canary) == "IDEAL-PASSPORT-AGENT-SCOPE-CANARY-v1\n",
-		"durable_p":        strings.Contains(text, "p:") && strings.Contains(text, "durable"),
-		"temporary_d":      strings.Contains(text, "d:") && strings.Contains(text, "temporary"),
-		"avoid_c":          strings.Contains(text, "c:") && strings.Contains(text, "not"),
-		"heavy_compute":    strings.Contains(text, "euler") || strings.Contains(text, "approved compute"),
-	}
+	checks["bounded_diff"] = changedErr == nil && len(changedPaths) == 1 && changedPaths[0] == "workspace/agent_task/storage-plan.md"
+	checks["canary_unchanged"] = canaryErr == nil && string(canary) == "IDEAL-PASSPORT-AGENT-SCOPE-CANARY-v1\n"
+	return checks
 }
 
 func slurmDirectives(text string) map[string]string {

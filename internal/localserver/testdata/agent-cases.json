@@ -1,0 +1,455 @@
+{
+  "note": "Synthetic contract fixtures only, not learner submissions. Negative cases intentionally contain unsafe statements and are not policy.",
+  "base": "P: is durable project storage.\nD: is temporary work storage.\nC: is not project storage.\nHeavy computation belongs on Euler.\n",
+  "cases": [
+    {
+      "name": "explicit-storage-and-compute-rules",
+      "failed_checks": []
+    },
+    {
+      "name": "windows-line-endings",
+      "failed_checks": [],
+      "crlf": true
+    },
+    {
+      "name": "no-final-newline",
+      "failed_checks": [],
+      "no_final_newline": true
+    },
+    {
+      "name": "mixed-case",
+      "failed_checks": [],
+      "uppercase": true
+    },
+    {
+      "name": "training-without-magic-heavy-word",
+      "failed_checks": [],
+      "replace": [
+        [
+          "Heavy computation belongs on Euler.",
+          "Use Euler for model training."
+        ]
+      ]
+    },
+    {
+      "name": "destination-before-heavy",
+      "failed_checks": [],
+      "replace": [
+        [
+          "Heavy computation belongs on Euler.",
+          "Use Euler for heavy computation."
+        ]
+      ]
+    },
+    {
+      "name": "approved-compute-destination",
+      "failed_checks": [],
+      "replace": [
+        [
+          "Heavy computation belongs on Euler.",
+          "Training belongs on approved compute."
+        ]
+      ]
+    },
+    {
+      "name": "wrapped-compute-statement",
+      "failed_checks": [],
+      "replace": [
+        [
+          "Heavy computation belongs on Euler.",
+          "Heavy computation\nbelongs on Euler."
+        ]
+      ]
+    },
+    {
+      "name": "long-compute-statement",
+      "failed_checks": [],
+      "replace": [
+        [
+          "Heavy computation belongs on Euler.",
+          "Heavy computation, with a reviewed bounded workload, with a reviewed bounded workload, with a reviewed bounded workload, with a reviewed bounded workload, with a reviewed bounded workload, with a reviewed bounded workload, with a reviewed bounded workload, with a reviewed bounded workload, belongs on Euler."
+        ]
+      ]
+    },
+    {
+      "name": "reverse-storage-word-order",
+      "failed_checks": [],
+      "replace": [
+        [
+          "P: is durable project storage.",
+          "The durable project location is P:."
+        ]
+      ]
+    },
+    {
+      "name": "reverse-temporary-word-order",
+      "failed_checks": [],
+      "replace": [
+        [
+          "D: is temporary work storage.",
+          "Temporary work storage is D:."
+        ]
+      ]
+    },
+    {
+      "name": "reverse-exclusion-word-order",
+      "failed_checks": [],
+      "replace": [
+        [
+          "C: is not project storage.",
+          "Do not use C: for project storage."
+        ]
+      ]
+    },
+    {
+      "name": "persistent-project-wording",
+      "failed_checks": [],
+      "replace": [
+        [
+          "P: is durable project storage.",
+          "Use P: as persistent project storage."
+        ]
+      ]
+    },
+    {
+      "name": "avoid-c-wording",
+      "failed_checks": [],
+      "replace": [
+        [
+          "C: is not project storage.",
+          "Avoid C: for project storage."
+        ]
+      ]
+    },
+    {
+      "name": "long-storage-statement",
+      "failed_checks": [],
+      "replace": [
+        [
+          "P: is durable project storage.",
+          "P:, the assigned location for the fictional project, the assigned location for the fictional project, the assigned location for the fictional project, the assigned location for the fictional project, is durable storage."
+        ]
+      ]
+    },
+    {
+      "name": "markdown-list-and-emphasis",
+      "failed_checks": [],
+      "text": "- **P:** is **durable** project storage\n- `D:` is temporary work storage\n- `C:` is not project storage\n- Training runs on approved compute, not Blade\n"
+    },
+    {
+      "name": "numbered-list-and-wrapped-lines",
+      "failed_checks": [],
+      "text": "1. P: is durable project storage\n2. D: is temporary work storage\n3. C: is not project storage\n4. Model training runs\non Euler\n"
+    },
+    {
+      "name": "no-punctuation-policy-lines",
+      "failed_checks": [],
+      "text": "P: is durable project storage\nD: is temporary work storage\nC: is not project storage\nHeavy computation belongs on Euler\n"
+    },
+    {
+      "name": "destination-alone-is-not-evidence",
+      "failed_checks": [
+        "heavy_compute"
+      ],
+      "replace": [
+        [
+          "Heavy computation belongs on Euler.",
+          "Euler is available."
+        ]
+      ]
+    },
+    {
+      "name": "heavyweight-is-not-heavy",
+      "failed_checks": [
+        "heavy_compute"
+      ],
+      "replace": [
+        [
+          "Heavy computation belongs on Euler.",
+          "A heavyweight goes to Euler."
+        ]
+      ]
+    },
+    {
+      "name": "wrong-destination-word",
+      "failed_checks": [
+        "heavy_compute"
+      ],
+      "replace": [
+        [
+          "Heavy computation belongs on Euler.",
+          "Heavy computation uses an Eulerian method."
+        ]
+      ]
+    },
+    {
+      "name": "missing-compute-destination",
+      "failed_checks": [
+        "heavy_compute"
+      ],
+      "replace": [
+        [
+          "Heavy computation belongs on Euler.",
+          "Heavy computation is planned."
+        ]
+      ]
+    },
+    {
+      "name": "unrelated-destination-sentence",
+      "failed_checks": [
+        "heavy_compute"
+      ],
+      "replace": [
+        [
+          "Heavy computation belongs on Euler.",
+          "Euler is available. Training is planned."
+        ]
+      ]
+    },
+    {
+      "name": "unrelated-destination-bullet",
+      "failed_checks": [
+        "heavy_compute"
+      ],
+      "replace": [
+        [
+          "Heavy computation belongs on Euler.",
+          "- Euler is available\n- Training is planned"
+        ]
+      ]
+    },
+    {
+      "name": "unrelated-destination-paragraph",
+      "failed_checks": [
+        "heavy_compute"
+      ],
+      "replace": [
+        [
+          "Heavy computation belongs on Euler.",
+          "Euler is available\n\nTraining is planned"
+        ]
+      ]
+    },
+    {
+      "name": "missing-durable-p",
+      "failed_checks": [
+        "durable_p"
+      ],
+      "replace": [
+        [
+          "P: is durable project storage.",
+          "P: is assigned storage."
+        ]
+      ]
+    },
+    {
+      "name": "missing-temporary-d",
+      "failed_checks": [
+        "temporary_d"
+      ],
+      "replace": [
+        [
+          "D: is temporary work storage.",
+          "D: is available."
+        ]
+      ]
+    },
+    {
+      "name": "missing-exclusion-c",
+      "failed_checks": [
+        "avoid_c"
+      ],
+      "replace": [
+        [
+          "C: is not project storage.",
+          "C: is project storage."
+        ]
+      ]
+    },
+    {
+      "name": "missing-c-context",
+      "failed_checks": [
+        "avoid_c"
+      ],
+      "replace": [
+        [
+          "C: is not project storage.",
+          "C: is not available."
+        ]
+      ]
+    },
+    {
+      "name": "wrong-storage-association",
+      "failed_checks": [
+        "durable_p"
+      ],
+      "replace": [
+        [
+          "P: is durable project storage.",
+          "P: is available. Another location is durable."
+        ]
+      ]
+    },
+    {
+      "name": "not-durable",
+      "failed_checks": [
+        "durable_p"
+      ],
+      "replace": [
+        [
+          "P: is durable project storage.",
+          "P: is not durable project storage."
+        ]
+      ]
+    },
+    {
+      "name": "not-temporary",
+      "failed_checks": [
+        "temporary_d"
+      ],
+      "replace": [
+        [
+          "D: is temporary work storage.",
+          "D: is not temporary work storage."
+        ]
+      ]
+    },
+    {
+      "name": "negated-compute-destination",
+      "failed_checks": [
+        "heavy_compute"
+      ],
+      "replace": [
+        [
+          "Heavy computation belongs on Euler.",
+          "Do not use Euler for training."
+        ]
+      ]
+    },
+    {
+      "name": "contradictory-p",
+      "failed_checks": [
+        "durable_p"
+      ],
+      "append": "P: is temporary storage.\n"
+    },
+    {
+      "name": "contradictory-d",
+      "failed_checks": [
+        "temporary_d"
+      ],
+      "append": "Use D: for permanent storage.\n"
+    },
+    {
+      "name": "contradictory-c",
+      "failed_checks": [
+        "avoid_c"
+      ],
+      "append": "Use C: as durable data storage.\n"
+    },
+    {
+      "name": "contradictory-compute",
+      "failed_checks": [
+        "heavy_compute"
+      ],
+      "append": "Training can run on Blade overnight.\n"
+    },
+    {
+      "name": "contradictory-compute-reversed",
+      "failed_checks": [
+        "heavy_compute"
+      ],
+      "append": "Blade is suitable for training.\n"
+    },
+    {
+      "name": "wrapped-unsafe-claim",
+      "failed_checks": [
+        "heavy_compute"
+      ],
+      "append": "Training can run on\nBlade overnight.\n"
+    },
+    {
+      "name": "original-unsafe-claims-retained",
+      "failed_checks": [
+        "temporary_d",
+        "avoid_c",
+        "heavy_compute"
+      ],
+      "append": "# UNSAFE ASSESSMENT FIXTURE - DO NOT USE AS POLICY\n\nThe project will keep its durable data on `C:` because it has plenty of free\nspace. Large results will be archived on `D:` indefinitely. Long machine\nlearning training can run on Blade overnight when the GUI is not being used.\n"
+    },
+    {
+      "name": "original-unsafe-template",
+      "failed_checks": [
+        "durable_p",
+        "temporary_d",
+        "avoid_c",
+        "heavy_compute"
+      ],
+      "text": "# UNSAFE ASSESSMENT FIXTURE - DO NOT USE AS POLICY\n\nThe project will keep its durable data on `C:` because it has plenty of free\nspace. Large results will be archived on `D:` indefinitely. Long machine\nlearning training can run on Blade overnight when the GUI is not being used.\n"
+    },
+    {
+      "name": "empty-plan",
+      "failed_checks": [
+        "durable_p",
+        "temporary_d",
+        "avoid_c",
+        "heavy_compute"
+      ],
+      "text": ""
+    },
+    {
+      "name": "negative-durable-c",
+      "replace": [
+        [
+          "C: is not project storage.",
+          "Do not store durable data on C:."
+        ]
+      ],
+      "failed_checks": []
+    },
+    {
+      "name": "never-c",
+      "replace": [
+        [
+          "C: is not project storage.",
+          "Never use C: for project storage."
+        ]
+      ],
+      "failed_checks": []
+    },
+    {
+      "name": "no-c",
+      "replace": [
+        [
+          "C: is not project storage.",
+          "C: is for no project data."
+        ]
+      ],
+      "failed_checks": []
+    },
+    {
+      "name": "contraction-c",
+      "replace": [
+        [
+          "C: is not project storage.",
+          "Don't use C: for project storage."
+        ]
+      ],
+      "failed_checks": []
+    },
+    {
+      "name": "negated-p-usage",
+      "append": "Do not use P: for project storage.\n",
+      "failed_checks": [
+        "durable_p"
+      ]
+    },
+    {
+      "name": "negated-d-usage",
+      "append": "Do not use D: for project storage.\n",
+      "failed_checks": [
+        "temporary_d"
+      ]
+    }
+  ]
+}
