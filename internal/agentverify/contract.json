@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "artifact": "workspace/agent_task/storage-plan.md",
+  "max_bytes_exclusive": 100000,
+  "bounded_file": {
+    "label": "The plan is a readable text file within the size limit",
+    "message": "Keep storage-plan.md as a regular UTF-8 file smaller than 100 KB inside workspace/agent_task; do not use a symbolic link."
+  },
+  "statement_separator": "[.!?;]+|\\n[ \\t]*\\n|\\n[ \\t]*(?:[-*+]|[0-9]+[.)])[ \\t]+",
+  "rules": [
+    {
+      "id": "durable_p",
+      "label": "The P: rule identifies durable project storage",
+      "message": "Review the P: statement in storage-plan.md. Connect P: with durable or persistent storage in the same sentence or list item, and remove contradictory claims.",
+      "all": [
+        [
+          "\\bp:"
+        ],
+        [
+          "\\b(?:durable|persistent)\\b"
+        ]
+      ],
+      "deny": [
+        "\\bp:.*\\b(?:not|never)\\s+(?:(?:a|the|for|suitable|as|used)\\s+)*(?:durable|persistent)\\b",
+        "\\bp:.*\\b(?:is|as|for)\\s+(?:only\\s+)?temporary\\b",
+        "\\b(?:not|never|avoid)\\s+(?:(?:use|using|for)\\s+)*p:"
+      ]
+    },
+    {
+      "id": "temporary_d",
+      "label": "The D: rule identifies temporary work",
+      "message": "Review the D: statement in storage-plan.md. Connect D: with temporary work in the same sentence or list item, and remove claims that it keeps data permanently.",
+      "all": [
+        [
+          "\\bd:"
+        ],
+        [
+          "\\btemporary\\b"
+        ]
+      ],
+      "deny": [
+        "\\bd:.*\\b(?:not|never)\\s+(?:(?:a|the|for|suitable|as|used)\\s+)*temporary\\b",
+        "\\bd:.*\\b(?:is|as|for)\\s+(?:(?:a|the)\\s+)?(?:durable|permanent|persistent)\\b",
+        "\\barchived on d: indefinitely\\b",
+        "\\b(?:not|never|avoid)\\s+(?:(?:use|using|for)\\s+)*d:"
+      ]
+    },
+    {
+      "id": "avoid_c",
+      "label": "The C: rule excludes project storage",
+      "message": "Review the C: statement in storage-plan.md. Explicitly exclude C: from project storage in that sentence or list item, and remove claims that durable data belongs there.",
+      "all": [
+        [
+          "\\bc:"
+        ],
+        [
+          "\\b(?:not|never|avoid|unsuitable|no|don't|mustn't|isn't)\\b"
+        ],
+        [
+          "\\b(?:project|research|data|storage)\\b"
+        ]
+      ],
+      "deny": [
+        "\\bdurable (?:project )?data on c:",
+        "\\bc:.*\\b(?:is|as|for)\\s+(?:(?:a|the)\\s+)?(?:durable|permanent|persistent|project storage)\\b"
+      ]
+    },
+    {
+      "id": "heavy_compute",
+      "label": "The compute rule sends demanding work to approved compute",
+      "message": "Review the compute statement in storage-plan.md. Connect the work (for example, training or heavy computation) with Euler or approved compute in the same sentence or list item. Either order is accepted. Remove claims allowing that work on Blade.",
+      "all": [
+        [
+          "\\b(?:heavy|intensive|training|computation|computations|computing|workload|workloads|simulation|simulations)\\b"
+        ],
+        [
+          "\\b(?:euler|approved compute)\\b"
+        ]
+      ],
+      "deny": [
+        "\\b(?:training|heavy work|heavy computation)\\s+(?:(?:can|will|should|must)\\s+)?(?:run|runs|belongs)\\s+on blade\\b",
+        "\\bblade\\s+(?:(?:is|can be|will be)\\s+)?(?:used|suitable|approved)\\s+for\\s+(?:training|heavy work|heavy computation)\\b",
+        "\\b(?:not|never|avoid)\\s+(?:(?:use|using|run|running|on|to)\\s+)*(?:euler|approved compute)\\b",
+        "\\b(?:euler|approved compute)\\s+(?:(?:is|are|must|should|can)\\s+)*(?:not|never)\\s+(?:(?:be|used|use|for)\\s+)*(?:suitable|allowed|approved|training|heavy|computation)\\b"
+      ]
+    }
+  ],
+  "policy_line_start": "(?m)^[ \\t]*[pdc]:",
+  "negated_claim_prefix": "\\b(?:do not|never|avoid|don't|must not|should not)\\s+(?:(?:keep|keeping|store|storing|put|putting|use|using|archive|archiving|run|running|let|be)\\s+)*$"
+}
