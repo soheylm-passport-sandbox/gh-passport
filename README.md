@@ -9,7 +9,7 @@ First install [GitHub CLI](https://cli.github.com/) and authenticate:
 
 ```text
 gh auth login --web --git-protocol https
-gh extension install soheylm-passport-sandbox/gh-passport --force --pin v0.5.14
+gh extension install soheylm-passport-sandbox/gh-passport --force --pin v0.5.15
 ```
 
 Then start the local setup wizard:
@@ -31,6 +31,14 @@ gh passport status
 gh passport sync
 gh passport doctor
 ```
+
+On another computer, install this launcher and sign in to the same GitHub
+account, then run `gh passport resume`. It restores the existing published
+record without creating a new Passport. Use **Set up this computer** to recheck
+local tools and follow the instructions for its operating system. On returning
+to a previously used computer, close its old Passport server and run resume
+again. Unsubmitted answers and practice files remain on their original computer;
+keep them safe. A conflicting local branch stops for help without resetting it.
 
 ## Updates
 

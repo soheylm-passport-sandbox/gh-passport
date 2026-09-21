@@ -115,9 +115,17 @@ func TestParseDoctorOptions(t *testing.T) {
 }
 
 func TestSubcommandHelpDoesNotExecuteCommand(t *testing.T) {
-	for _, command := range []string{"start", "open", "status", "sync", "doctor"} {
+	for _, command := range []string{"start", "resume", "open", "status", "sync", "doctor"} {
 		if err := run([]string{command, "--help"}); err != nil {
 			t.Fatalf("%s --help returned %v", command, err)
+		}
+	}
+}
+
+func TestResumeRejectsRouteChangesBeforeStarting(t *testing.T) {
+	for _, option := range []string{"--platform", "--responsibility"} {
+		if err := run([]string{"resume", option, "linux"}); err == nil || !strings.Contains(err.Error(), "preserves the existing route") {
+			t.Fatalf("resume %s did not reject a route change: %v", option, err)
 		}
 	}
 }
