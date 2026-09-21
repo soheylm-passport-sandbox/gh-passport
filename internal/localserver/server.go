@@ -41,6 +41,7 @@ type LauncherUpdater interface {
 }
 
 type Server struct {
+	hostPlatform    string // test seam; production uses the launcher's runtime.GOOS
 	repository      passportrepo.Repository
 	store           localstate.Store
 	controllerAppID int64
@@ -63,6 +64,7 @@ type Server struct {
 }
 
 type ContextPayload struct {
+	Computer      ComputerContext         `json:"computer"`
 	Mode          string                  `json:"mode"`
 	Repository    passportrepo.Repository `json:"repository"`
 	LocalState    localstate.State        `json:"local_state"`
@@ -175,6 +177,7 @@ func (server *Server) handler() http.Handler {
 	mux.HandleFunc("POST /__passport/v2/submit", server.withSession(server.submitMission))
 	mux.HandleFunc("POST /__passport/v2/setup", server.withSession(server.completeSetup))
 	mux.HandleFunc("POST /__passport/v2/practice", server.withSession(server.preparePractice))
+	mux.HandleFunc("POST /__passport/v2/computer-check", server.withSession(server.recheckComputer))
 	mux.Handle("/", server.staticHandler())
 	return server.securityHeaders(server.hostGuard(mux))
 }
@@ -419,6 +422,7 @@ func (server *Server) context(response http.ResponseWriter, _ *http.Request) {
 			return
 		}
 		payload := ContextPayload{
+			Computer:      server.computerContext(),
 			Mode:          "local",
 			Repository:    server.safeRepository(),
 			LocalState:    state,
@@ -436,6 +440,7 @@ func (server *Server) context(response http.ResponseWriter, _ *http.Request) {
 		}
 	}
 	payload := ContextPayload{
+		Computer:    server.computerContext(),
 		Mode:        "local",
 		Repository:  server.safeRepository(),
 		LocalState:  state,

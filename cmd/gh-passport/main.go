@@ -82,6 +82,8 @@ func run(arguments []string) error {
 	switch command {
 	case "start":
 		return start(arguments)
+	case "resume":
+		return start(append([]string{"--resume"}, arguments...))
 	case "open":
 		return open(arguments)
 	case "status":
@@ -113,6 +115,8 @@ func start(arguments []string) error {
 		switch arguments[index] {
 		case "--yes":
 			options.AssumeYes = true
+		case "--resume":
+			options.ResumeOnly = true
 		case "--no-browser":
 			noBrowser = true
 		case "--directory", "--platform", "--responsibility":
@@ -133,11 +137,21 @@ func start(arguments []string) error {
 			return fmt.Errorf("unknown start option %q", arguments[index])
 		}
 	}
-	if noBrowser && !options.AssumeYes {
+	if noBrowser && !options.AssumeYes && !options.ResumeOnly {
 		return errors.New("--no-browser is for automated qualification and requires --yes")
 	}
-	if !options.AssumeYes && !noBrowser {
+	if !options.AssumeYes && !noBrowser && !options.ResumeOnly {
 		return startBrowserWizard(options)
+	}
+	if options.ResumeOnly && (options.Platform != "" || len(options.Responsibilities) > 0) {
+		return errors.New("resume preserves the existing route; do not pass platform or responsibility options")
+	}
+	if options.ResumeOnly && options.Directory == "" {
+		if record, err := installregistry.Load(); err == nil {
+			options.Directory = record.TransportRoot
+		} else if !errors.Is(err, os.ErrNotExist) {
+			return errors.New("the local Passport registry needs recovery; run gh passport doctor; nothing was replaced")
+		}
 	}
 	result, err := starter.Run(options)
 	if err != nil {
@@ -638,6 +652,7 @@ func usage() {
 
 Usage:
   gh passport start [--directory PATH] [--platform OS] [--responsibility ID] [--yes] [--no-browser]
+  gh passport resume [--directory PATH] [--no-browser]
   gh passport open [--no-browser]
   gh passport status [--json]
   gh passport sync [--json]

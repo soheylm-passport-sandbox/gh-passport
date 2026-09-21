@@ -30,6 +30,7 @@ const (
 )
 
 type Options struct {
+	ResumeOnly       bool
 	Directory        string
 	Platform         string
 	Responsibilities []string
@@ -147,7 +148,16 @@ func run(options Options, runner commandRunner) (Result, error) {
 	if err != nil {
 		return Result{}, err
 	}
-	if err := ensureForkAndClone(ctx, runner, username, directory); err != nil {
+	resumeURL := ""
+	if options.ResumeOnly {
+		resumeURL, err = existingLearningRecord(ctx, runner, username)
+		if err != nil {
+			return Result{}, err
+		}
+		if err := cloneExistingPassport(ctx, runner, username, directory); err != nil {
+			return Result{}, err
+		}
+	} else if err := ensureForkAndClone(ctx, runner, username, directory); err != nil {
 		return Result{}, err
 	}
 	if err := ensureRemotes(ctx, runner, username, directory); err != nil {
@@ -160,7 +170,10 @@ func run(options Options, runner commandRunner) (Result, error) {
 	if err != nil {
 		return Result{}, fmt.Errorf("inspect passport working tree: %w", err)
 	}
-	if strings.TrimSpace(string(status)) != "" && !onlyGeneratedPassportChange(string(status)) {
+	if strings.TrimSpace(string(status)) != "" && (options.ResumeOnly || !onlyGeneratedPassportChange(string(status))) {
+		if options.ResumeOnly {
+			return Result{}, errors.New("passport folder has local changes; keep both computers' files and request safe recovery; nothing was reset or published")
+		}
 		return Result{}, errors.New("passport folder has local changes; keep them safe, then run `gh passport open` instead of restarting")
 	}
 
@@ -175,6 +188,11 @@ func run(options Options, runner commandRunner) (Result, error) {
 		return Result{}, err
 	}
 	branch := "onboarding/" + strings.ToLower(username)
+	if options.ResumeOnly {
+		if _, err := runner.Run(ctx, directory, "git", "show-ref", "--verify", "--quiet", "refs/remotes/origin/"+branch); err != nil {
+			return Result{}, errors.New("the published Passport branch is unavailable; retry or request help; no replacement route was created")
+		}
+	}
 	if err := prepareBranch(ctx, runner, directory, branch); err != nil {
 		return Result{}, err
 	}
@@ -185,6 +203,9 @@ func run(options Options, runner commandRunner) (Result, error) {
 	existing, err := loadExistingPassport(filepath.Join(directory, "passport.json"), catalogValue, username, branch)
 	if err != nil {
 		return Result{}, err
+	}
+	if options.ResumeOnly && existing == nil {
+		return Result{}, errors.New("the existing branch has no Passport; request help instead of starting another route")
 	}
 	if existing != nil {
 		platform = existing.Platform
@@ -221,9 +242,14 @@ func run(options Options, runner commandRunner) (Result, error) {
 		Missions:          missions,
 		SetupComplete:     setupComplete,
 	}
-	_, err = writePassport(filepath.Join(directory, "passport.json"), value)
-	if err != nil {
-		return Result{}, err
+	if existing == nil {
+		if _, err = writePassport(filepath.Join(directory, "passport.json"), value); err != nil {
+			return Result{}, err
+		}
+	}
+	if options.ResumeOnly {
+		fmt.Fprintln(options.Output, "Existing Passport resumed. Official progress comes from GitHub. Unsubmitted answers and practice files stay on their original computer.")
+		return Result{Directory: directory, PullRequestURL: resumeURL}, nil
 	}
 	status, err = runner.Run(ctx, directory, "git", "status", "--porcelain=v1", "--untracked-files=normal")
 	if err != nil {
