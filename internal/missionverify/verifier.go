@@ -254,11 +254,12 @@ func ConfirmLive(mission Mission, input map[string]string) (map[string]any, erro
 		checks["environment_marker"] = input["environment_marker"] == "euler-python-env-ok"
 	case "euler_job":
 		checks["job_id"] = regexp.MustCompile(`^[1-9][0-9]{2,}$`).MatchString(input["job_id"])
-		checks["correct_account"] = input["account"] == "es_fuge"
+		account := strings.TrimSpace(input["account"])
+		checks["correct_account"] = account == "es_fuge" || account == "normal/es_fuge"
 		checks["owner_checked"] = input["owner_checked"] == "yes"
 		checks["queue_inspected"] = input["queue_inspected"] == "yes"
 		checks["completed"] = strings.EqualFold(input["state"], "COMPLETED")
-		checks["zero_exit"] = input["exit_code"] == "0:0"
+		checks["zero_exit"] = strings.TrimSpace(input["exit_code"]) == "0:0"
 		checks["one_cpu"] = input["alloc_cpus"] == "1"
 		checks["one_gib_per_cpu"] = regexp.MustCompile(`(?i)^1G(?:[cn])?$`).MatchString(input["req_mem"])
 		checks["python_environment"] = input["python_environment"] == "yes"
