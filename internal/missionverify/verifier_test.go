@@ -100,6 +100,40 @@ func TestEulerJobReceiptRequiresEveryObservedBoundary(t *testing.T) {
 	}
 }
 
+func TestEulerJobReceiptAcceptsOnlyLabNormalAccountAndZeroExit(t *testing.T) {
+	mission := Mission{Verification: Verification{LocalVerifier: "euler_job", RequiresLiveConfirmation: true}}
+	base := map[string]string{
+		"job_id": "123456", "owner_checked": "yes", "queue_inspected": "yes",
+		"state": "COMPLETED", "alloc_cpus": "1", "req_mem": "1Gc",
+		"seff_seen": "yes", "python_environment": "yes", "output_marker": "5 squared is 25",
+	}
+	for _, test := range []struct {
+		account  string
+		exitCode string
+		want     bool
+	}{
+		{"es_fuge", "0:0", true},
+		{"normal/es_fuge", "0:0", true},
+		{" normal/es_fuge ", " 0:0 ", true},
+		{"bulk/es_fuge", "0:0", false},
+		{"normal/es+", "0:0", false},
+		{"normal/es_other", "0:0", false},
+		{"normal/es_fuge", "1:0", false},
+		{"normal/es_fuge", "0:9", false},
+	} {
+		input := make(map[string]string, len(base)+2)
+		for key, value := range base {
+			input[key] = value
+		}
+		input["account"] = test.account
+		input["exit_code"] = test.exitCode
+		receipt, err := ConfirmLive(mission, input)
+		if err != nil || receipt["passed"] != test.want {
+			t.Errorf("account=%q exit=%q: receipt=%#v err=%v", test.account, test.exitCode, receipt, err)
+		}
+	}
+}
+
 func TestEulerPythonReceiptRequiresExactSafeMarker(t *testing.T) {
 	mission := Mission{Verification: Verification{LocalVerifier: "euler_python", RequiresLiveConfirmation: true}}
 	receipt, err := ConfirmLive(mission, map[string]string{"environment_marker": "euler-python-env-ok"})
