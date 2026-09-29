@@ -231,25 +231,82 @@ key=&quot;$HOME/.ssh/id_ed25519_euler&quot;
 mkdir -p &quot;$HOME/.ssh&quot; &amp;&amp; chmod 700 &quot;$HOME/.ssh&quot;
 if [ -e &quot;$key&quot; ] || [ -e &quot;$key.pub&quot; ]; then printf &#39;STOP: standard key or public key already exists; nothing was overwritten\n&#39; &gt;&amp;2; exit 1; fi
 ssh-keygen -t ed25519 -a 100 -f &quot;$key&quot; -C &quot;$USER@euler&quot;
-)</code></pre></article></div><dl class="recipe-result"><div><dt>Expected</dt><dd>Both id_ed25519_euler and id_ed25519_euler.pub are created; the private key has restricted permissions.</dd></div><div class="success"><dt>Continue when</dt><dd>Install only the .pub file.</dd></div><div class="failure"><dt>If not</dt><dd>Stop at the first error and keep all pre-existing files unchanged.</dd></div></dl></li><li class="recipe-step" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>07</span><div><h4>Install only the public key</h4><span class="recipe-machine">Use the laptop or desktop in front of you</span></div></header><p class="recipe-instruction">Send only the contents of id_ed25519_euler.pub through the working password login. Euler stores accepted public keys in a file named authorized_keys. The remote command removes a possible Windows carriage return, preserves all existing entries, and avoids adding a duplicate exact line.</p><div class="recipe-commands"><article class="command-step" data-command-platform="windows" data-command-shell="powershell" data-command-mode="run"><div class="command-heading"><span>Run</span><strong>PowerShell on your Windows computer</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>&amp; {
+)</code></pre></article></div><dl class="recipe-result"><div><dt>Expected</dt><dd>Both id_ed25519_euler and id_ed25519_euler.pub are created; the private key has restricted permissions.</dd></div><div class="success"><dt>Continue when</dt><dd>Install only the .pub file.</dd></div><div class="failure"><dt>If not</dt><dd>Stop at the first error and keep all pre-existing files unchanged.</dd></div></dl></li><li class="recipe-step" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>07</span><div><h4>Install only the public key</h4><span class="recipe-machine">Use the laptop or desktop in front of you</span></div></header><p class="recipe-instruction">Run this on your own computer, not inside an Euler session. Send only id_ed25519_euler.pub through the working password login. Spaces in your Windows profile or key comment are supported; do not rename your profile or move your keys. The command preserves existing authorized_keys entries and avoids adding a duplicate exact line.</p><div class="recipe-links"><a href="/reference/euler/troubleshooting/#windows-public-key-installation-reports-grep-errors">Recover a failed Windows public-key installation</a></div><div class="recipe-commands"><article class="command-step" data-command-platform="windows" data-command-shell="powershell" data-command-mode="run"><div class="command-heading"><span>Run</span><strong>PowerShell on your Windows computer</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>&amp; {
+  $ErrorActionPreference = &quot;Stop&quot;
   $EulerUser = Read-Host &quot;Short ETH username used in the password test&quot;
   if ($EulerUser -notmatch &quot;^[A-Za-z0-9._-]+$&quot;) { throw &quot;STOP: invalid ETH username&quot; }
   $PublicKey = Join-Path $env:USERPROFILE &quot;.ssh\id_ed25519_euler.pub&quot;
-  if (-not (Test-Path -LiteralPath $PublicKey)) { throw &quot;STOP: public key is missing&quot; }
-  Get-Content -LiteralPath $PublicKey | ssh -F none -o PubkeyAuthentication=no -o PasswordAuthentication=yes -o KbdInteractiveAuthentication=yes -o PreferredAuthentications=keyboard-interactive,password &quot;$EulerUser@euler.ethz.ch&quot; &#39;umask 077; mkdir -p ~/.ssh; chmod 700 ~/.ssh; touch ~/.ssh/authorized_keys; chmod 600 ~/.ssh/authorized_keys; key=&quot;$(tr -d &quot;\r&quot;)&quot;; grep -Fqx &quot;$key&quot; ~/.ssh/authorized_keys || printf &quot;%s\n&quot; &quot;$key&quot; &gt;&gt; ~/.ssh/authorized_keys; printf &quot;public-key-installed\n&quot;&#39;
+  if (-not (Test-Path -LiteralPath $PublicKey -PathType Leaf)) { throw &quot;STOP: public key is missing&quot; }
+  $KeyText = (Get-Content -LiteralPath $PublicKey -Raw -Encoding UTF8).Trim()
+  if ($KeyText -notmatch &#39;^ssh-ed25519 [A-Za-z0-9+/]+={0,2}(?: [^\r\n]*)?$&#39;) { throw &quot;STOP: expected one Ed25519 public-key line; keep the files and request help&quot; }
+  $KeyData = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($KeyText))
+  $Script = @&#39;
+set -eu
+key=$(printf %s __PUBLIC_KEY_DATA__ | base64 -d)
+umask 077
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+touch ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+if grep -Fqx -- &quot;$key&quot; ~/.ssh/authorized_keys; then
+  :
+else
+  status=$?
+  [ &quot;$status&quot; -eq 1 ] || exit &quot;$status&quot;
+  printf &quot;\n%s\n&quot; &quot;$key&quot; &gt;&gt; ~/.ssh/authorized_keys
+fi
+grep -Fqx -- &quot;$key&quot; ~/.ssh/authorized_keys
+printf &quot;public-key-installed\n&quot;
+&#39;@
+  $Script = $Script.Replace(&#39;__PUBLIC_KEY_DATA__&#39;, $KeyData).Replace(&quot;`r&quot;, &quot;&quot;)
+  $ScriptData = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($Script + &quot;`n&quot;))
+  $ScriptData | ssh -F none -o PubkeyAuthentication=no -o PasswordAuthentication=yes -o KbdInteractiveAuthentication=yes -o PreferredAuthentications=keyboard-interactive,password &quot;$EulerUser@euler.ethz.ch&quot; &quot;bash -o pipefail -c &#39;base64 -d | sh&#39;&quot;
+  if ($LASTEXITCODE -ne 0) { throw &quot;STOP: public-key installation failed; keep both key files and request help with the error&quot; }
 }</code></pre></article><article class="command-step" data-command-platform="macos" data-command-shell="zsh" data-command-mode="run"><div class="command-heading"><span>Run</span><strong>Terminal on your Mac (zsh is already running)</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>(
 printf &#39;Short ETH username used in the password test: &#39;; read -r eth_user
 case &quot;$eth_user&quot; in &#39;&#39;|*[^A-Za-z0-9._-]*) printf &#39;STOP: invalid ETH username\n&#39; &gt;&amp;2; exit 1;; esac
 public_key=&quot;$HOME/.ssh/id_ed25519_euler.pub&quot;
 test -f &quot;$public_key&quot; || { printf &#39;STOP: public key is missing\n&#39; &gt;&amp;2; exit 1; }
-cat &quot;$public_key&quot; | ssh -F none -o PubkeyAuthentication=no -o PasswordAuthentication=yes -o KbdInteractiveAuthentication=yes -o PreferredAuthentications=keyboard-interactive,password &quot;$eth_user@euler.ethz.ch&quot; &#39;umask 077; mkdir -p ~/.ssh; chmod 700 ~/.ssh; touch ~/.ssh/authorized_keys; chmod 600 ~/.ssh/authorized_keys; key=&quot;$(tr -d &quot;\r&quot;)&quot;; grep -Fqx &quot;$key&quot; ~/.ssh/authorized_keys || printf &quot;%s\n&quot; &quot;$key&quot; &gt;&gt; ~/.ssh/authorized_keys; printf &quot;public-key-installed\n&quot;&#39;
+cat &quot;$public_key&quot; | ssh -F none -o PubkeyAuthentication=no -o PasswordAuthentication=yes -o KbdInteractiveAuthentication=yes -o PreferredAuthentications=keyboard-interactive,password &quot;$eth_user@euler.ethz.ch&quot; &#39;set -eu
+key=&quot;$(tr -d &quot;\r&quot;)&quot;
+[ -n &quot;$key&quot; ] || { printf &quot;STOP: empty public key\n&quot; &gt;&amp;2; exit 1; }
+umask 077
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+touch ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+if grep -Fqx -- &quot;$key&quot; ~/.ssh/authorized_keys; then
+  :
+else
+  status=$?
+  [ &quot;$status&quot; -eq 1 ] || exit &quot;$status&quot;
+  printf &quot;\n%s\n&quot; &quot;$key&quot; &gt;&gt; ~/.ssh/authorized_keys
+fi
+grep -Fqx -- &quot;$key&quot; ~/.ssh/authorized_keys
+printf &quot;public-key-installed\n&quot;&#39;
 )</code></pre></article><article class="command-step" data-command-platform="linux" data-command-shell="bash" data-command-mode="run"><div class="command-heading"><span>Run</span><strong>Terminal on your Linux computer (Bash is already running)</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>(
 printf &#39;Short ETH username used in the password test: &#39;; read -r eth_user
 case &quot;$eth_user&quot; in &#39;&#39;|*[^A-Za-z0-9._-]*) printf &#39;STOP: invalid ETH username\n&#39; &gt;&amp;2; exit 1;; esac
 public_key=&quot;$HOME/.ssh/id_ed25519_euler.pub&quot;
 test -f &quot;$public_key&quot; || { printf &#39;STOP: public key is missing\n&#39; &gt;&amp;2; exit 1; }
-cat &quot;$public_key&quot; | ssh -F none -o PubkeyAuthentication=no -o PasswordAuthentication=yes -o KbdInteractiveAuthentication=yes -o PreferredAuthentications=keyboard-interactive,password &quot;$eth_user@euler.ethz.ch&quot; &#39;umask 077; mkdir -p ~/.ssh; chmod 700 ~/.ssh; touch ~/.ssh/authorized_keys; chmod 600 ~/.ssh/authorized_keys; key=&quot;$(tr -d &quot;\r&quot;)&quot;; grep -Fqx &quot;$key&quot; ~/.ssh/authorized_keys || printf &quot;%s\n&quot; &quot;$key&quot; &gt;&gt; ~/.ssh/authorized_keys; printf &quot;public-key-installed\n&quot;&#39;
-)</code></pre></article></div><dl class="recipe-result"><div><dt>Expected</dt><dd>After the ETH password, Euler prints public-key-installed and no SSH or permission error.</dd></div><div class="success"><dt>Continue when</dt><dd>Run the direct key-only test.</dd></div><div class="failure"><dt>If not</dt><dd>Do not edit authorized_keys manually; diagnose the reported login or permission error.</dd></div></dl></li><li class="recipe-step" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>08</span><div><h4>Prove direct key-only access</h4><span class="recipe-machine">Use the laptop or desktop in front of you</span></div></header><p class="recipe-instruction">Run the direct test with password and keyboard-interactive authentication disabled. Enter only the local key passphrase if prompted.</p><div class="recipe-commands"><article class="command-step" data-command-platform="windows" data-command-shell="powershell" data-command-mode="run"><div class="command-heading"><span>Run</span><strong>PowerShell on your Windows computer</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>&amp; {
+cat &quot;$public_key&quot; | ssh -F none -o PubkeyAuthentication=no -o PasswordAuthentication=yes -o KbdInteractiveAuthentication=yes -o PreferredAuthentications=keyboard-interactive,password &quot;$eth_user@euler.ethz.ch&quot; &#39;set -eu
+key=&quot;$(tr -d &quot;\r&quot;)&quot;
+[ -n &quot;$key&quot; ] || { printf &quot;STOP: empty public key\n&quot; &gt;&amp;2; exit 1; }
+umask 077
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+touch ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+if grep -Fqx -- &quot;$key&quot; ~/.ssh/authorized_keys; then
+  :
+else
+  status=$?
+  [ &quot;$status&quot; -eq 1 ] || exit &quot;$status&quot;
+  printf &quot;\n%s\n&quot; &quot;$key&quot; &gt;&gt; ~/.ssh/authorized_keys
+fi
+grep -Fqx -- &quot;$key&quot; ~/.ssh/authorized_keys
+printf &quot;public-key-installed\n&quot;&#39;
+)</code></pre></article></div><dl class="recipe-result"><div><dt>Expected</dt><dd>After the ETH password, Euler prints public-key-installed with no error. This confirms the exact public-key line is present; the next key-only test must still pass.</dd></div><div class="success"><dt>Continue when</dt><dd>Run the direct key-only test.</dd></div><div class="failure"><dt>If not</dt><dd>Stop at any error, even if an older command printed public-key-installed. Keep both key files. For grep errors or public-key-installedn from the older Windows command, follow the linked recovery guide; do not delete authorized_keys or regenerate keys.</dd></div></dl></li><li class="recipe-step" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>08</span><div><h4>Prove direct key-only access</h4><span class="recipe-machine">Use the laptop or desktop in front of you</span></div></header><p class="recipe-instruction">Run the direct test with password and keyboard-interactive authentication disabled. Enter only the local key passphrase if prompted.</p><div class="recipe-commands"><article class="command-step" data-command-platform="windows" data-command-shell="powershell" data-command-mode="run"><div class="command-heading"><span>Run</span><strong>PowerShell on your Windows computer</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>&amp; {
   $EulerUser = Read-Host &quot;Short ETH username&quot;
   if ($EulerUser -notmatch &quot;^[A-Za-z0-9._-]+$&quot;) { throw &quot;STOP: invalid ETH username&quot; }
   $KeyPath = Join-Path $env:USERPROFILE &quot;.ssh\id_ed25519_euler&quot;
@@ -1114,7 +1171,7 @@ credentials and private-key contents.</p>
 <h2 id="understand-before-accepting-ai-output">Understand Before Accepting AI Output<a class="heading-anchor" href="#understand-before-accepting-ai-output" aria-label="Link to Understand Before Accepting AI Output">#</a></h2><p>Inspect every path and backup before accepting an SSH repair. A <code>.pub</code> file in
 <code>IdentityFile</code>, concatenated host blocks, or PowerShell pasted into Euler Bash
 are configuration errors, not reasons to delete all SSH state.</p>
-</article></details></div></div><nav class="mission-footer-nav" aria-label="Lesson navigation" data-mission-footer><a href="#" hidden data-previous-mission><span>Previous lesson</span><strong></strong></a><a class="source-link" href="https://github.com/IDEALLab/onboarding-IT/blob/549ea90be383d71c8469016e9670441e20041a3b/curriculum/missions/euler-access-ssh/README.md" rel="noreferrer">View this lesson on GitHub</a><a class="next" href="/missions/euler-python-environment/" data-next-mission><span>Next lesson</span><strong>Create A Small Python Environment On Euler</strong></a></nav></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practise safely, check the result yourself, and keep a verifiable record on GitHub.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Course version 2.1.2 /published version 549ea90b</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+</article></details></div></div><nav class="mission-footer-nav" aria-label="Lesson navigation" data-mission-footer><a href="#" hidden data-previous-mission><span>Previous lesson</span><strong></strong></a><a class="source-link" href="https://github.com/IDEALLab/onboarding-IT/blob/84f2b3aef4c0ed0b1e5a240332102bf75c14e9e4/curriculum/missions/euler-access-ssh/README.md" rel="noreferrer">View this lesson on GitHub</a><a class="next" href="/missions/euler-python-environment/" data-next-mission><span>Next lesson</span><strong>Create A Small Python Environment On Euler</strong></a></nav></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practise safely, check the result yourself, and keep a verifiable record on GitHub.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Course version 2.1.2 /published version 84f2b3ae</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
 `).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
 `).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html><script>(function(){const missionId = "euler-access-ssh";
 const contextEndpoint = "/__passport/v1/context";
