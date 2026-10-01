@@ -1,0 +1,186 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Goal: practise one small, reversible Git round trip before using the same pattern for approved research code. This is an optional reference exercise. It does not submit a Passport lesson or change your Passport progress."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Move Project Code Between Your Computer, GitHub, And Euler | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.CzbNcnCw.css"></head><body data-curriculum-version="2.1.2"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Choose lessons</a><a data-mission-navigation href="/missions/core-orientation/">Sample lesson</a><a href="/reference/">Guides &amp; terms</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Choose lessons</a><a data-mission-navigation href="/missions/core-orientation/">Sample lesson</a><a href="/reference/">Guides &amp; terms</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a lesson or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search lessons, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Lessons</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Public course preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r}. Keep the terminal window that launched the Passport open while you work. The Git lesson later explains how GitHub stores the submitted work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my progress`);let l=document.querySelector(`[data-passport-action]`);l&&(l.href=e.dataset.dashboardUrl||`/passport/`,l.textContent=`Resume my passport`);for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`My progress`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current lesson`}document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Handbook / reference</span></div><main id="main-content" class="page-shell"><header class="reference-hero"><div><p class="eyebrow">reference</p><h1>Move Project Code Between Your Computer, GitHub, And Euler</h1></div><div class="reference-actions"><a class="button secondary" href="https://github.com/IDEALLab/onboarding-IT/blob/187c95b5248bc70c2d812f7dd7ca5bbb1090535d/docs/reference/euler/github-code-sync.md" rel="noreferrer">View this page on GitHub</a><a href="/passport/">Return to my progress</a></div></header><div class="reference-layout"><article class="markdown-body reference-body"><aside class="reference-command-primer"><strong>Before running a command</strong><p>A <strong>command</strong> is a line of text that tells a computer to do one task. You paste it into a <strong>terminal</strong>, the text application used for commands. A <strong>shell</strong> is the part inside that application that reads the command. PowerShell, zsh, and Bash are shells. Open only the application named for your computer below; it starts the correct shell automatically. You do not need to install a separate Bash or zsh application.</p><ul><li><strong>Windows:</strong> press the Windows key, type <strong>PowerShell</strong>, and open the result named PowerShell. Do not use Command Prompt, Git Bash, or WSL for a block labelled PowerShell.</li><li><strong>macOS:</strong> press <strong>Command+Space</strong>, type <strong>Terminal</strong>, and press Return. The Terminal application starts zsh automatically.</li><li><strong>Linux:</strong> open <strong>Terminal</strong> from the applications menu. The Terminal application normally starts Bash automatically.</li></ul><p>The <strong>prompt</strong> is the text beside the blinking cursor. Check the stated computer, paste only the command after its prompt, press Enter, and wait for the prompt to return. For an Euler command, connect to Euler first; the same text window then controls the remote Euler computer.</p><a href="/core/command-line-basics/">How to open a terminal and run a command</a></aside><div class="reference-markdown"><p><strong>Goal:</strong> practise one small, reversible Git round trip before using the same
+pattern for approved research code. This is an optional reference exercise. It
+does not submit a Passport lesson or change your Passport progress.</p>
+<p><strong>Prerequisites:</strong> complete the Euler access lesson and the Git lessons if they
+are assigned to you. If Git is not in your Passport route, learn the
+<a href="/reference/guides/git_workflow/">Git workflow</a> before this
+optional exercise; it is not required to pass the Euler lessons. Use your own
+GitHub account and personal Euler account. Keep the Passport exercise fork out
+of this demonstration.</p>
+<p><strong>Where commands run:</strong> commands marked <strong>your computer</strong> run in PowerShell on
+Windows, Terminal with zsh on macOS, or Terminal with Bash on Linux. After
+<code>ssh euler</code>, commands marked <strong>Euler</strong> run in Bash on an Euler <em>login node</em> in
+that same terminal window. A Slurm job runs elsewhere; do not put GitHub login,
+<code>git pull</code>, or <code>git push</code> in a batch script.
+If opening a terminal or running a command is new to you, use the
+<a href="/core/command-line-basics/">command-line basics</a> before step 1.</p>
+<h2 id="the-route">The Route<a class="heading-anchor" href="#the-route" aria-label="Link to The Route">#</a></h2><pre><code class="language-text">your computer  -- push --&gt;  your private GitHub demo repository
+     ^                            |
+     |                            | clone or pull
+     +-------- pull &lt;-- Euler login node -- push --&gt; GitHub
+</code></pre>
+<p>The demo contains only a fictional text file. For research work, keep small
+reviewed code in Git, approved data and results in their assigned storage, and
+record the exact commit used by a job. Ask the project owner before using a
+real repository or adding a GitHub credential to your Euler account. A direct
+push to the demo&#39;s default branch is acceptable only because you own this
+disposable practice repository; follow the project&#39;s branch and pull-request
+rules for lab code.</p>
+<h2 id="1-prepare-a-separate-private-demo-repository">1. Prepare A Separate Private Demo Repository<a class="heading-anchor" href="#1-prepare-a-separate-private-demo-repository" aria-label="Link to 1. Prepare A Separate Private Demo Repository">#</a></h2><p><strong>Where:</strong> your computer, outside the managed Passport folder. First check that
+GitHub CLI is signed in as your intended personal GitHub account. Before
+running the creation command, check that you do not already have a folder or
+repository named <code>passport-euler-sync-demo</code>; if you do, stop and inspect it:</p>
+<pre><code class="language-sh">gh auth status --active --hostname github.com
+cd &quot;$HOME&quot;
+gh repo create passport-euler-sync-demo --private --add-readme --clone
+cd &quot;$HOME/passport-euler-sync-demo&quot;
+git status --short
+</code></pre>
+<p>The GitHub CLI creates a <strong>private repository in your own account</strong> and clones
+it in your home folder. Do not run this from a research repository or the
+Passport&#39;s managed folder. <code>git status --short</code> should print nothing. If
+<code>gh auth status</code> names the wrong account or creation fails,
+use the <a href="/reference/guides/git_workflow/">Git workflow recovery</a>
+before continuing.</p>
+<p>Create <code>sync-demo.txt</code> containing exactly one line, <code>Written on my computer</code>.
+Use any plain-text editor. If you prefer a terminal command, choose <strong>only</strong>
+the block for your computer:</p>
+<p>Windows PowerShell on your computer:</p>
+<pre><code class="language-powershell">&#39;Written on my computer&#39; | Set-Content -LiteralPath sync-demo.txt -Encoding utf8
+</code></pre>
+<p>macOS zsh or Linux Bash on your computer:</p>
+<pre><code class="language-sh">printf &#39;Written on my computer\n&#39; &gt; sync-demo.txt
+</code></pre>
+<p>Then, on your computer:</p>
+<pre><code class="language-sh">git add sync-demo.txt
+git commit -m &quot;docs: add computer sync marker&quot;
+git push
+git rev-parse HEAD
+git status --short
+</code></pre>
+<p><strong>Expected:</strong> GitHub shows <code>sync-demo.txt</code> with the computer line. Keep the
+commit ID printed by <code>git rev-parse HEAD</code> for comparison. The final status is
+empty. If Git asks for a commit name or email, follow the
+<a href="/reference/guides/git_workflow/">Git identity procedure</a> in this
+demo repository; do not guess or change every repository&#39;s settings.</p>
+<h2 id="2-check-github-access-from-euler">2. Check GitHub Access From Euler<a class="heading-anchor" href="#2-check-github-access-from-euler" aria-label="Link to 2. Check GitHub Access From Euler">#</a></h2><p><strong>Where:</strong> connect from your computer with <code>ssh euler</code>, then run the following
+on the Euler login node. This GitHub authentication is separate from the SSH
+key that lets your computer enter Euler.</p>
+<p>First try the access you may already have:</p>
+<pre><code class="language-sh">ssh -T git@github.com
+</code></pre>
+<p>GitHub&#39;s successful response begins <code>Hi YOUR_USERNAME!</code> and says it does not
+provide shell access. <strong>Compare that username with the account that owns the
+demo repository.</strong> GitHub documents that this successful test can return exit
+code 1. On first contact, compare the presented host-key fingerprint with
+<a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints" rel="noreferrer" data-external-link>GitHub&#39;s published fingerprints</a>
+before accepting it. If the correct account responds, keep this working setup
+and go to step 3. If the wrong account responds, stop and ask for help.</p>
+<p>If no GitHub key works, create a <strong>new key on Euler</strong>. Never copy the private
+key from your computer to Euler, reuse the computer-to-Euler key, or enable SSH
+agent forwarding. Inspect the dedicated filename first:</p>
+<pre><code class="language-sh">if [ -e &quot;$HOME/.ssh/id_ed25519_github_euler&quot; ] || [ -e &quot;$HOME/.ssh/id_ed25519_github_euler.pub&quot; ]; then
+  printf &#39;STOP: inspect the existing Euler GitHub key files before continuing\n&#39;
+else
+  umask 077
+  mkdir -p &quot;$HOME/.ssh&quot;
+  ssh-keygen -t ed25519 -a 64 -f &quot;$HOME/.ssh/id_ed25519_github_euler&quot;
+fi
+</code></pre>
+<p>Choose a <strong>nonempty passphrase</strong> when asked. If either file already exists,
+do not overwrite it: ask for help checking whether the pair is usable. Display
+<strong>only the public half</strong>:</p>
+<pre><code class="language-sh">cat &quot;$HOME/.ssh/id_ed25519_github_euler.pub&quot;
+</code></pre>
+<p>In your computer&#39;s browser, open GitHub <strong>Settings &gt; SSH and GPG keys &gt; New
+SSH key</strong>. Name it <code>Euler GitHub access</code> and paste the public line there. Never
+paste the private file&#39;s <strong>contents</strong> into GitHub, the Passport, chat, or a
+repository. GitHub may request confirmation in the browser.</p>
+<p>Back on the Euler login node, test the dedicated key:</p>
+<pre><code class="language-sh">ssh -i &quot;$HOME/.ssh/id_ed25519_github_euler&quot; -o IdentitiesOnly=yes -T git@github.com
+</code></pre>
+<p><strong>Expected:</strong> <code>Hi YOUR_USERNAME!</code>, naming your intended account. The key&#39;s
+passphrase may be requested. If GitHub says <code>Permission denied (publickey)</code>,
+check that its registered public key matches this file and that you selected
+the intended account. Do not paste keys or tokens into a help issue. The
+<a href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/testing-your-ssh-connection" rel="noreferrer" data-external-link>GitHub SSH connection guide</a>
+explains the expected message and exit code.</p>
+<h2 id="3-bring-the-pc-commit-to-euler">3. Bring The PC Commit To Euler<a class="heading-anchor" href="#3-bring-the-pc-commit-to-euler" aria-label="Link to 3. Bring The PC Commit To Euler">#</a></h2><p><strong>Where:</strong> Euler login node, in your personal <code>$HOME</code>. Choose <strong>one</strong> of the
+two clone blocks below, depending on which SSH test succeeded. Each block
+validates the GitHub username you type and runs in a subshell, so an invalid
+value stops the clone without closing your Euler connection.</p>
+<p>If an existing correct GitHub SSH setup passed in step 2:</p>
+<pre><code class="language-sh">(
+  printf &#39;Your GitHub username: &#39;; read -r github_user
+  case &quot;$github_user&quot; in &#39;&#39;|*[^A-Za-z0-9-]*) printf &#39;STOP: invalid GitHub username\n&#39; &gt;&amp;2; exit 1;; esac
+  cd &quot;$HOME&quot; || exit 1
+  git clone &quot;git@github.com:$github_user/passport-euler-sync-demo.git&quot;
+)
+</code></pre>
+<p>If you created the dedicated Euler key, use it for the clone and save its
+selection <strong>only in this demo repository</strong>:</p>
+<pre><code class="language-sh">(
+  printf &#39;Your GitHub username: &#39;; read -r github_user
+  case &quot;$github_user&quot; in &#39;&#39;|*[^A-Za-z0-9-]*) printf &#39;STOP: invalid GitHub username\n&#39; &gt;&amp;2; exit 1;; esac
+  cd &quot;$HOME&quot; || exit 1
+  GIT_SSH_COMMAND=&quot;ssh -i $HOME/.ssh/id_ed25519_github_euler -o IdentitiesOnly=yes&quot; git clone &quot;git@github.com:$github_user/passport-euler-sync-demo.git&quot; || exit 1
+  cd &quot;$HOME/passport-euler-sync-demo&quot; || exit 1
+  git config --local core.sshCommand &quot;ssh -i $HOME/.ssh/id_ed25519_github_euler -o IdentitiesOnly=yes&quot;
+)
+</code></pre>
+<p>Run the comparison in the cloned demo repository:</p>
+<pre><code class="language-sh">cd &quot;$HOME/passport-euler-sync-demo&quot; || exit 1
+git status --short
+cat sync-demo.txt
+git rev-parse HEAD
+</code></pre>
+<p><strong>Expected:</strong> clean status, the computer line, and the same full commit ID you
+recorded on your computer. If the folder already exists, <code>git clone</code> refuses
+to overwrite it. Inspect the existing folder and ask for help instead of
+removing it. If the commit IDs differ, stop before editing or submitting a job.
+Before the next commit, inspect <code>git config --show-origin --get user.name</code> and
+<code>git config --show-origin --get user.email</code>. If either value is missing or
+wrong, follow the <a href="/reference/guides/git_workflow/#configure-git-identity">repository-local Git identity procedure</a>
+here on Euler.</p>
+<h2 id="4-send-one-euler-change-back-then-verify-on-the-computer">4. Send One Euler Change Back, Then Verify On The Computer<a class="heading-anchor" href="#4-send-one-euler-change-back-then-verify-on-the-computer" aria-label="Link to 4. Send One Euler Change Back, Then Verify On The Computer">#</a></h2><p><strong>Where:</strong> Euler login node, inside the demo repository:</p>
+<pre><code class="language-sh">git status --short
+printf &#39;Added on Euler login node\n&#39; &gt;&gt; sync-demo.txt
+git add sync-demo.txt
+git commit -m &quot;docs: add Euler sync marker&quot;
+git push
+git rev-parse HEAD
+git status --short
+</code></pre>
+<p><strong>Expected:</strong> the push succeeds and status is empty. If Git needs an author
+name or email, set an approved GitHub-associated identity <strong>for this repository
+only</strong> using <code>git config --local user.name</code> and <code>git config --local user.email</code>,
+then retry the commit. A commit identifies its author; the SSH key authorizes
+the push. If <code>git push</code> is rejected, stop; do not force-push.</p>
+<p><strong>Where:</strong> back on your computer, in its demo clone:</p>
+<pre><code class="language-sh">cd &quot;$HOME/passport-euler-sync-demo&quot;
+git status --short
+git pull --ff-only
+cat sync-demo.txt
+git rev-parse HEAD
+git status --short
+</code></pre>
+<p>In PowerShell, use <code>Get-Content sync-demo.txt</code> instead of <code>cat</code> if <code>cat</code> is
+unavailable. <strong>Expected:</strong> both lines appear in order, the full commit ID
+matches the one printed on Euler, and status remains empty. <code>--ff-only</code> refuses
+to combine divergent changes silently. If it refuses, stop and use the
+<a href="/reference/guides/git_workflow/">Git workflow guide</a> or ask for
+help. Do not reset, delete, or force-push to make the demo pass.</p>
+<h2 id="applying-this-to-a-real-euler-job">Applying This To A Real Euler Job<a class="heading-anchor" href="#applying-this-to-a-real-euler-job" aria-label="Link to Applying This To A Real Euler Job">#</a></h2><p>Work in a personal code clone under <code>$HOME</code>, use the project-approved branch
+and review process, and update the clone on an Euler login node. Before
+<code>sbatch</code>, inspect <code>git status --short</code> and record <code>git rev-parse HEAD</code> with
+your run configuration. A pending job may read files after you change them, so
+use a run-specific immutable checkout or snapshot when a queued or concurrent
+run must keep one exact code version. Keep project data, logs, and results in
+their approved locations described by <a href="/reference/euler/storage/">Euler storage</a>. Do not
+assume pushing from Euler is appropriate for a protected lab branch.</p>
+<p><strong>If blocked:</strong> stop at the first failed command and use the Passport&#39;s public
+help request with only the step number and a sanitized error. Never post a
+private repository URL, token, private key, username, or research file.</p>
+</div></article><aside class="reference-related"><p class="eyebrow">Keep your place</p><h2>Related pages</h2><nav aria-label="Related handbook pages"><a href="/core/command-line-basics/">Terminal And Command Basics</a><a href="/handbook/tracks/euler-cpu/">Euler CPU Track</a><a href="/reference/euler/">Euler Reference</a><a href="/reference/euler/euler-tunnel/">Euler Tunnel And VS Code</a><a href="/reference/euler/storage/">Euler Storage And Data Lifecycle</a><a href="/reference/guides/git_workflow/">Git And GitHub Workflow</a></nav><div class="fallback-card"><strong>Reading is not completion.</strong><p>Return to your current lesson to practise, verify, and submit the result.</p></div></aside></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practise safely, check the result yourself, and keep a verifiable record on GitHub.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Course version 2.1.2 /published version 187c95b5</small></footer><script type="module">var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+`).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
+`).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html>
