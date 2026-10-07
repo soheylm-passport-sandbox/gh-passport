@@ -4,8 +4,8 @@
     "controller_app_id": 4827197,
     "deployment_id": "semester-2026-sandbox",
     "exercise_repository": "soheylm-passport-sandbox/passport-exercises",
-    "extension_install_command": "gh extension install soheylm-passport-sandbox/gh-passport --force --pin v0.5.25",
-    "extension_release": "v0.5.25",
+    "extension_install_command": "gh extension install soheylm-passport-sandbox/gh-passport --force --pin v0.5.26",
+    "extension_release": "v0.5.26",
     "extension_repository": "soheylm-passport-sandbox/gh-passport",
     "handbook_ref": "main",
     "handbook_repository": "IDEALLab/onboarding-IT",
@@ -13,7 +13,7 @@
     "support_assignee": "SoheylM"
   },
   "schema_version": 1,
-  "source_commit": "d088af7b3ef6f9e2854e5bbe8bd5773f96ffa3a9",
+  "source_commit": "39d829cdcbf3db67139b76da593afb7b333a63ab",
   "source_exact": true,
   "source_repository": "IDEALLab/onboarding-IT"
 }
