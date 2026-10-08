@@ -1,0 +1,334 @@
+{
+  "contract": "python-change/2",
+  "fixture_warning": "Original synthetic assessment fixtures. Entries marked unsafe must never be executed; they test rejection by static analysis. Not learner records or required lesson answers.",
+  "cases": [
+    {
+      "id": "independent_three_cpu_test",
+      "expected_code": "accepted",
+      "expected_status": "pass",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "commuted_multiplication",
+      "expected_code": "accepted",
+      "expected_status": "pass",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return memory_per_cpu_gib * cpus\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "local_intermediate",
+      "expected_code": "accepted",
+      "expected_status": "pass",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    total = cpus * memory_per_cpu_gib\n    return total\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "equivalent_arithmetic",
+      "expected_code": "accepted",
+      "expected_status": "pass",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * (memory_per_cpu_gib + 1) - cpus\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "separate_integer_guards",
+      "expected_code": "accepted",
+      "expected_status": "pass",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus <= 0:\n        raise ValueError()\n    if memory_per_cpu_gib <= 0:\n        raise ValueError()\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "negated_positive_guard",
+      "expected_code": "accepted",
+      "expected_status": "pass",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if not (cpus >= 1 and memory_per_cpu_gib > 0):\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "variables_arithmetic_and_keywords",
+      "expected_code": "accepted",
+      "expected_status": "pass",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        cpus = 3\n        per_cpu = 7\n        self.assertEqual(3 * 7, total_memory_gib(memory_per_cpu_gib=per_cpu, cpus=cpus))\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "different_regression",
+      "expected_code": "accepted",
+      "expected_status": "pass",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(2, 5), 10)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "unchanged_bug",
+      "expected_code": "behavior",
+      "expected_status": "needs_work",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "hardcoded_total",
+      "expected_code": "behavior",
+      "expected_status": "needs_work",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return 21\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "wrong_algebra",
+      "expected_code": "behavior",
+      "expected_status": "needs_work",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus + memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "removed_validation",
+      "expected_code": "validation",
+      "expected_status": "needs_work",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "and_instead_of_or",
+      "expected_code": "validation",
+      "expected_status": "needs_work",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 and memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "rejects_positive_cpu",
+      "expected_code": "shape",
+      "expected_status": "unsupported",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 2 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "undiscovered_method",
+      "expected_code": "discovery",
+      "expected_status": "needs_work",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def check_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "comment_only_regression",
+      "expected_code": "discovery",
+      "expected_status": "needs_work",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        # self.assertEqual(total_memory_gib(3, 7), 21)\n        pass\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "conditional_assertion",
+      "expected_code": "discovery",
+      "expected_status": "needs_work",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        if False:\n            self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "skip_decorator",
+      "expected_code": "discovery",
+      "expected_status": "needs_work",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    @unittest.skip(\"hidden\")\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "duplicate_method",
+      "expected_code": "discovery",
+      "expected_status": "needs_work",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "wrong_expected_value",
+      "expected_code": "expected",
+      "expected_status": "needs_work",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 7)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "tautological_expected",
+      "expected_code": "expected",
+      "expected_status": "needs_work",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), total_memory_gib(3, 7))\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "baseline_only_twice",
+      "expected_code": "regression",
+      "expected_status": "needs_work",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "lost_original_baseline",
+      "expected_code": "baseline",
+      "expected_status": "needs_work",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 4), 4)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "dead_correct_return",
+      "expected_code": "shape",
+      "expected_status": "unsupported",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return memory_per_cpu_gib\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "shadowed_function_class",
+      "expected_code": "discovery",
+      "expected_status": "needs_work",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass total_memory_gib(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "shadowed_function_local",
+      "expected_code": "discovery",
+      "expected_status": "needs_work",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        total_memory_gib = 21\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "shadowed_error_name",
+      "expected_code": "shape",
+      "expected_status": "unsupported",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    ValueError = 0\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "top_level_io",
+      "expected_code": "shape",
+      "expected_status": "unsupported",
+      "unsafe_synthetic_fixture_do_not_execute": true,
+      "source": "open('DO_NOT_EXECUTE_MARKER', 'w').write('UNSAFE SYNTHETIC FIXTURE')\ndef total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "extra_import",
+      "expected_code": "shape",
+      "expected_status": "unsupported",
+      "unsafe_synthetic_fixture_do_not_execute": true,
+      "source": "import os  # UNSAFE SYNTHETIC FIXTURE: extra import must be rejected\ndef total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "endless_loop",
+      "expected_code": "shape",
+      "expected_status": "unsupported",
+      "unsafe_synthetic_fixture_do_not_execute": true,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    while True:  # UNSAFE SYNTHETIC FIXTURE: never execute\n        pass\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "annotation_call",
+      "expected_code": "shape",
+      "expected_status": "unsupported",
+      "unsafe_synthetic_fixture_do_not_execute": true,
+      "source": "def total_memory_gib(cpus: print('UNSAFE SYNTHETIC FIXTURE'), memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "valid_but_unsupported_sum",
+      "expected_code": "shape",
+      "expected_status": "unsupported",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return sum([memory_per_cpu_gib] * cpus)\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "boolean_expected",
+      "expected_code": "shape",
+      "expected_status": "unsupported",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), True)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "finite_sample_overfit",
+      "expected_code": "behavior",
+      "expected_status": "needs_work",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib + (cpus - 1) * (cpus - 3) * (memory_per_cpu_gib - 3)\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "shadowed_module_load_tests",
+      "expected_code": "discovery",
+      "expected_status": "needs_work",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass load_tests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "shadowed_module___file__",
+      "expected_code": "discovery",
+      "expected_status": "needs_work",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass __file__(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "native_unittest_name_prefix",
+      "expected_code": "accepted",
+      "expected_status": "pass",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def testThreeCpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "invalid_input_assertions",
+      "expected_code": "accepted",
+      "expected_status": "pass",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n        with self.assertRaises(ValueError):\n            total_memory_gib(0, 3)\n        with self.assertRaises(ValueError):\n            total_memory_gib(2, -1)\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "false_invalid_input_assertion",
+      "expected_code": "expected",
+      "expected_status": "needs_work",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n        with self.assertRaises(ValueError):\n            total_memory_gib(2, 3)\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "shadowed_exception_in_test",
+      "expected_code": "discovery",
+      "expected_status": "needs_work",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass TotalMemoryTests(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n        ValueError = 3\n        with self.assertRaises(ValueError):\n            total_memory_gib(0, 3)\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    {
+      "id": "class_shadows_exception",
+      "expected_code": "discovery",
+      "expected_status": "needs_work",
+      "unsafe_synthetic_fixture_do_not_execute": false,
+      "source": "def total_memory_gib(cpus: int, memory_per_cpu_gib: int) -> int:\n    if cpus < 1 or memory_per_cpu_gib < 1:\n        raise ValueError(\"positive inputs required\")\n    return cpus * memory_per_cpu_gib\n",
+      "tests": "import unittest\nfrom passport_example import total_memory_gib\n\nclass ValueError(unittest.TestCase):\n    def test_one_cpu(self) -> None:\n        self.assertEqual(total_memory_gib(1, 3), 3)\n\n    def test_three_cpus(self) -> None:\n        self.assertEqual(total_memory_gib(3, 7), 21)\n        with self.assertRaises(ValueError):\n            total_memory_gib(0, 3)\n        with self.assertRaises(ValueError):\n            total_memory_gib(2, -1)\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    }
+  ]
+}

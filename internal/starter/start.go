@@ -177,6 +177,15 @@ func run(options Options, runner commandRunner) (Result, error) {
 		return Result{}, errors.New("passport folder has local changes; keep them safe, then run `gh passport open` instead of restarting")
 	}
 
+	branch := "onboarding/" + strings.ToLower(username)
+	if options.ResumeOnly {
+		if _, err := runner.Run(ctx, directory, "git", "show-ref", "--verify", "--quiet", "refs/remotes/origin/"+branch); err != nil {
+			return Result{}, errors.New("the published Passport branch is unavailable; retry or request help; no replacement route was created")
+		}
+	}
+	if err := prepareBranch(ctx, runner, directory, branch); err != nil {
+		return Result{}, err
+	}
 	catalogRaw, err := runner.Run(
 		ctx, directory, "git", "show", "upstream/main:passport-curriculum.json",
 	)
@@ -187,14 +196,20 @@ func run(options Options, runner commandRunner) (Result, error) {
 	if err != nil {
 		return Result{}, err
 	}
-	branch := "onboarding/" + strings.ToLower(username)
-	if options.ResumeOnly {
-		if _, err := runner.Run(ctx, directory, "git", "show-ref", "--verify", "--quiet", "refs/remotes/origin/"+branch); err != nil {
-			return Result{}, errors.New("the published Passport branch is unavailable; retry or request help; no replacement route was created")
+	if raw, readErr := os.ReadFile(filepath.Join(directory, "passport.json")); readErr == nil {
+		var previous struct {
+			CurriculumVersion string `json:"curriculum_version"`
 		}
-	}
-	if err := prepareBranch(ctx, runner, directory, branch); err != nil {
-		return Result{}, err
+		if json.Unmarshal(raw, &previous) == nil && previous.CurriculumVersion == "2.1.2" && catalogValue.CurriculumVersion == "3.0.0" {
+			legacy, err := runner.Run(ctx, directory, "git", "show", "upstream/main:compatibility/2.1.2/passport-curriculum.json")
+			if err != nil {
+				return Result{}, errors.New("the official legacy catalogue is unavailable; no route was changed")
+			}
+			catalogValue, err = decodeCatalog(legacy)
+			if err != nil || catalogValue.CurriculumVersion != "2.1.2" {
+				return Result{}, errors.New("invalid legacy catalogue; no route was changed")
+			}
+		}
 	}
 	platform := ""
 	responsibilities := []string(nil)

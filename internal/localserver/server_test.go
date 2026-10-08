@@ -631,7 +631,7 @@ func testServer(t *testing.T) *Server {
 		Root: t.TempDir(), Owner: "student", Name: "passport-exercises", UpstreamOwner: "soheylm-passport-sandbox", UpstreamName: "passport-exercises", Branch: "onboarding/student",
 		HeadSHA: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
 		Passport: passportrepo.Passport{
-			SchemaVersion: 2, CurriculumVersion: "1.2.0", GitHubUser: "student",
+			SchemaVersion: 2, CurriculumVersion: "2.1.2", GitHubUser: "student",
 			SourceRepository: "soheylm-passport-sandbox/passport-exercises", ForkRepository: "student/passport-exercises", AssessmentBranch: "onboarding/student",
 			Platform: "linux", Missions: []string{"core-orientation"},
 		},

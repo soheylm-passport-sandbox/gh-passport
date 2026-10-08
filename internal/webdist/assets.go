@@ -1,9 +1,22 @@
 package webdist
 
-import "embed"
+import (
+	"embed"
+	"errors"
+	"io/fs"
+)
 
-// Assets are replaced with the deterministic Astro build by the release script.
-// The committed fallback keeps source tests buildable and fails honestly.
-//
-//go:embed all:bundle
+//go:embed all:bundle all:legacy
 var Assets embed.FS
+
+// Bundle selects a pinned lesson contract; unknown versions cannot fall back.
+func Bundle(version string) (fs.FS, error) {
+	switch version {
+	case "2.1.2":
+		return fs.Sub(Assets, "legacy/2.1.2")
+	case "3.0.0":
+		return fs.Sub(Assets, "bundle")
+	default:
+		return nil, errors.New("unsupported lesson bundle")
+	}
+}
