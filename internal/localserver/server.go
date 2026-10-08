@@ -30,6 +30,7 @@ import (
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/localstate"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/missionverify"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/passportrepo"
+	"github.com/soheylm-passport-sandbox/gh-passport/internal/pythonverify"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/webdist"
 )
 
@@ -83,7 +84,7 @@ func New(
 	if !passportrepo.IsLocalStateIgnored(repository, runner) {
 		return nil, errors.New(".passport-local is not gitignored; refusing to create local state")
 	}
-	assets, err := fs.Sub(webdist.Assets, "bundle")
+	assets, err := webdist.Bundle(repository.Passport.CurriculumVersion)
 	if err != nil {
 		return nil, err
 	}
@@ -1004,6 +1005,19 @@ func (server *Server) localReceipt(mission missionverify.Mission, input map[stri
 		checks = server.verifyPythonEnvironment()
 	case "python_project":
 		checks = server.verifyPythonProject()
+	case "python_project_v2":
+		result, bounded, err := server.verifyPythonProjectV2()
+		if err != nil {
+			return receipt, err
+		}
+		assessmentReceipt := map[string]any{
+			"verifier": verifier, "passed": result.Passed() && bounded,
+			"checks": map[string]bool{"semantic_model": result.Passed(), "bounded_diff": bounded},
+		}
+		if result.Message != "" {
+			assessmentReceipt["feedback"] = result.Message
+		}
+		return server.validateReceiptChecks(mission, assessmentReceipt)
 	case "ai_configuration":
 		checks = server.verifyAIConfiguration()
 	case "ai_project":
@@ -1155,6 +1169,62 @@ func (server *Server) verifyPythonEnvironment() map[string]bool {
 			bytes.Contains(definition, []byte("python=3.11")) &&
 			definitionTracked && definitionUnchanged,
 	}
+}
+
+func (server *Server) verifyPythonProjectV2() (pythonverify.Result, bool, error) {
+	root, python := server.practicePython()
+	return server.verifyPythonProjectAt(root, python)
+}
+
+func (server *Server) verifyPythonProjectAt(root, python string) (pythonverify.Result, bool, error) {
+	info, rootErr := os.Lstat(root)
+	if rootErr != nil || !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		return pythonverify.Result{}, false, errors.New("practice root must be a real directory")
+	}
+	snapshot := pythonverify.Snapshot{Files: map[string][]byte{}, ChangedPaths: []string{}, FileModes: map[string]string{}}
+	for _, relative := range []string{pythonverify.SourcePath, pythonverify.TestPath} {
+		path, err := boundedRegularFile(root, relative, 100000)
+		if err != nil {
+			return pythonverify.Result{}, false, errors.New("keep both practice files as regular files under the practice folder")
+		}
+		before, err := os.Lstat(path)
+		if err != nil {
+			return pythonverify.Result{}, false, err
+		}
+		file, err := os.Open(path)
+		if err != nil {
+			return pythonverify.Result{}, false, err
+		}
+		opened, statErr := file.Stat()
+		raw, readErr := io.ReadAll(io.LimitReader(file, 100001))
+		file.Close()
+		after, afterErr := os.Lstat(path)
+		if statErr != nil || readErr != nil || afterErr != nil || !os.SameFile(before, opened) || !os.SameFile(before, after) || !after.Mode().IsRegular() || len(raw) > 100000 || before.Size() != after.Size() || !before.ModTime().Equal(after.ModTime()) {
+			return pythonverify.Result{}, false, errors.New("practice files changed during checking; save and retry")
+		}
+		snapshot.Files[relative] = raw
+		snapshot.FileModes[relative] = "100644"
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	tracked, err := server.runner.Run(ctx, root, "git", "diff", "--no-ext-diff", "--no-textconv", "--name-only", "-z", "HEAD", "--", "workspace/python_project")
+	if err != nil {
+		return pythonverify.Result{}, false, err
+	}
+	untracked, err := server.runner.Run(ctx, root, "git", "ls-files", "--others", "--exclude-standard", "-z", "--", "workspace/python_project")
+	if err != nil {
+		return pythonverify.Result{}, false, err
+	}
+	for _, raw := range [][]byte{tracked, untracked} {
+		for _, path := range strings.Split(string(raw), "\x00") {
+			if path != "" {
+				snapshot.ChangedPaths = append(snapshot.ChangedPaths, path)
+			}
+		}
+	}
+	bounded := len(snapshot.ChangedPaths) == 2 && onlyExpectedPaths(strings.Join(snapshot.ChangedPaths, "\n"), map[string]bool{pythonverify.SourcePath: true, pythonverify.TestPath: true})
+	result, err := pythonverify.Assess(ctx, python, snapshot)
+	return result, bounded, err
 }
 
 func (server *Server) verifyPythonProject() map[string]bool {

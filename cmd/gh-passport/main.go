@@ -28,7 +28,7 @@ import (
 var (
 	version           = "0.1.0-dev"
 	controllerAppID   = deployment.ControllerAppID
-	curriculumVersion = "2.1.2"
+	curriculumVersion = "3.0.0"
 )
 
 type doctorCheck struct {
@@ -312,18 +312,32 @@ func signalUpdateReady() error {
 	return nil
 }
 
+func supportedCurriculum(value string) bool { return value == "2.1.2" || value == "3.0.0" }
+
+func localCurriculum(root string) string {
+	repository, err := passportrepo.Find(root, passportrepo.ExecRunner{})
+	if err == nil && supportedCurriculum(repository.Passport.CurriculumVersion) {
+		return repository.Passport.CurriculumVersion
+	}
+	return curriculumVersion
+}
+
 func newUpdateService(repositoryRoot string) *launcherupdate.Service {
 	return &launcherupdate.Service{
 		RepositoryRoot:    repositoryRoot,
 		CurrentVersion:    version,
-		CurriculumVersion: curriculumVersion,
+		CurriculumVersion: localCurriculum(repositoryRoot),
 		Runner:            githubstatus.GHRunner{},
 	}
 }
 
 func printVersion(arguments []string) error {
+	reported := curriculumVersion
+	if root, err := os.Getwd(); err == nil {
+		reported = localCurriculum(root)
+	}
 	if len(arguments) == 0 {
-		fmt.Printf("gh-passport %s (curriculum %s, controller-app-id %s, bridge-contract v1)\n", version, curriculumVersion, controllerAppID)
+		fmt.Printf("gh-passport %s (curriculum %s, controller-app-id %s, bridge-contract v1)\n", version, reported, controllerAppID)
 		return nil
 	}
 	if len(arguments) != 1 || arguments[0] != "--json" {
@@ -331,7 +345,7 @@ func printVersion(arguments []string) error {
 	}
 	return writeJSON(map[string]any{
 		"version":            version,
-		"curriculum_version": curriculumVersion,
+		"curriculum_version": reported,
 		"controller_app_id":  controllerAppID,
 		"bridge_contract":    1,
 	})
@@ -553,7 +567,7 @@ func writeDiagnosticBundle(repositoryRoot string, checks []doctorCheck) (string,
 		SchemaVersion:     1,
 		GeneratedAt:       time.Now().UTC().Format(time.RFC3339Nano),
 		LauncherVersion:   version,
-		CurriculumVersion: curriculumVersion,
+		CurriculumVersion: localCurriculum(repositoryRoot),
 		OperatingSystem:   runtime.GOOS,
 		Architecture:      runtime.GOARCH,
 		Checks:            sanitized,
@@ -613,7 +627,7 @@ func contextForDirectory(workingDirectory string) (passportrepo.Repository, int6
 	} else if findErr != nil {
 		return passportrepo.Repository{}, 0, findErr
 	}
-	if repository.Passport.CurriculumVersion != curriculumVersion {
+	if !supportedCurriculum(repository.Passport.CurriculumVersion) {
 		return passportrepo.Repository{}, 0, fmt.Errorf(
 			"passport curriculum %s requires a compatible launcher; this launcher embeds %s",
 			repository.Passport.CurriculumVersion, curriculumVersion,

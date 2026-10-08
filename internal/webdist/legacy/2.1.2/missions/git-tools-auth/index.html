@@ -1,0 +1,874 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Inspect Git, the file-history program on your computer, the prepared practice clone, GitHub login and commit author. Repair only what is missing or wrong; keep working accounts and other repositories intact."><meta name="theme-color" content="#f4efe4"><meta name="color-scheme" content="light"><title>Configure Git Identity And GitHub Access | IDEAL IT Passport</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/_astro/BaseLayout.vOrAzqpe.css"></head><body data-curriculum-version="2.1.2"><a class="skip-link" href="#main-content">Skip to main content</a><div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div><header class="site-header"><div class="header-shell"><a class="brand" href="/" aria-label="IDEAL IT Passport home"><span class="brand-mark" aria-hidden="true">I/</span><span><strong>IDEAL</strong><small>IT Passport</small></span></a><nav class="primary-nav" aria-label="Primary navigation"><a data-route-navigation href="/start/">Choose lessons</a><a data-mission-navigation href="/missions/core-orientation/">Sample lesson</a><a href="/reference/">Guides &amp; terms</a><a href="/help/">Help</a></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Compact navigation"><a data-route-navigation href="/start/">Choose lessons</a><a data-mission-navigation href="/missions/core-orientation/">Sample lesson</a><a href="/reference/">Guides &amp; terms</a><a href="/help/">Help</a></nav></details><div class="header-actions"><div class="global-search" data-global-search data-base="/"><button class="search-trigger" type="button" aria-haspopup="dialog" aria-label="Search handbook"><span aria-hidden="true">⌕</span><span>Search</span><kbd>/</kbd></button><dialog class="search-dialog" aria-labelledby="search-title"><div class="search-dialog-head"><div><p class="eyebrow">Passport search</p><h2 id="search-title">Find a lesson or fix</h2></div><button class="dialog-close" type="button" aria-label="Close search">Close</button></div><label for="global-search-input">Search lessons, symptoms, systems, and tools</label><input id="global-search-input" class="search-input" type="search" placeholder="Try SSH permission, GPU, NAS..." autocomplete="off"><div class="search-filters"><label>Kind<select data-search-kind><option value="all">All pages</option><option value="mission">Lessons</option><option value="help">Troubleshooting</option><option value="reference">References</option></select></label><label>System<select data-search-system><option value="all">All systems</option><option value="git">Git and GitHub</option><option value="euler">Euler and SSH</option><option value="data">NAS and data</option><option value="blade">Blade</option><option value="ai">AI agents</option><option value="windows">Windows and WSL</option><option value="python">Python</option></select></label></div><p class="search-status" aria-live="polite">Type at least two characters.</p><ol class="search-results"></ol><div class="search-shortcuts"><a href="/help/">Browse help by symptom</a><a href="/reference/">Browse all references</a></div></dialog></div><script type="module">var e=document.querySelector(`[data-global-search]`),t=e?.querySelector(`.search-trigger`),n=e?.querySelector(`dialog`),r=e?.querySelector(`.dialog-close`),i=e?.querySelector(`input`),a=e?.querySelector(`.search-results`),o=e?.querySelector(`.search-status`),s=e?.querySelector(`[data-search-kind]`),c=e?.querySelector(`[data-search-system]`),l=(e?.dataset.base||`/`).replace(/\/$/,``),u=null,d=e=>`${l}${e}`||`/`,f=async()=>{if(u)return u;let e=await fetch(d(`/data/search.json`),{credentials:`same-origin`});if(!e.ok)throw Error(`search index unavailable`);return u=await e.json(),u},p=async()=>{n?.showModal(),i?.focus();try{await f()}catch{o&&(o.textContent=`Search is unavailable. Use the reference or help index.`)}};t?.addEventListener(`click`,p),r?.addEventListener(`click`,()=>n?.close()),n?.addEventListener(`click`,e=>{e.target===n&&n.close()}),document.addEventListener(`keydown`,e=>{let r=e.target;if(e.key===`Escape`&&n?.open){e.preventDefault(),n.close(),t?.focus();return}e.key===`/`&&!r?.matches(`input, textarea, select, [contenteditable]`)&&(e.preventDefault(),p())});var m=[[`ssh`,`publickey`,`key`,`permission`,`denied`,`authentication`],[`oom`,`memory`,`killed`,`outofmemory`],[`pending`,`queue`,`squeue`,`reason`],[`quota`,`disk`,`lquota`,`storage`],[`wsl`,`windows`,`linux`],[`conflict`,`merge`,`pull`],[`rtx`,`gpu`,`4090`,`3090`,`6000`],[`nas`,`network`,`drive`,`storage`],[`blade`,`rdp`,`remote`,`desktop`]],h=e=>{let t=e.replace(/[^a-z0-9]/g,``);return m.find(e=>e.includes(t))||[t]},g=(e,t)=>{let n=0,r=e.title.toLowerCase();for(let i of t){let t=h(i).find(t=>e.search.includes(t));if(!t)return-1;n+=r.includes(t)?8:2}return e.category===`help`&&(n+=2),n},_=async()=>{if(!i||!a||!o)return;let e=i.value.trim().toLowerCase();if(a.replaceChildren(),e.length<2){o.textContent=`Type at least two characters.`;return}try{let t=await f(),n=e.split(/\s+/).map(e=>e.replace(/[^a-z0-9]/g,``)).filter(Boolean),r=t.filter(e=>s?.value===`all`||e.category===s?.value).filter(e=>c?.value===`all`||e.systems.includes(c?.value||``)).map(e=>({item:e,score:g(e,n)})).filter(({score:e})=>e>=0).sort((e,t)=>t.score-e.score||e.item.title.localeCompare(t.item.title)).map(({item:e})=>e).slice(0,8);o.textContent=r.length?`${r.length} result${r.length===1?``:`s`}.`:`No result. Try a system name or symptom.`;for(let e of r){let t=document.createElement(`li`),n=document.createElement(`a`);n.href=d(e.route);let r=document.createElement(`span`);r.className=`result-category`,r.textContent=e.category;let i=document.createElement(`strong`);i.textContent=e.title;let o=document.createElement(`small`);o.textContent=e.summary||`Open this passport page.`,n.append(r,i,o),t.append(n),a.append(t)}}catch{o.textContent=`Search is unavailable. Use the reference or help index.`}};i?.addEventListener(`input`,_),s?.addEventListener(`change`,_),c?.addEventListener(`change`,_);</script><a class="resume-link" data-passport-action href="/getting-started/">How to start</a></div></div></header><div class="runtime-mode runtime-preview" role="status" aria-live="polite" data-runtime-mode data-context-endpoint="/__passport/v1/context" data-dashboard-url="/passport/"><div class="runtime-mode-inner"><strong data-runtime-label>Public course preview</strong><span data-runtime-message>This is not your assigned passport. No identity, answers, or completion progress are stored here.</span><a data-runtime-link href="/getting-started/">How to start your passport</a></div></div><script type="module">var e=document.querySelector(`[data-runtime-mode]`),t=t=>{if(!e||!t||typeof t!=`object`)return;let n=t,r=n.repository?.passport?.github_user,i=n.repository?.branch,a=n.repository?.passport?.assessment_branch;if(n.mode!==`local`||typeof r!=`string`||!r||typeof i!=`string`||i!==a)return;e.classList.remove(`runtime-preview`),e.classList.add(`runtime-local`);let o=e.querySelector(`[data-runtime-label]`),s=e.querySelector(`[data-runtime-message]`),c=e.querySelector(`[data-runtime-link]`);o&&(o.textContent=`Your local passport`),s&&(s.textContent=`Loaded for @${r}. Keep the launcher terminal open while you work.`),c&&(c.href=e.dataset.dashboardUrl||`/passport/`,c.textContent=`Open my progress`);for(let t of document.querySelectorAll(`[data-reference-progress]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Open my progress`;for(let t of document.querySelectorAll(`[data-passport-action]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`Resume my passport`;for(let t of document.querySelectorAll(`[data-route-navigation]`))t.href=e.dataset.dashboardUrl||`/passport/`,t.textContent=`My progress`;for(let n of document.querySelectorAll(`[data-mission-navigation]`)){let r=t.official?.status?.current_mission||t.local_state?.last_opened_mission;typeof r==`string`&&r&&(n.href=`${(e.dataset.dashboardUrl||`/passport/`).replace(/\/passport\/$/,``)}/missions/${encodeURIComponent(r)}/`),n.textContent=`Current lesson`}let l=n.computer?.platform||n.repository?.passport?.platform;typeof l==`string`&&[`windows`,`macos`,`linux`].includes(l)&&(document.body.dataset.passportPlatform=l),document.body.dataset.runtimeMode=`local`,document.dispatchEvent(new CustomEvent(`passport:runtime`,{detail:n}))};(async()=>{if(e)try{let n=await fetch(e.dataset.contextEndpoint||``,{credentials:`same-origin`,headers:{Accept:`application/json`}});if(!n.ok)return;t(await n.json())}catch{}})();</script><div class="page-ribbon"><span>Guided lesson</span></div><main id="main-content" class="page-shell"><div class="mission-page lesson-with-challenge"><header class="mission-hero"><div class="mission-kicker"><span data-mission-position>01 / 02</span><span>About 30 minutes</span><span class="risk risk-local_change">changes practice files</span></div><h1>Configure Git Identity And GitHub Access</h1><p>Inspect Git, the file-history program on your computer, the prepared practice clone, GitHub login and commit author. Repair only what is missing or wrong; keep working accounts and other repositories intact.</p><div class="machine-callout"><span>Where you will work</span><strong data-work-here>On the laptop or desktop in front of you</strong></div><ol class="mission-contract" aria-label="Lesson stages"><li><a href="#learning-challenge"><span>1</span>Understand</a></li><li><a href="#lesson-practice"><span>2</span>Try it yourself</a></li><li><a href="#lesson-check"><span>3</span>Check and submit</a></li></ol></header><div class="mission-layout"><aside class="mission-aside"><nav class="mission-progress" aria-label="Git Contributor lesson sequence" data-mission-progress data-current-id="git-tools-auth" data-base="/"><div class="progress-heading"><span data-progress-source>Course preview</span><strong data-progress-title>Git Contributor</strong></div><ol><li class="active" aria-current="step"><span>01</span><a href="/missions/git-tools-auth/">Configure Git Identity And GitHub Access</a></li><li><span>02</span><a href="/missions/git-manual-pr/">Complete A Manual Pull Request Loop</a></li></ol><p data-progress-note>This preview shows the complete topic. Your local Passport shows only the lessons selected for your work.</p></nav><script>(function(){const contextEndpoint = "/__passport/v1/context";
+const missionIndex = [{"id":"ai-agent-baseline","title":"Use A Safe Agent Loop After The Manual Baseline","route":"/missions/ai-agent-baseline/","track":"ai_agents"},{"id":"ai-tool-configuration","title":"Set Up One AI Coding Tool Safely","route":"/missions/ai-tool-configuration/","track":"ai_agents"},{"id":"blade-access-storage","title":"Use Blade For Graphical Work Without Losing Data","route":"/missions/blade-access-storage/","track":"blade"},{"id":"core-accounts-secrets","title":"Protect Accounts And Secrets","route":"/missions/core-accounts-secrets/","track":"core"},{"id":"core-incidents-ai-responsibility","title":"Respond To Incidents And Own Automated Work","route":"/missions/core-incidents-ai-responsibility/","track":"core"},{"id":"core-orientation","title":"Start And Resume Your Passport","route":"/missions/core-orientation/","track":"core"},{"id":"core-systems-data","title":"Map Systems And Research Data","route":"/missions/core-systems-data/","track":"core"},{"id":"data-collaboration","title":"Design Safe Shared Data Collaboration","route":"/missions/data-collaboration/","track":"data_steward"},{"id":"data-handover","title":"Create A Recoverable Project Handover","route":"/missions/data-handover/","track":"data_steward"},{"id":"data-placement","title":"Place Research Data Intentionally","route":"/missions/data-placement/","track":"data_steward"},{"id":"euler-access-ssh","title":"Establish Safe Euler SSH Access","route":"/missions/euler-access-ssh/","track":"euler_cpu"},{"id":"euler-cpu-accounting","title":"Measure And Right-Size An Euler Job","route":"/missions/euler-cpu-accounting/","track":"euler_cpu"},{"id":"euler-cpu-arrays","title":"Cap And Calculate Euler Job Arrays","route":"/missions/euler-cpu-arrays/","track":"euler_cpu"},{"id":"euler-cpu-first-job","title":"Submit And Control A Tiny Euler CPU Job","route":"/missions/euler-cpu-first-job/","track":"euler_cpu"},{"id":"euler-gpu-review","title":"Review A One-GPU Euler Plan","route":"/missions/euler-gpu-review/","track":"euler_gpu"},{"id":"euler-python-environment","title":"Create A Small Python Environment On Euler","route":"/missions/euler-python-environment/","track":"euler_cpu"},{"id":"euler-storage-reproducibility","title":"Place Euler Data And Freeze Run Inputs","route":"/missions/euler-storage-reproducibility/","track":"euler_cpu"},{"id":"git-manual-pr","title":"Complete A Manual Pull Request Loop","route":"/missions/git-manual-pr/","track":"git"},{"id":"git-tools-auth","title":"Configure Git Identity And GitHub Access","route":"/missions/git-tools-auth/","track":"git"},{"id":"nas-access-storage","title":"Verify Your Approved NAS Workspace","route":"/missions/nas-access-storage/","track":"nas"},{"id":"python-environment","title":"Create A Reproducible Python Environment","route":"/missions/python-environment/","track":"python"},{"id":"python-reproducible-change","title":"Make And Verify A Reproducible Python Change","route":"/missions/python-reproducible-change/","track":"python"},{"id":"supervisor-offboarding","title":"Plan Handover And Offboarding","route":"/missions/supervisor-offboarding/","track":"supervisor"},{"id":"supervisor-onboarding","title":"Assign Lessons And A Safe Project Environment","route":"/missions/supervisor-onboarding/","track":"supervisor"}];
+
+  const progress = document.querySelector("[data-mission-progress]");
+  const loadAssignedRoute = async () => {
+    if (!progress) return;
+    try {
+      const response = await fetch(contextEndpoint, { credentials: "same-origin", headers: { Accept: "application/json" } });
+      if (!response.ok) return;
+      const context = await response.json();
+      const ids = context?.repository?.passport?.missions;
+      const currentId = progress.dataset.currentId;
+      const index = new Map(missionIndex.map((item) => [item.id, item]));
+      if (!Array.isArray(ids) || !ids.includes(currentId) || ids.some((id) => !index.has(id))) return;
+      const base = String(progress.dataset.base || "/").replace(/\/$/, "");
+      const list = progress.querySelector("ol");
+      list.replaceChildren();
+      ids.forEach((id, position) => {
+        const mission = index.get(id);
+        const row = document.createElement("li");
+        const active = id === currentId;
+        row.classList.toggle("active", active);
+        if (active) row.setAttribute("aria-current", "step");
+        const number = document.createElement("span");
+        number.textContent = String(position + 1).padStart(2, "0");
+        const link = document.createElement("a");
+        link.href = `${base}${mission.route}`;
+        link.textContent = mission.title;
+        row.append(number, link);
+        list.append(row);
+      });
+      progress.querySelector("[data-progress-source]").textContent = "Your lessons";
+      progress.querySelector("[data-progress-title]").textContent = `${ids.length} lessons`;
+      progress.querySelector("[data-progress-note]").textContent = "This list comes from your Passport. The automatic check shown on GitHub is the official completion result.";
+    } catch {
+      // The route-specific Markdown and track sequence remain usable offline.
+    }
+  };
+  loadAssignedRoute();
+})();</script><div class="authority-note" data-authority-note><strong data-authority-title>Course preview only</strong><p data-authority-copy>You can try the questions, but this page cannot record or submit progress.</p><a data-authority-link href="/getting-started/">Open my real Passport</a></div></aside><div class="mission-content"><section class="learning-brief learning-challenge" id="learning-challenge" aria-label="Understand before practising"><span id="lesson-understand" tabindex="-1"></span><span id="what-you-need-to-know" tabindex="-1"></span><span id="what-success-looks-like" tabindex="-1"></span><span id="avoid-this" tabindex="-1"></span><span id="what-you-are-trying-to-achieve" tabindex="-1"></span><article class="markdown-body mission-body" data-mission-id="git-tools-auth"><h2 id="before-you-start">Before you start<a class="heading-anchor" href="#before-you-start" aria-label="Link to Before you start">#</a></h2><p>Git is version-control software: it records file versions. A repository is a
+project folder with history; a clone is its separate local working copy.
+GitHub stores the shared online copy; GitHub CLI (gh) acts through your login.</p>
+<div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Purpose</th>
+<th>Inspection</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GitHub login</td>
+<td>Authorizes GitHub actions</td>
+<td>Which account gh uses</td>
+</tr>
+<tr>
+<td>Git author identity</td>
+<td>Labels commits with name/email</td>
+<td>Effective values and their configuration source</td>
+</tr>
+<tr>
+<td>Branch and origin remote</td>
+<td>Select work and its online repository</td>
+<td>Prepared practice branch and credential-free URL</td>
+</tr>
+</tbody></table></div>
+<p>A correct login does not set the commit author. A remote address must not contain
+a password or token. The repair below changes author identity only in this clone.
+GitHub Education is an optional student benefit application; waiting for approval
+does not block this Git practice.</p>
+<p>Inspect all three settings before changing one. If the login is right but the
+author is wrong, which repair would address the actual problem?</p>
+<details>
+<summary>Separate login from commit authorship</summary><p>Keep the intended GitHub account. Confirm the effective name/email from the
+practice clone, then use its local identity repair only if needed. Inspect the
+branch and origin independently. Do not reset another project to match this one.</p>
+</details><p>Repair the specific setting that failed, inside the practice repository.</p>
+</article><a class="button secondary lesson-start" href="#lesson-practice">Start the practice</a></section><section class="activity-studio" data-activity-studio data-mission="git-tools-auth" data-verifier="git_environment" data-verify-endpoint="/__passport/v2/verify" data-submit-endpoint="/__passport/v2/submit" data-context-endpoint="/__passport/v1/context" data-state-endpoint="/__passport/v1/state" data-sync-endpoint="/__passport/v1/sync" data-passport-url="/passport/" data-computer-check-endpoint="/__passport/v2/computer-check" data-practice-endpoint="/__passport/v2/practice"><aside class="mode-banner" hidden data-computer-setup><strong>Set up this computer</strong><p>Follow the instructions on this computer. Completed grades and draft answers stay unchanged. This view cannot submit an assessment.</p><p hidden data-computer-ssh-note>The button checks your local SSH configuration only. Also follow the lesson's final key-only login test on this computer; a configuration check cannot prove access to Euler. Keep private keys on their original computer.</p><button class="button primary" type="button" disabled data-recheck-computer>Check this computer</button><p role="status" data-computer-check-status>Open this view from Set up this computer in your local Passport.</p><a href="/computer/">Back to computer setup</a></aside><header class="activity-heading" id="lesson-practice"><div><p class="eyebrow">Practice</p><h2>Try it in your practice folder</h2></div></header><section class="mission-recipe" aria-labelledby="git-tools-auth-recipe" data-mission-recipe><div class="recipe-heading"><div><p class="eyebrow">Follow in order</p><h3 id="git-tools-auth-recipe">Steps</h3><p>Stay in the displayed practice folder. Inspect the login, author identity and branch before using a conditional repair.</p></div><div class="recipe-platform-picker" data-recipe-platform-picker aria-label="Show instructions for one operating system"><button type="button" data-recipe-select-platform="windows">Windows</button><button type="button" data-recipe-select-platform="macos">macOS</button><button type="button" data-recipe-select-platform="linux">Linux</button></div></div><details class="recipe-command-guide"><summary>Optional: using the terminal</summary><div class="recipe-command-guide-content"><p>A <strong>command</strong> is a line of text that tells a computer to do one task. You paste it into a <strong>terminal</strong>, the text application used for commands. A <strong>shell</strong> is the part inside that application that reads the command. PowerShell, zsh, and Bash are shells. Open only the application named for your computer below; it starts its configured shell. Follow the shell named below. You do not need to install a separate Bash or zsh application.</p><p><strong>Your computer</strong> or <strong>local</strong> means the laptop or desktop in front of you. <strong>Remote</strong> means another computer reached through the network. A command affects whichever computer the step names, so check that label before pasting.</p><ul><li data-command-guide-platform="windows"><strong>Windows:</strong> press the Windows key, type <strong>PowerShell</strong>, and open the result named PowerShell. Do not use Command Prompt, Git Bash, or WSL for a block labelled PowerShell.</li><li data-command-guide-platform="macos"><strong>macOS:</strong> press <strong>Command+Space</strong>, type <strong>Terminal</strong>, and press Return. Terminal normally starts the zsh shell. If it uses another shell, run <code>zsh</code> for this session.</li><li data-command-guide-platform="linux"><strong>Linux:</strong> open the app named <strong>Terminal</strong> from the applications menu. It normally starts the Bash shell. If it uses another shell, run <code>bash</code> for this session.</li></ul><p>The <strong>prompt</strong> is the text beside the blinking cursor. For each card, check the named computer, choose Copy, paste only the command after the prompt, press Enter once, and wait for the prompt to return.</p><p>If you have never done this before, first run the harmless <strong>terminal-ready</strong> practice on the start page. It lets you practise copying, pasting, pressing Enter, and reading output before a setup command.</p><a href="/getting-started/#command-basics-title">Practise one harmless command first</a><a href="/core/command-line-basics/">How to open a terminal and run a command</a></div></details><ol class="recipe-steps"><li class="recipe-step" id="step-terms" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>01</span><div><h3>Know what Git and GitHub do</h3><span class="recipe-machine">Read and answer on this web page</span></div></header><p class="recipe-instruction">Git is version-control software: it records file versions on this computer. A repository is a project folder and its history; a branch separates work. A clone is a separate working copy. Git saves the online address under a short name called a remote; origin is the usual name. GitHub stores the shared online copy. GitHub CLI (gh) performs authenticated GitHub actions. Use the identity/login/remote table above before changing any settings.</p><div class="recipe-links"><a href="/reference/guides/git_workflow/">Open the Git workflow reference</a></div><p class="recipe-observation"><strong>Look for</strong><span>You can distinguish Git on your computer from GitHub on the web.</span></p><details class="recipe-recovery"><summary>Explanation and help</summary><dl><div><dt>What this means</dt><dd>Prepare the isolated practice repository.</dd></div><div><dt>Safe recovery</dt><dd>Read the definitions before changing identity, login, branch, or remote settings.</dd></div></dl></details></li><li class="recipe-step" id="step-prepare" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>02</span><div><h3>Prepare the Git practice folder</h3><span class="recipe-machine">On your computer</span></div></header><p class="recipe-instruction">Press Prepare practice folder in this step. Wait for the Passport to show one folder path and one practice branch. Run the displayed enter-folder command and keep this terminal in that folder.</p><section class="practice-launch" data-practice-launch><div><strong>Practice folder</strong><p>The launcher creates or reuses the exercise folder for this course. It does not change another folder.</p><p class="practice-status" data-practice-status role="status" aria-live="polite">Open this lesson from your local Passport to prepare the folder.</p></div><button class="button secondary" type="button" data-prepare-practice disabled>Prepare practice folder</button><div class="practice-result" data-practice-result hidden><strong>Practice folder ready</strong><p data-practice-path></p><ol class="practice-commands" data-practice-commands></ol></div></section><p class="recipe-observation"><strong>Look for</strong><span>The Passport reports a ready practice folder.</span></p><details class="recipe-recovery"><summary>Explanation and help</summary><dl><div><dt>What this means</dt><dd>Use the displayed enter-folder command.</dd></div><div><dt>Safe recovery</dt><dd>Do not create or delete folders manually; run gh passport doctor.</dd></div></dl></details></li><li class="recipe-step" id="step-versions" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>03</span><div><h3>Check Git and GitHub CLI</h3><span class="recipe-machine">On your computer</span></div></header><p class="recipe-instruction">Open PowerShell on Windows or the Terminal application on macOS or Linux. On Linux, the terminal normally starts the Bash shell. Run both checks after entering the practice folder.</p><div class="recipe-links"><a href="https://git-scm.com/downloads" rel="noreferrer">Install Git</a><a href="https://cli.github.com/" rel="noreferrer">Install GitHub CLI</a></div><div class="recipe-commands"><article class="command-step" data-command-platform="windows" data-command-shell="powershell" data-command-mode="run"><div class="command-body"><div class="command-heading"><span>Run</span><strong>PowerShell on Windows</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>git --version</code></pre></div></article><article class="command-step" data-command-platform="macos" data-command-shell="zsh" data-command-mode="run"><div class="command-body"><div class="command-heading"><span>Run</span><strong>Terminal on macOS (zsh)</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>git --version</code></pre></div></article><article class="command-step" data-command-platform="linux" data-command-shell="bash" data-command-mode="run"><div class="command-body"><div class="command-heading"><span>Run</span><strong>Terminal on Linux (Bash)</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>git --version</code></pre></div></article><article class="command-step" data-command-platform="windows" data-command-shell="powershell" data-command-mode="run"><div class="command-body"><div class="command-heading"><span>Run</span><strong>PowerShell on Windows</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>gh --version</code></pre></div></article><article class="command-step" data-command-platform="macos" data-command-shell="zsh" data-command-mode="run"><div class="command-body"><div class="command-heading"><span>Run</span><strong>Terminal on macOS (zsh)</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>gh --version</code></pre></div></article><article class="command-step" data-command-platform="linux" data-command-shell="bash" data-command-mode="run"><div class="command-body"><div class="command-heading"><span>Run</span><strong>Terminal on Linux (Bash)</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>gh --version</code></pre></div></article></div><p class="recipe-observation"><strong>Look for</strong><span>Each command prints a version and no command-not-found error.</span></p><p class="recipe-observation"><strong>If this differs</strong><span>Install only the missing tool from its official link, close the terminal, reopen it, and rerun this step.</span></p><details class="recipe-recovery"><summary>Explanation and help</summary><dl><div><dt>What this means</dt><dd>Continue to GitHub authentication.</dd></div></dl></details></li><li class="recipe-step" id="step-authenticate-check" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>04</span><div><h3>Check the GitHub account</h3><span class="recipe-machine">On your computer</span></div></header><p class="recipe-instruction">Run the status command before changing anything. Read the username shown under github.com.</p><div class="recipe-commands"><article class="command-step" data-command-platform="windows" data-command-shell="powershell" data-command-mode="run"><div class="command-body"><div class="command-heading"><span>Run</span><strong>PowerShell on Windows</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>gh auth status --active --hostname github.com</code></pre></div></article><article class="command-step" data-command-platform="macos" data-command-shell="zsh" data-command-mode="run"><div class="command-body"><div class="command-heading"><span>Run</span><strong>Terminal on macOS (zsh)</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>gh auth status --active --hostname github.com</code></pre></div></article><article class="command-step" data-command-platform="linux" data-command-shell="bash" data-command-mode="run"><div class="command-body"><div class="command-heading"><span>Run</span><strong>Terminal on Linux (Bash)</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>gh auth status --active --hostname github.com</code></pre></div></article></div><p class="recipe-observation"><strong>Look for</strong><span>gh auth status names the intended GitHub username.</span></p><p class="recipe-observation"><strong>If this differs</strong><span>If no account or the wrong account is shown, use the next step. Never put a token in a repository URL.</span></p><details class="recipe-recovery"><summary>Explanation and help</summary><dl><div><dt>What this means</dt><dd>Keep the working login and skip the next step.</dd></div></dl></details></li><li class="recipe-step" id="step-authenticate" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>05</span><div><h3>Sign in only when needed</h3><span class="recipe-machine">On your computer</span></div></header><p class="recipe-instruction">Run this only when the previous check showed no account or the wrong account. Enter the intended GitHub username. The command first tries to select an account already stored on this computer; otherwise it opens a new browser login. It does not remove another account.</p><div class="recipe-commands"><article class="command-step" data-command-platform="windows" data-command-shell="powershell" data-command-mode="run"><details class="command-body command-disclosure"><summary>Show sign-in repair only if the account check failed (PowerShell on Windows)</summary><div class="command-heading"><span>Run</span><strong>PowerShell on Windows</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>&amp; {
+  $GitHubUser = Read-Host &quot;Intended GitHub username&quot;
+  if ($GitHubUser -notmatch &quot;^[A-Za-z0-9-]+$&quot;) { throw &quot;STOP: invalid GitHub username&quot; }
+  gh auth switch --hostname github.com --user $GitHubUser
+  if ($LASTEXITCODE -ne 0) { gh auth login --hostname github.com --git-protocol https --web }
+  gh auth status --active --hostname github.com
+}</code></pre></details></article><article class="command-step" data-command-platform="macos" data-command-shell="zsh" data-command-mode="run"><details class="command-body command-disclosure"><summary>Show sign-in repair only if the account check failed (Terminal on macOS (zsh))</summary><div class="command-heading"><span>Run</span><strong>Terminal on macOS (zsh)</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>(
+printf &#39;Intended GitHub username: &#39;; read -r github_user
+case &quot;$github_user&quot; in &#39;&#39;|*[^ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-]*) printf &#39;STOP: invalid GitHub username\n&#39; &gt;&amp;2; exit 1;; esac
+if ! gh auth switch --hostname github.com --user &quot;$github_user&quot;; then gh auth login --hostname github.com --git-protocol https --web; fi
+gh auth status --active --hostname github.com
+)</code></pre></details></article><article class="command-step" data-command-platform="linux" data-command-shell="bash" data-command-mode="run"><details class="command-body command-disclosure"><summary>Show sign-in repair only if the account check failed (Terminal on Linux (Bash))</summary><div class="command-heading"><span>Run</span><strong>Terminal on Linux (Bash)</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>(
+printf &#39;Intended GitHub username: &#39;; read -r github_user
+case &quot;$github_user&quot; in &#39;&#39;|*[^ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-]*) printf &#39;STOP: invalid GitHub username\n&#39; &gt;&amp;2; exit 1;; esac
+if ! gh auth switch --hostname github.com --user &quot;$github_user&quot;; then gh auth login --hostname github.com --git-protocol https --web; fi
+gh auth status --active --hostname github.com
+)</code></pre></details></article></div><p class="recipe-observation"><strong>Look for</strong><span>The final status names the intended GitHub username.</span></p><p class="recipe-observation"><strong>If this differs</strong><span>Stop before creating commits. Finish the browser login or use the help path for the exact error.</span></p><details class="recipe-recovery"><summary>Explanation and help</summary><dl><div><dt>What this means</dt><dd>Continue to the commit identity.</dd></div></dl></details></li><li class="recipe-step" id="step-inspect-identity" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>06</span><div><h3>Inspect your commit identity</h3><span class="recipe-machine">On your computer</span></div></header><p class="recipe-instruction">From the practice repository, print the effective name and email Git will attach to its commits and the configuration file each value comes from. A GitHub no-reply address is acceptable if you use it consistently.</p><div class="recipe-commands"><article class="command-step" data-command-platform="windows" data-command-shell="powershell" data-command-mode="run"><div class="command-body"><div class="command-heading"><span>Run</span><strong>PowerShell on Windows</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>git config --show-origin --get user.name
+git config --show-origin --get user.email</code></pre></div></article><article class="command-step" data-command-platform="macos" data-command-shell="zsh" data-command-mode="run"><div class="command-body"><div class="command-heading"><span>Run</span><strong>Terminal on macOS (zsh)</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>git config --show-origin --get user.name
+git config --show-origin --get user.email</code></pre></div></article><article class="command-step" data-command-platform="linux" data-command-shell="bash" data-command-mode="run"><div class="command-body"><div class="command-heading"><span>Run</span><strong>Terminal on Linux (Bash)</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>git config --show-origin --get user.name
+git config --show-origin --get user.email</code></pre></div></article></div><p class="recipe-observation"><strong>Look for</strong><span>Each line names a configuration source followed by a non-empty name or valid email address.</span></p><p class="recipe-observation"><strong>If this differs</strong><span>Set only the missing or incorrect values in the next step.</span></p><details class="recipe-recovery"><summary>Explanation and help</summary><dl><div><dt>What this means</dt><dd>Keep the existing values and continue.</dd></div></dl></details></li><li class="recipe-step" id="step-set-identity" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>07</span><div><h3>Set identity only if needed</h3><span class="recipe-machine">On your computer</span></div></header><p class="recipe-instruction">Use this step only if the previous check was empty or wrong. Enter the author name and a verified GitHub email or GitHub-provided no-reply email. This sets the identity only in the practice repository, so it cannot silently change your other projects. The email identifies commits; it is not an ETH password or login.</p><div class="recipe-links"><a href="https://github.com/settings/emails" rel="noreferrer">Open GitHub email settings</a></div><div class="recipe-commands"><article class="command-step" data-command-platform="windows" data-command-shell="powershell" data-command-mode="run"><details class="command-body command-disclosure"><summary>Show identity repair only if the name or email is wrong (PowerShell on Windows)</summary><div class="command-heading"><span>Run</span><strong>PowerShell on Windows</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>&amp; {
+  $GitName = Read-Host &quot;Commit author name&quot;
+  $GitEmail = Read-Host &quot;GitHub email or no-reply email&quot;
+  if ([string]::IsNullOrWhiteSpace($GitName) -or $GitEmail -notmatch &quot;^[^@\s]+@[^@\s]+$&quot;) { throw &quot;STOP: invalid name or email&quot; }
+  git config --local user.name &quot;$GitName&quot;
+  git config --local user.email &quot;$GitEmail&quot;
+  git config --show-origin --get user.name
+  git config --show-origin --get user.email
+}</code></pre></details></article><article class="command-step" data-command-platform="macos" data-command-shell="zsh" data-command-mode="run"><details class="command-body command-disclosure"><summary>Show identity repair only if the name or email is wrong (Terminal on macOS (zsh))</summary><div class="command-heading"><span>Run</span><strong>Terminal on macOS (zsh)</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>(
+printf &#39;Commit author name: &#39;; read -r git_name
+printf &#39;GitHub email or no-reply email: &#39;; read -r git_email
+if [ -z &quot;$git_name&quot; ] || ! printf &#39;%s\n&#39; &quot;$git_email&quot; | grep -Eq &#39;^[^[:space:]@]+@[^[:space:]@]+$&#39;; then printf &#39;STOP: invalid name or email\n&#39; &gt;&amp;2; exit 1; fi
+git config --local user.name &quot;$git_name&quot;
+git config --local user.email &quot;$git_email&quot;
+git config --show-origin --get user.name
+git config --show-origin --get user.email
+)</code></pre></details></article><article class="command-step" data-command-platform="linux" data-command-shell="bash" data-command-mode="run"><details class="command-body command-disclosure"><summary>Show identity repair only if the name or email is wrong (Terminal on Linux (Bash))</summary><div class="command-heading"><span>Run</span><strong>Terminal on Linux (Bash)</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>(
+printf &#39;Commit author name: &#39;; read -r git_name
+printf &#39;GitHub email or no-reply email: &#39;; read -r git_email
+if [ -z &quot;$git_name&quot; ] || ! printf &#39;%s\n&#39; &quot;$git_email&quot; | grep -Eq &#39;^[^[:space:]@]+@[^[:space:]@]+$&#39;; then printf &#39;STOP: invalid name or email\n&#39; &gt;&amp;2; exit 1; fi
+git config --local user.name &quot;$git_name&quot;
+git config --local user.email &quot;$git_email&quot;
+git config --show-origin --get user.name
+git config --show-origin --get user.email
+)</code></pre></details></article></div><p class="recipe-observation"><strong>Look for</strong><span>The repeated check prints the values you entered and names .git/config as their source.</span></p><p class="recipe-observation"><strong>If this differs</strong><span>Do not continue with an empty identity; correct the value or request help without including private information.</span></p><details class="recipe-recovery"><summary>Explanation and help</summary><dl><div><dt>What this means</dt><dd>Continue to the optional student benefit.</dd></div></dl></details></li><li class="recipe-step" id="step-education-email" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>08</span><div><h3>Students: verify your ETH email for GitHub Education</h3><span class="recipe-machine">Read and answer on this web page</span></div></header><p class="recipe-instruction">Students: open GitHub email settings on the same account confirmed above. If a verified ETH email is already listed, keep it and continue. Otherwise add the ETH email, open GitHub&#39;s verification message in your ETH mailbox, and finish verification. Do not make the address public unless you choose to. This optional benefit setup does not block the Git exercise. Never submit an ETH mailbox password or verification code here.</p><div class="recipe-links"><a href="https://github.com/settings/emails" rel="noreferrer">Verify GitHub email addresses</a></div><p class="recipe-observation"><strong>Look for</strong><span>Eligible students see their ETH address marked Verified. Staff and other ineligible learners skip this student-only step.</span></p><details class="recipe-recovery"><summary>Explanation and help</summary><dl><div><dt>What this means</dt><dd>Eligible students open the Education application in the next step. Everyone else skips it and continues to the repository check.</dd></div><div><dt>Safe recovery</dt><dd>Continue the manual Git route while resolving email verification. Never submit mailbox codes to the Passport.</dd></div></dl></details></li><li class="recipe-step" id="step-education-application" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>09</span><div><h3>Students: apply for GitHub Education</h3><span class="recipe-machine">Read and answer on this web page</span></div></header><p class="recipe-instruction">GitHub Education is GitHub&#39;s student-verification program; approved accounts can see the current Student Developer Pack benefits. Students: open Education benefits on the same account. If GitHub already shows approved student benefits, keep them and skip the application. Otherwise select Start an application and submit only the proof requested through that GitHub page. Staff and learners who are not eligible skip this step. Approval may take time and does not block Git practice.</p><div class="recipe-links"><a href="https://github.com/settings/education/benefits" rel="noreferrer">Open GitHub Education benefits</a><a href="https://docs.github.com/en/education/about-github-education/github-education-for-students/apply-to-github-education-as-a-student" rel="noreferrer">Read the official application steps</a></div><p class="recipe-observation"><strong>Look for</strong><span>Eligible students see approved benefits or a pending application. Staff and other ineligible learners skip this student-only step.</span></p><details class="recipe-recovery"><summary>Explanation and help</summary><dl><div><dt>What this means</dt><dd>Continue now. If your route later includes the AI tool mission, that mission will check whether Copilot is available.</dd></div><div><dt>Safe recovery</dt><dd>Continue the manual Git route. Do not buy a product to pass this mission.</dd></div></dl></details></li><li class="recipe-step" id="step-repository-state" data-recipe-step data-recipe-platforms="all"><header><span class="recipe-number" data-recipe-number>10</span><div><h3>Inspect repository, branch, and remote</h3><span class="recipe-machine">On your computer</span></div></header><p class="recipe-instruction">Inspect the practice clone, its branch and origin remote using the existing commands. The remote is a saved repository address, not a login credential. If anything differs from the prepared folder/branch, stop and use the named recovery; do not switch or reset another project.</p><div class="recipe-commands"><article class="command-step" data-command-platform="windows" data-command-shell="powershell" data-command-mode="run"><div class="command-body"><div class="command-heading"><span>Run</span><strong>PowerShell on Windows</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>git status --short --branch
+git remote -v</code></pre></div></article><article class="command-step" data-command-platform="macos" data-command-shell="zsh" data-command-mode="run"><div class="command-body"><div class="command-heading"><span>Run</span><strong>Terminal on macOS (zsh)</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>git status --short --branch
+git remote -v</code></pre></div></article><article class="command-step" data-command-platform="linux" data-command-shell="bash" data-command-mode="run"><div class="command-body"><div class="command-heading"><span>Run</span><strong>Terminal on Linux (Bash)</strong><button type="button" data-copy-command>Copy</button></div><pre tabindex="0"><code>git status --short --branch
+git remote -v</code></pre></div></article></div><p class="recipe-observation"><strong>Look for</strong><span>The branch starts with practice/. The lines beginning with origin point to the expected GitHub repository and contain no password or token.</span></p><p class="recipe-observation"><strong>If this differs</strong><span>Return to Prepare practice folder; do not edit the remote until the mismatch is understood.</span></p><details class="recipe-recovery"><summary>Explanation and help</summary><dl><div><dt>What this means</dt><dd>Run Check my work.</dd></div></dl></details></li></ol></section><div id="lesson-check"><section class="lesson-learning-checks" aria-label="Practise" data-learning-checks><h3>Practise</h3><p>One practice question. It does not affect your progress.</p><div class="question-stack"><fieldset class="mission-question" data-learning-question="login_author"><legend><span>01</span>gh shows the correct GitHub account, but git config prints a different author email. Will logging in again fix the next commit author?</legend><div class="answer-options"><label><input type="radio" autocomplete="off" name="practice-login_author" value="wrong_a"><span>Yes; GitHub login sets every repository&#39;s author.</span></label><label><input type="radio" autocomplete="off" name="practice-login_author" value="correct"><span>No; inspect the effective Git author identity and repair it only in this practice repository if needed.</span></label><label><input type="radio" autocomplete="off" name="practice-login_author" value="wrong_b"><span>Delete the clone and create another account.</span></label></div><p class="question-feedback" data-learning-feedback hidden role="status" aria-live="polite"></p><details class="learning-explanation" data-learning-explanation><summary>See an explanation</summary><p>Git author identity labels commits; GitHub authentication authorizes account actions. They are separate. Inspect before using the repository-local identity repair.</p></details></fieldset></div></section><script>(function(){const learningQuestions = [{"answer":["correct"],"critical":false,"feedback":"Git author identity labels commits; GitHub authentication authorizes account actions. They are separate. Inspect before using the repository-local identity repair.","hint":"Which setting labels the commit, and which signs in?","id":"login_author","options":[{"id":"wrong_a","label":"Yes; GitHub login sets every repository's author."},{"id":"correct","label":"No; inspect the effective Git author identity and repair it only in this practice repository if needed."},{"id":"wrong_b","label":"Delete the clone and create another account."}],"prompt":"gh shows the correct GitHub account, but git config prints a different author email. Will logging in again fix the next commit author?","type":"single"}];
+
+  (() => {
+    const root = document.querySelector("[data-learning-checks]");
+    if (!root || learningQuestions.length === 0) return;
+    for (const question of learningQuestions) {
+      const fieldset = root.querySelector(`[data-learning-question="${question.id}"]`);
+      if (!fieldset) continue;
+      fieldset.addEventListener("change", () => {
+        const selected = fieldset.querySelector("input:checked")?.value;
+        if (!selected) return;
+        const correct = question.answer.includes(selected);
+        fieldset.querySelector("[data-learning-explanation]").hidden = correct;
+        const feedback = fieldset.querySelector("[data-learning-feedback]");
+        feedback.dataset.correct = String(correct);
+        feedback.textContent = correct
+          ? `That's right. ${question.feedback}`
+          : `Try again. ${question.hint || "Compare your choice with the explanation in this lesson."}`;
+        feedback.hidden = false;
+      });
+    }
+  })();
+})();</script><form data-activity-form><header class="lesson-check-heading"><p class="eyebrow">Finish the lesson</p><h2>Questions to submit</h2><p>Answer these 2 questions, then confirm the work you checked.</p><p class="lesson-threshold">To pass: 80% and every safety question. Completion appears after the automatic GitHub check passes.</p></header><div class="question-stack"><fieldset class="mission-question" data-question="auth_scope" data-question-type="single"><legend><span>01</span>What must gh auth status confirm?</legend><div class="answer-options"><label><input type="radio" name="auth_scope" value="correct" disabled><span>The intended GitHub account is authenticated.</span></label><label><input type="radio" name="auth_scope" value="wrong_a" disabled><span>Any GitHub account is sufficient.</span></label><label><input type="radio" name="auth_scope" value="wrong_b" disabled><span>An ETH password is stored in Git.</span></label></div><p class="question-feedback" data-feedback-for="auth_scope" hidden></p></fieldset><fieldset class="mission-question" data-question="safe_diagnosis" data-question-type="single"><legend><span>02</span>What should you do before repairing a failed tool check?</legend><div class="answer-options"><label><input type="radio" name="safe_diagnosis" value="correct" disabled><span>Read the named check and follow the recovery for that check.</span></label><label><input type="radio" name="safe_diagnosis" value="wrong_a" disabled><span>Delete the .git directory.</span></label><label><input type="radio" name="safe_diagnosis" value="wrong_b" disabled><span>Regenerate every SSH key.</span></label></div><p class="question-feedback" data-feedback-for="safe_diagnosis" hidden></p></fieldset></div><fieldset class="mission-attestation"><legend>Before submitting</legend><label><input type="checkbox" name="reviewed" disabled>I reviewed the answers and any changed practice files myself.</label><label><input type="checkbox" name="no_secrets" disabled>This public submission contains no credentials, private paths, real logs, or research data.</label><label><input type="checkbox" name="observed_result" disabled>I personally observed every result I claim.</label></fieldset><div class="activity-actions"><button class="button secondary" type="button" data-check-work disabled>Check my work</button><button class="button primary" type="button" data-submit-mission disabled>Submit lesson</button><a class="button quiet" href="/getting-started/" data-start-passport>Open my real passport first</a></div><p class="activity-submit-explanation" data-preview-explanation>You can check sample answers here. Open your local Passport to check your practice files and submit the lesson.</p><p class="activity-submit-explanation" data-local-explanation hidden><strong>Check my work</strong> checks this lesson on your computer. <strong>Submit lesson</strong> sends only the generated exercise result described above to GitHub; it does not upload your terminal history or unrelated files.</p><div class="activity-result" role="status" aria-live="polite" data-activity-result><strong>Preview only</strong><span>You can try the questions here. This page does not store or submit your answers.</span></div></form></div><section class="local-check-results" data-local-check-results hidden aria-live="polite"><strong data-local-check-summary>Checks on this computer</strong><p>These local checks do not record an assessment result.</p><ul data-local-check-list></ul></section></section><script>(function(){const missionId = "git-tools-auth";
+const previewQuestions = [{"id":"auth_scope","type":"single","answer":["correct"],"feedback":"The intended GitHub account is authenticated.","critical":false},{"id":"safe_diagnosis","type":"single","answer":["correct"],"feedback":"Read the named check and follow the recovery for that check.","critical":false}];
+const previewPassPercent = 80;
+const agentCheckGuidance = {};
+const verifier = "git_environment";
+
+  const studio = document.querySelector(`[data-activity-studio][data-mission="${missionId}"]`);
+  if (studio) {
+    const form = studio.querySelector("[data-activity-form]");
+    const resultBox = studio.querySelector("[data-activity-result]");
+    const checkButton = studio.querySelector("[data-check-work]");
+    const submitButton = studio.querySelector("[data-submit-mission]");
+    const practiceButton = studio.querySelector("[data-prepare-practice]");
+    const practiceStatus = studio.querySelector("[data-practice-status]");
+    const localCheckResults = studio.querySelector("[data-local-check-results]");
+    const localCheckSummary = studio.querySelector("[data-local-check-summary]");
+    const localCheckList = studio.querySelector("[data-local-check-list]");
+    let context = null;
+    const computerSetupRequested = new URL(location.href).searchParams.get("setup") === "computer";
+    let computerSetup = false;
+    if (computerSetupRequested) {
+      form.hidden = true;
+      studio.querySelector(".activity-heading").hidden = true;
+      studio.querySelector("[data-computer-setup]").hidden = false;
+    }
+    const currentPlatform = () => context?.computer?.platform || context?.repository?.passport?.platform;
+    let lastReady = false;
+    const localCheckGuidance = {
+      ...agentCheckGuidance,
+      semantic_model: ["Python calculation and discovered tests", "Keep the original test, add an independent multi-CPU test, and follow the specific feedback above."],
+      ...(verifier === "python_project_v2" ? { bounded_diff: ["Only source and test files changed", "Review git status and git diff in workspace/python_project. Keep changes to passport_example.py and tests/test_passport_example.py; no extra project file belongs in this exercise."] } : {}),
+      git: ["Git is available", "Run git --version. Install Git only if that command is missing."],
+      github_auth: ["The intended GitHub account is active", "Run gh auth status --active --hostname github.com and confirm that it names the account assigned to this Passport."],
+      identity_name: ["A commit author name is configured", "In the practice folder, follow Inspect your commit identity, then Set identity only if needed."],
+      identity_email: ["A valid commit email is configured", "In the practice folder, follow Inspect your commit identity, then set a verified GitHub email or GitHub no-reply email."],
+      remote_credentials_absent: ["The Git remote contains no credential", "Run git remote -v. If its URL contains a password or token, stop and use the Git help page."],
+      practice_repository: ["The prepared practice repository is valid", "Press Prepare practice folder again. Do not create, move, or delete this folder manually."],
+      practice_branch: ["The practice branch is selected", "Press Prepare practice folder again so the launcher can select the assigned practice branch safely."],
+      correct_account: ["Euler job account", "For this job, enter the full Account value from sacct: normal/es_fuge (or es_fuge if Euler displays the short name). If sacct shows another account, stop and ask for help. Do not resubmit the job."],
+      zero_exit: ["Successful job exit code", "Enter 0:0 from the main job row in sacct. If the job has another exit code, inspect its logs and ask for help before resubmitting."],
+    };
+    const checkLabel = (name) => name.split("_").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+    const showLocalChecks = (receipt) => {
+      const checks = receipt?.checks;
+      if (!localCheckResults || !localCheckSummary || !localCheckList || !checks || typeof checks !== "object" || Array.isArray(checks)) {
+        if (localCheckResults) localCheckResults.hidden = true;
+        return;
+      }
+      const entries = Object.entries(checks).filter(([, passed]) => typeof passed === "boolean");
+      const failed = entries.filter(([, passed]) => !passed);
+      if (failed.length === 0) {
+        localCheckResults.hidden = true;
+        return;
+      }
+      const passedCount = entries.length - failed.length;
+      localCheckSummary.textContent = `${passedCount} of ${entries.length} computer checks passed`;
+      localCheckList.replaceChildren(...entries.map(([name, passed]) => {
+        const item = document.createElement("li");
+        const title = document.createElement("strong");
+        const detail = document.createElement("span");
+        const guidance = localCheckGuidance[name] || [checkLabel(name), "Repeat the matching lesson step, then check your work again."];
+        item.dataset.passed = String(passed);
+        title.textContent = `${passed ? "Passed" : "Fix"}: ${guidance[0]}`;
+        detail.textContent = passed ? "No action needed." : guidance[1];
+        item.append(title, detail);
+        return item;
+      }));
+      localCheckResults.hidden = false;
+    };
+    const setPracticeStatus = (message, kind = "neutral") => {
+      if (!practiceStatus) return;
+      practiceStatus.textContent = message;
+      practiceStatus.dataset.kind = kind;
+    };
+    const localShellFor = (platform) => platform === "windows" ? "powershell" : platform === "macos" ? "zsh" : "bash";
+    let selectedSetup = "copilot";
+    const applyRecipePlatform = (platform) => {
+      const localShell = localShellFor(platform);
+      let visibleIndex = 0;
+      for (const step of studio.querySelectorAll("[data-recipe-step]")) {
+        const platforms = (step.dataset.recipePlatforms || "all").split(",");
+        const visible = (platforms.includes("all") || platforms.includes(platform))
+          && (!step.dataset.setupRoute || selectedSetup === "all" || step.dataset.setupRoute === selectedSetup);
+        step.hidden = !visible;
+        if (!visible) continue;
+        visibleIndex += 1;
+        const number = step.querySelector("[data-recipe-number]");
+        if (number) number.textContent = String(visibleIndex).padStart(2, "0");
+        for (const command of step.querySelectorAll("[data-command-platform]")) {
+          const target = command.dataset.commandPlatform;
+          const shell = command.dataset.commandShell;
+          const mode = command.dataset.commandMode;
+          command.hidden = !(mode === "edit" || mode === "prompt" || target === platform || target === "euler" || target === "blade" || (target === "all" && shell === localShell));
+        }
+      }
+      for (const button of studio.querySelectorAll("[data-recipe-select-platform]")) {
+        button.dataset.active = String(button.dataset.recipeSelectPlatform === platform);
+        button.setAttribute("aria-pressed", String(button.dataset.recipeSelectPlatform === platform));
+      }
+      for (const instruction of studio.querySelectorAll("[data-command-guide-platform]")) {
+        instruction.hidden = instruction.dataset.commandGuidePlatform !== platform;
+      }
+    };
+    const detectPlatform = () => {
+      let saved = null;
+      try { saved = window.localStorage.getItem("passport-recipe-platform"); } catch {}
+      if (["windows", "macos", "linux"].includes(saved)) return saved;
+      const value = String(navigator.userAgentData?.platform || navigator.platform || navigator.userAgent).toLowerCase();
+      return value.includes("win") ? "windows" : value.includes("mac") ? "macos" : "linux";
+    };
+    let displayedPlatform = detectPlatform();
+    applyRecipePlatform(displayedPlatform);
+    for (const button of studio.querySelectorAll("[data-recipe-select-platform]")) {
+      button.addEventListener("click", () => {
+        if (context) return;
+        displayedPlatform = button.dataset.recipeSelectPlatform;
+        try { window.localStorage.setItem("passport-recipe-platform", displayedPlatform); } catch {}
+        applyRecipePlatform(displayedPlatform);
+      });
+    }
+
+    const selectSetup = (route) => {
+      if (!["copilot", "zed", "all"].includes(route)) return;
+      selectedSetup = route;
+      applyRecipePlatform(currentPlatform() || displayedPlatform);
+      for (const button of studio.querySelectorAll("[data-setup-select]")) {
+        const active = button.dataset.setupSelect === route;
+        button.setAttribute("aria-pressed", String(active));
+        button.dataset.active = String(active);
+      }
+    };
+    const revealSetupHash = () => {
+      const target = document.getElementById(location.hash.slice(1));
+      const route = target?.closest("[data-setup-route]")?.dataset.setupRoute;
+      if (route) selectSetup(route);
+    };
+    const setupPicker = studio.querySelector("[data-setup-picker]");
+    if (setupPicker) {
+      setupPicker.hidden = false;
+      selectSetup(selectedSetup);
+      for (const button of setupPicker.querySelectorAll("[data-setup-select]")) {
+        button.addEventListener("click", () => selectSetup(button.dataset.setupSelect));
+      }
+      revealSetupHash();
+      window.addEventListener("hashchange", revealSetupHash);
+    }
+
+    const answers = () => {
+      const value = {};
+      for (const fieldset of form.querySelectorAll("[data-question]")) {
+        const id = fieldset.dataset.question;
+        if (fieldset.dataset.questionType === "order") {
+          value[id] = Array.from(fieldset.querySelectorAll("[data-order-position]")).map((item) => item.value).filter(Boolean);
+        } else {
+          value[id] = Array.from(fieldset.querySelectorAll("input:checked")).map((item) => item.value);
+        }
+      }
+      return value;
+    };
+    const updateOrderSummaries = () => {
+      for (const fieldset of form.querySelectorAll('[data-question-type="order"]')) {
+        const selects = Array.from(fieldset.querySelectorAll('[data-order-position]'));
+        const selected = selects.filter(select => select.value);
+        const summary = fieldset.querySelector('[data-order-summary]');
+        if (!summary) continue;
+        summary.hidden = selected.length === 0;
+        const duplicates = new Set(selected.map(select => select.value)).size !== selected.length;
+        summary.textContent = duplicates
+          ? "An action is selected more than once. Use each action once; keep reviewing your order."
+          : "Your sequence: " + selects.map((select, index) => `${index + 1}. ${select.value ? select.selectedOptions[0].textContent : 'not selected'}`).join(' -> ');
+      }
+    };
+    const localInput = () => Object.fromEntries(Array.from(form.querySelectorAll("[data-live-confirmation] input, [data-live-confirmation] select")).map((item) => [item.name, item.value]));
+    const attestation = () => Object.fromEntries(["reviewed", "no_secrets", "observed_result"].map((name) => [name, Boolean(form.elements[name]?.checked)]));
+    const payload = () => ({ mission: missionId, answers: answers(), local_input: localInput(), attestation: attestation() });
+    const setResult = (title, message, kind = "neutral") => {
+      resultBox.dataset.kind = kind;
+      resultBox.querySelector("strong").textContent = title;
+      resultBox.querySelector("span").textContent = message;
+    };
+    const installCopyButtons = (root = studio) => {
+      for (const button of root.querySelectorAll("[data-copy-command]:not([data-copy-ready])")) {
+        button.dataset.copyReady = "true";
+        button.addEventListener("click", async () => {
+          const command = button.closest(".command-step")?.querySelector("code")?.textContent || "";
+          try {
+            await navigator.clipboard.writeText(command);
+            button.textContent = "Copied";
+            window.setTimeout(() => { button.textContent = "Copy"; }, 1400);
+          } catch {
+            button.textContent = "Select text";
+          }
+        });
+      }
+    };
+    const personalizeRecipeCommands = (value) => {
+      const repository = value?.repository?.passport?.fork_repository;
+      const githubUser = value?.repository?.passport?.github_user;
+      if (typeof repository !== "string" || !repository || typeof githubUser !== "string" || !githubUser) return;
+      const replacements = {
+        "{{fork_repository}}": repository,
+        "{{practice_branch}}": `practice/${githubUser.toLowerCase()}`,
+      };
+      for (const code of studio.querySelectorAll(".recipe-commands code")) {
+        const template = code.dataset.commandTemplate || code.textContent || "";
+        code.dataset.commandTemplate = template;
+        code.textContent = Object.entries(replacements).reduce(
+          (command, [placeholder, replacement]) => command.replaceAll(placeholder, replacement),
+          template,
+        );
+        const copy = code.closest(".command-step")?.querySelector("[data-copy-command]");
+        if (copy && !code.textContent.includes("{{")) {
+          copy.disabled = false;
+          copy.textContent = "Copy";
+        }
+      }
+    };
+    installCopyButtons();
+    const persistDraft = async () => {
+      if (computerSetupRequested || !context?.local_state) return;
+      const state = structuredClone(context.local_state);
+      state.mission_drafts ||= {};
+      state.mission_drafts[missionId] = answers();
+      try {
+        const response = await fetch(studio.dataset.stateEndpoint, { method: "PUT", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify(state) });
+        if (response.ok) context.local_state = state;
+      } catch {}
+    };
+    const showFeedback = (feedback = []) => {
+      for (const node of form.querySelectorAll("[data-feedback-for]")) node.hidden = true;
+      for (const item of feedback) {
+        const node = form.querySelector(`[data-feedback-for="${item.question}"]`);
+        if (!node) continue;
+        node.hidden = false;
+        node.dataset.correct = String(Boolean(item.correct));
+        node.textContent = item.message;
+      }
+    };
+    const enablePreviewPractice = () => {
+      if (computerSetupRequested) return;
+      applyVariant("public-preview", 0);
+      for (const control of form.querySelectorAll("[data-question] input, [data-question] select")) control.disabled = false;
+      checkButton.disabled = false;
+      checkButton.textContent = "Check sample answers";
+      studio.querySelector("[data-preview-explanation]").hidden = false;
+      studio.querySelector("[data-local-explanation]").hidden = true;
+      if (practiceButton) {
+        practiceButton.disabled = true;
+        setPracticeStatus("This public sample cannot create files. Open your local Passport to use this button.");
+      }
+      setResult("Interactive sample", "You can try these questions. Nothing is saved or submitted.");
+    };
+    const checkPreviewPractice = () => {
+      const supplied = answers();
+      const feedback = previewQuestions.map((question) => {
+        const actual = supplied[question.id] || [];
+        const expected = question.answer || [];
+        const comparableActual = question.type === "order" ? actual : [...actual].sort();
+        const comparableExpected = question.type === "order" ? expected : [...expected].sort();
+        const correct = comparableActual.length === comparableExpected.length
+          && comparableActual.every((value, index) => value === comparableExpected[index]);
+        return {
+          question: question.id,
+          correct,
+          message: correct ? "Correct." : question.feedback,
+        };
+      });
+      showFeedback(feedback);
+      const correctCount = feedback.filter((item) => item.correct).length;
+      const score = Math.round((correctCount / Math.max(feedback.length, 1)) * 100);
+      const criticalPassed = previewQuestions.every((question, index) => !question.critical || feedback[index].correct);
+      const passed = score >= previewPassPercent && criticalPassed;
+      setResult(
+        passed ? "Sample answers correct" : "Review the sample feedback",
+        `${score}% score. This practice result is not stored and is not course completion.`,
+        passed ? "success" : "needs-work",
+      );
+    };
+    const hashText = (value) => {
+      let hash = 2166136261;
+      for (let index = 0; index < value.length; index += 1) {
+        hash ^= value.charCodeAt(index);
+        hash = Math.imul(hash, 16777619) >>> 0;
+      }
+      return hash || 0x9e3779b9;
+    };
+    const orderedFor = (items, identity, key, variant) => {
+      items.forEach((item, index) => { item.dataset.orderOrigin ||= String(index); });
+      const ordered = [...items].sort((left, right) => Number(left.dataset.orderOrigin) - Number(right.dataset.orderOrigin));
+      let random = hashText(`${identity}:${missionId}:${key}`);
+      const next = () => {
+        random ^= random << 13;
+        random ^= random >>> 17;
+        random ^= random << 5;
+        return random >>> 0;
+      };
+      for (let index = ordered.length - 1; index > 0; index -= 1) {
+        const selected = next() % (index + 1);
+        [ordered[index], ordered[selected]] = [ordered[selected], ordered[index]];
+      }
+      if (ordered.length < 2) return ordered;
+      const offset = variant % ordered.length;
+      return [...ordered.slice(offset), ...ordered.slice(0, offset)];
+    };
+    const applyVariant = (identity, variant, clear = false) => {
+      if (typeof identity !== "string" || identity.length === 0 || !Number.isInteger(variant) || variant < 0) return;
+      const stack = form.querySelector(".question-stack");
+      const questions = orderedFor(Array.from(stack.querySelectorAll(":scope > [data-question]")), identity, "questions", variant);
+      questions.forEach((question, index) => {
+        const number = question.querySelector("legend > span");
+        if (number) number.textContent = String(index + 1).padStart(2, "0");
+        stack.append(question);
+        const questionID = question.dataset.question || "question";
+        const choices = orderedFor(Array.from(question.querySelectorAll(".answer-options > label")), identity, `${questionID}:choices`, variant);
+        const choiceRoot = question.querySelector(".answer-options");
+        choices.forEach((choice) => choiceRoot?.append(choice));
+        for (const select of question.querySelectorAll("[data-order-position]")) {
+          const options = orderedFor(Array.from(select.querySelectorAll("option[value]:not([value=''])")), identity, `${questionID}:order-options`, variant);
+          options.forEach((option) => select.append(option));
+        }
+      });
+      if (clear) {
+        for (const input of form.querySelectorAll("[data-question] input")) input.checked = false;
+        for (const select of form.querySelectorAll("[data-question] select")) select.value = "";
+        persistDraft();
+        updateOrderSummaries();
+      }
+    };
+    const request = async (endpoint) => {
+      const response = await fetch(endpoint, { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(payload()) });
+      const value = await response.json().catch(() => ({}));
+      return { response, value };
+    };
+    const waitForController = async () => {
+      const deadline = Date.now() + 3 * 60 * 1000;
+      while (Date.now() < deadline) {
+        try {
+          const response = await fetch(studio.dataset.syncEndpoint, { method: "POST", credentials: "same-origin", headers: { Accept: "application/json" } });
+          if (response.ok) {
+            const value = await response.json();
+            if (value.state === "verified" && value.official?.status?.head_sha) {
+              setResult("Automatic check received", "Opening your trusted passport status.", "success");
+              window.setTimeout(() => { window.location.href = studio.dataset.passportUrl; }, 700);
+              return;
+            }
+            if (value.state === "assessment_recovery_required") {
+              setResult("Safe recovery needed", "Your work remains saved. Open your progress page for the exact recovery step.", "needs-work");
+              return;
+            }
+          }
+        } catch {}
+        await new Promise((resolve) => window.setTimeout(resolve, 10000));
+      }
+      setResult("Submitted; check still running", "You can close this page. Reopen with gh passport open and use Sync from GitHub later.", "neutral");
+    };
+    form.addEventListener("change", () => { updateOrderSummaries(); lastReady = false; submitButton.disabled = true; persistDraft(); });
+    checkButton.addEventListener("click", async () => {
+      if (computerSetupRequested) return;
+      if (!context) {
+        checkPreviewPractice();
+        return;
+      }
+      checkButton.disabled = true;
+      showLocalChecks(null);
+      setResult("Checking this attempt", "The launcher is running only this lesson's checks.");
+      try {
+        const { response, value } = await request(studio.dataset.verifyEndpoint);
+        if (!response.ok) throw new Error("The automatic check could not run safely on this computer.");
+        showFeedback(value.feedback);
+        showLocalChecks(value.receipt);
+        if (Number.isInteger(value.next_variant) && value.next_variant >= 0) {
+          context.local_state.attempt_counts ||= {};
+          context.local_state.attempt_counts[missionId] = value.next_variant;
+        }
+        lastReady = value.status === "ready_to_submit";
+        submitButton.disabled = !lastReady;
+        const knowledgePassed = value.score_percent >= previewPassPercent && value.critical_passed;
+        if (!lastReady && !knowledgePassed) applyVariant(context.local_state.passport_id, value.next_variant, true);
+        if (lastReady) {
+          setResult("Ready to submit", `${value.score_percent}% answer score. The required computer checks also passed.`, "success");
+        } else if (!knowledgePassed) {
+          const retryMessage = value.critical_passed
+            ? "Review the feedback; the same skills are now presented in a different order."
+            : "A safety-critical answer needs correction. Review the feedback; the same skills are now presented in a different order.";
+          setResult(
+            "Revise the answers and retry",
+            `${value.score_percent}% answer score. ${retryMessage}`,
+            "needs-work",
+          );
+        } else {
+          setResult(
+            "Finish the checks on this computer",
+            `${value.score_percent}% answer score. ${typeof value.receipt?.feedback === "string" && value.receipt.feedback ? value.receipt.feedback : "Your answers are correct, but Submit stays locked until every computer check below passes. Fix only the named check, then select Check my work again."}`,
+            "action-required",
+          );
+        }
+      } catch (error) {
+        setResult("Check stopped safely", error.message || "Use the recovery section below.", "error");
+      } finally { checkButton.disabled = false; }
+    });
+    submitButton.addEventListener("click", async () => {
+      if (computerSetupRequested || !lastReady) return;
+      submitButton.disabled = true;
+      setResult("Submitting once", "The launcher is preparing exactly one safe public submission record.");
+      try {
+        const { response, value } = await request(studio.dataset.submitEndpoint);
+        if (!response.ok) throw new Error(value.detail || value.error || "Submission stopped safely.");
+        setResult("Submitted to GitHub", "The automatic check is running. Keep this page open or return later; do not submit again.", "success");
+        waitForController();
+      } catch (error) {
+        setResult("Nothing was published", error.message, "error");
+        submitButton.disabled = false;
+      }
+    });
+    studio.querySelector("[data-recheck-computer]").addEventListener("click", async (event) => {
+      if (!computerSetup) return;
+      const button = event.currentTarget;
+      const status = studio.querySelector("[data-computer-check-status]");
+      button.disabled = true;
+      status.textContent = "Checking this computer...";
+      showLocalChecks(null);
+      try {
+        const response = await fetch(studio.dataset.computerCheckEndpoint, {
+          method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mission: missionId }),
+        });
+        const value = await response.json();
+        if (!response.ok || value.assessment_changed !== false || value.mission !== missionId) throw new Error("Setup check unavailable. Keep your files and retry, or use the help page.");
+        showLocalChecks(value);
+        status.textContent = value.passed
+          ? "Computer checks passed. Your assessment progress is unchanged." + (missionId === "euler-access-ssh" ? " Also complete the final key-only login test in the instructions; this button did not connect to Euler." : "")
+          : "Some computer checks need attention. Follow the named steps below; your completed grades are unchanged.";
+      } catch (error) { status.textContent = error.message || "Check unavailable. Keep your work and retry."; }
+      finally { button.disabled = false; }
+    });
+    practiceButton?.addEventListener("click", async () => {
+      practiceButton.disabled = true;
+      practiceButton.textContent = "Preparing...";
+      setPracticeStatus("Creating or refreshing the practice folder. Keep this page open.", "working");
+      try {
+        const response = await fetch(studio.dataset.practiceEndpoint, { method: "POST", credentials: "same-origin", headers: { Accept: "application/json" } });
+        const value = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          const messages = {
+            practice_clone_failed: "Git could not download the exercise folder. Check your network and GitHub login, then try again.",
+            practice_path_not_safe: "A file or link already uses the practice-folder location. Nothing was changed. Run gh passport doctor.",
+            practice_origin_mismatch: "The existing practice folder belongs to another repository. Nothing was changed. Run gh passport doctor.",
+            practice_fetch_failed: "Git could not refresh the existing exercise folder. Check your network and GitHub login, then try again.",
+            practice_branch_failed: "Git could not open the practice branch. Nothing was reset. Run gh passport doctor.",
+          };
+          throw new Error(value.detail || messages[value.error] || "The practice folder could not be prepared. Run gh passport doctor.");
+        }
+        const panel = studio.querySelector("[data-practice-result]");
+        panel.hidden = false;
+        panel.querySelector("[data-practice-path]").textContent = `Folder: ${value.path}`;
+        const enter = currentPlatform() === "windows"
+          ? `Set-Location -LiteralPath "${value.path}"`
+          : `cd -- "${value.path}"`;
+        const commands = [enter];
+        const list = panel.querySelector("[data-practice-commands]");
+        const commandItems = (items) => items.map((command, index) => {
+          const item = document.createElement("li");
+          item.className = "command-step";
+          const heading = document.createElement("div");
+          heading.className = "command-heading";
+          const label = document.createElement("span");
+          label.textContent = `Step ${index + 1}`;
+          const pre = document.createElement("pre");
+          pre.tabIndex = 0;
+          const code = document.createElement("code");
+          code.textContent = command;
+          const copy = document.createElement("button");
+          copy.type = "button";
+          copy.dataset.copyCommand = "";
+          copy.textContent = "Copy";
+          heading.append(label, copy);
+          pre.append(code);
+          item.append(heading, pre);
+          return item;
+        });
+        list.replaceChildren(...commandItems(commands));
+        if (missionId === "git-manual-pr") {
+          const publish = studio.querySelector("[data-practice-publish]");
+          const publishList = publish?.querySelector("[data-practice-publish-commands]");
+          publishList?.replaceChildren(...commandItems([
+            `git push --set-upstream origin ${value.branch}`,
+            `gh pr create --repo ${context.repository.owner}/${context.repository.name} --base main --head ${value.branch} --draft --title "docs(practice): complete manual Git loop" --body "Fictional IDEAL Lab Passport practice. No credentials, private data, or research data."`,
+          ]));
+          if (publish) publish.hidden = false;
+        }
+        installCopyButtons(panel);
+        const publish = studio.querySelector("[data-practice-publish]");
+        if (publish) installCopyButtons(publish);
+        practiceButton.textContent = "Practice folder ready";
+        setPracticeStatus("Ready. Copy Step 1 below and run it in the terminal named by this lesson.", "success");
+      } catch (error) {
+        setResult("Practice setup stopped safely", error.message, "error");
+        practiceButton.textContent = "Try preparing again";
+        setPracticeStatus(error.message, "error");
+        practiceButton.disabled = false;
+      }
+    });
+
+    fetch(studio.dataset.contextEndpoint, { credentials: "same-origin", headers: { Accept: "application/json" } }).then(async (response) => {
+      if (!response.ok) {
+        enablePreviewPractice();
+        return;
+      }
+      context = await response.json();
+      if (!context?.repository?.passport?.missions?.includes(missionId)) return;
+      personalizeRecipeCommands(context);
+      const platform = currentPlatform();
+      if (!["windows", "macos", "linux"].includes(platform)) return;
+      applyRecipePlatform(platform);
+      const picker = studio.querySelector("[data-recipe-platform-picker]");
+      if (picker) picker.dataset.locked = "true";
+      studio.querySelector("[data-start-passport]").hidden = true;
+      studio.querySelector("[data-preview-explanation]").hidden = true;
+      studio.querySelector("[data-local-explanation]").hidden = computerSetupRequested;
+      if (computerSetupRequested) {
+        computerSetup = context.computer?.setup_missions?.includes(missionId) === true;
+        const status = studio.querySelector("[data-computer-check-status]");
+        if (!computerSetup) {
+          status.textContent = "This launcher cannot recheck this lesson. Update and reopen, then use the computer setup page.";
+          return;
+        }
+        studio.querySelector("[data-recheck-computer]").disabled = false;
+        studio.querySelector("[data-computer-ssh-note]").hidden = missionId !== "euler-access-ssh";
+        status.textContent = "Follow the steps, then check this computer. Nothing is submitted to GitHub.";
+        if (practiceButton) { practiceButton.disabled = false; setPracticeStatus("Reuse or prepare this computer's practice folder. Existing work is preserved."); }
+        return;
+      }
+      const assigned = context.repository.passport.missions;
+      const officialHead = context.official?.status?.head_sha || "";
+      const pending = context.local_state?.pending_submissions || {};
+      const pendingMission = assigned.find((id) => pending[id]?.head_sha && pending[id].head_sha !== officialHead) || "";
+      const activeMission = pendingMission || context.official?.status?.current_mission || assigned[0];
+      if (missionId !== activeMission) {
+        if (practiceButton) setPracticeStatus("Finish the current lesson first. This button unlocks when this lesson becomes current.");
+        setResult(
+          context.official?.status?.stage === "complete" ? "Course already complete" : "Lesson locked",
+          context.official?.status?.stage === "complete"
+            ? "Return to your progress page to open the trusted completion result."
+            : "Finish the current lesson shown on your progress page first.",
+          "neutral",
+        );
+        return;
+      }
+      applyVariant(context.local_state.passport_id, context.local_state?.attempt_counts?.[missionId] || 0);
+      const draft = context.local_state?.mission_drafts?.[missionId] || {};
+      for (const [question, values] of Object.entries(draft)) {
+        const fieldset = form.querySelector(`[data-question="${question}"]`);
+        if (!fieldset || !Array.isArray(values)) continue;
+        if (fieldset.dataset.questionType === "order") {
+          Array.from(fieldset.querySelectorAll("[data-order-position]")).forEach((select, index) => { select.value = values[index] || ""; });
+        } else {
+          for (const input of fieldset.querySelectorAll("input")) input.checked = values.includes(input.value);
+        }
+      }
+      updateOrderSummaries();
+      if (pendingMission === missionId) {
+        if (practiceButton) setPracticeStatus("This lesson is already submitted. Wait for the automatic check before changing it again.");
+        setResult("Submitted to GitHub", "The automatic check is running. You can return to your progress page; it will refresh by itself.", "success");
+        waitForController();
+        return;
+      }
+      for (const control of form.querySelectorAll("input, select, button")) control.disabled = false;
+      if (practiceButton) {
+        practiceButton.disabled = false;
+        setPracticeStatus("Ready. Select the button once; the launcher handles the Git setup.");
+      }
+      submitButton.disabled = true;
+      setResult("Attempt saved on this computer", "Follow the steps, check your work, then submit once.");
+    }).catch(enablePreviewPractice);
+  }
+})();</script><details class="mission-support" id="lesson-help"><summary><span>Need help?</span><strong>Open recovery steps and AI-review guidance</strong></summary><article class="markdown-body mission-body"><h2 id="if-blocked">If Blocked<a class="heading-anchor" href="#if-blocked" aria-label="Link to If Blocked">#</a></h2><p>If the editor is missing, install only the editor; do not clone again. If the
+remote or branch is wrong, stop and run <code>gh passport doctor</code>. Do not delete the
+folder, reset Git, replace SSH keys, or paste a token into the remote URL.
+Use <strong>Request help without posting secrets</strong> on the Passport progress page if the
+doctor&#39;s named recovery command does not resolve the problem. Submit one issue
+without private information and return later; the reviewer does not need to be
+online.</p>
+<p>Useful references:</p>
+<ul>
+<li><a href="/reference/guides/git_workflow/">Git workflow</a></li>
+<li><a href="/reference/guides/vscode/">VS Code</a></li>
+</ul>
+<h2 id="understand-before-accepting-ai-output">Understand Before Accepting AI Output<a class="heading-anchor" href="#understand-before-accepting-ai-output" aria-label="Link to Understand Before Accepting AI Output">#</a></h2><p>Do not let an AI assistant insert tokens, rewrite credential helpers, change
+the remote, or switch branches without explaining the exact reason. Verify the
+identity, remote, and branch yourself before accepting its claim of success.</p>
+</article></details></div></div><nav class="mission-footer-nav" aria-label="Lesson navigation" data-mission-footer><a href="#" hidden data-previous-mission><span>Previous lesson</span><strong></strong></a><a class="source-link" href="https://github.com/IDEALLab/onboarding-IT/blob/03e0d4132e2dd85f06ac4aa6d9350e08ea7496b8/curriculum/missions/git-tools-auth/README.md" rel="noreferrer">View this lesson on GitHub</a><a class="next" href="/missions/git-manual-pr/" data-next-mission><span>Next lesson</span><strong>Complete A Manual Pull Request Loop</strong></a></nav></div></main><footer class="site-footer"><div><strong>IDEAL Lab IT & Research Computing Passport</strong><p>Practise safely, check the result yourself, and keep a verifiable record on GitHub.</p></div><div class="footer-links"><a href="/handbook/">Markdown handbook</a><a href="/workbook/">Offline workbook</a><a href="/maintainers/">Maintainers</a></div><small>Course version 2.1.2 /published version 03e0d413</small></footer><script>(function(){const navigationLessons = [{"id":"ai-agent-baseline","title":"Use A Safe Agent Loop After The Manual Baseline","route":"/missions/ai-agent-baseline/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-prepare","label":"step 1: Prepare the AI practice files"},{"id":"step-manual-baseline","label":"step 2: Understand the task first"},{"id":"step-prompt","label":"step 3: Ask for a plan without allowing changes"},{"id":"step-review-actions","label":"step 4: Authorize only the one-file edit"},{"id":"step-inspect-state","label":"step 5: Inspect the changed paths"},{"id":"step-inspect-diff","label":"step 6: Review the complete diff"},{"id":"step-verify","label":"step 7: Check the result"}]},{"id":"ai-tool-configuration","title":"Set Up One AI Coding Tool Safely","route":"/missions/ai-tool-configuration/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-components","label":"step 1: Identify the components"},{"id":"step-choose-route","label":"step 2: Choose one setup option"},{"id":"step-copilot-benefit","label":"step 3: Copilot option: activate the Student benefit"},{"id":"step-editor","label":"step 4: Copilot option: connect VS Code"},{"id":"step-optional-paid","label":"step 5: Zed option: follow the personal OpenRouter procedure"},{"id":"step-prepare","label":"step 6: Open the fictional practice repository"},{"id":"step-read-only-test","label":"step 7: Run a read-only agent check"},{"id":"step-verify-clean","label":"step 8: Verify that configuration changed no project file"}]},{"id":"blade-access-storage","title":"Use Blade For Graphical Work Without Losing Data","route":"/missions/blade-access-storage/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-purpose","label":"the step: Confirm Blade is the right system"},{"id":"step-network","label":"the step: Connect to ETH network or VPN"},{"id":"step-rdp-windows","label":"the step: Connect from Windows"},{"id":"step-rdp-macos","label":"the step: Connect from macOS"},{"id":"step-rdp-linux","label":"the step: Connect from Linux"},{"id":"step-verify-host","label":"the step: Verify the remote computer"},{"id":"step-paths","label":"the step: Confirm P: and D: paths"},{"id":"step-round-trip","label":"the step: Copy, verify, and clean one test file"},{"id":"step-compute-rule","label":"the step: Leave heavy work off Blade"},{"id":"step-receipt","label":"the step: Record the safe result"}]},{"id":"core-accounts-secrets","title":"Protect Accounts And Secrets","route":"/missions/core-accounts-secrets/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-password-manager","label":"step 1: Prepare an approved password manager"},{"id":"step-mfa","label":"step 2: Enable GitHub two-factor authentication"},{"id":"step-secret-files","label":"step 3: Keep secrets outside Git"},{"id":"step-exposure","label":"step 4: Know the first response to exposure"},{"id":"step-answer","label":"step 5: Complete the scenarios"}]},{"id":"core-incidents-ai-responsibility","title":"Respond To Incidents And Own Automated Work","route":"/missions/core-incidents-ai-responsibility/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-terms","label":"step 1: Understand the incident examples"},{"id":"step-fiction-only","label":"step 2: Confirm the scenario is fictional"},{"id":"step-stop","label":"step 3: Stop the risky action"},{"id":"step-verify-containment","label":"step 4: Verify containment"},{"id":"step-report","label":"step 5: Identify the private reporting route"},{"id":"step-accountability","label":"step 6: Keep a person accountable"},{"id":"step-answer","label":"step 7: Complete the scenarios"}]},{"id":"core-orientation","title":"Start And Resume Your Passport","route":"/missions/core-orientation/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-confirm-mode","label":"step 1: Confirm the page mode"},{"id":"step-review-platform","label":"step 2: Check your operating system"},{"id":"step-command-basics","label":"step 3: Learn where commands run"},{"id":"step-system-map","label":"step 4: Meet the systems used by the lab"},{"id":"step-review-route","label":"step 5: Review your assigned lessons"},{"id":"step-understand-status","label":"step 6: Know where progress is stored"},{"id":"step-resume","label":"step 7: Close and reopen the Passport"}]},{"id":"core-systems-data","title":"Map Systems And Research Data","route":"/missions/core-systems-data/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-system-map","label":"step 1: Follow one project"},{"id":"step-code","label":"step 2: Share changes to analyse.py"},{"id":"step-durable-data","label":"step 3: Keep the approved input"},{"id":"step-temporary","label":"step 4: Separate a working copy from the result"},{"id":"step-blade","label":"step 5: Choose where to use the graphical tool"},{"id":"step-euler","label":"step 6: Choose where the long calculation runs"},{"id":"step-answer","label":"step 7: Check your decisions"}]},{"id":"data-collaboration","title":"Design Safe Shared Data Collaboration","route":"/missions/data-collaboration/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-owner","label":"step 1: Name the dataset owner"},{"id":"step-permissions","label":"step 2: Grant only needed access"},{"id":"step-write-boundary","label":"step 3: Define where writes occur"},{"id":"step-git-clones","label":"step 4: Use separate Git clones"},{"id":"step-recovery","label":"step 5: Define conflict and recovery rules"},{"id":"step-answer","label":"step 6: Complete the collaboration plan"}]},{"id":"data-handover","title":"Create A Recoverable Project Handover","route":"/missions/data-handover/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-prepare","label":"step 1: Prepare the handover practice file"},{"id":"step-ownership","label":"step 2: Record current and successor ownership"},{"id":"step-revision","label":"step 3: Record reproducible code"},{"id":"step-data","label":"step 4: Record data locations and cleanup"},{"id":"step-reproduction","label":"step 5: Record how to verify the project"},{"id":"step-retention","label":"step 6: Record access and retention actions"},{"id":"step-review","label":"step 7: Check scope and placeholders"}]},{"id":"data-placement","title":"Place Research Data Intentionally","route":"/missions/data-placement/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-classify","label":"step 1: Classify sensitivity"},{"id":"step-owner","label":"step 2: Name the owner"},{"id":"step-durability","label":"step 3: Decide how long it must survive"},{"id":"step-locality","label":"step 4: Match collaboration and compute locality"},{"id":"step-retention","label":"step 5: Record retention and cleanup"},{"id":"step-answer","label":"step 6: Complete each placement"}]},{"id":"euler-access-ssh","title":"Establish Safe Euler SSH Access","route":"/missions/euler-access-ssh/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-network","label":"step 1: Check the network or VPN"},{"id":"step-password-login","label":"step 2: Test password login"},{"id":"step-inspect","label":"step 3: Inspect existing SSH files without changing them"},{"id":"step-existing-key-test","label":"step 4: Keep working key-only access"},{"id":"step-failed-key-stop","label":"step 5: Diagnose an existing key pair without replacing it"},{"id":"step-generate","label":"step 6: Create the standard dedicated key only when absent"},{"id":"step-install-public","label":"step 7: Install only the public key"},{"id":"step-direct-key-test","label":"step 8: Prove direct key-only access"},{"id":"step-alias","label":"step 9: Create or update an isolated euler alias"},{"id":"step-resolved-config","label":"step 10: Verify the resolved SSH fields"},{"id":"step-alias-test","label":"step 11: Prove the alias is key-only"},{"id":"step-tunnel-gate","label":"step 12: Configure euler-tunnel only after config-ok"}]},{"id":"euler-cpu-accounting","title":"Measure And Right-Size An Euler Job","route":"/missions/euler-cpu-accounting/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-terms","label":"step 1: Distinguish requested and used resources"},{"id":"step-connect","label":"step 2: Connect to Euler"},{"id":"step-recover-id","label":"step 3: Use the existing job ID"},{"id":"step-sacct","label":"step 4: Read the accounting fields"},{"id":"step-seff","label":"step 5: Read seff"},{"id":"step-interpret","label":"step 6: Interpret before changing resources"},{"id":"step-right-size","label":"step 7: Choose the next measured request"},{"id":"step-complete","label":"step 8: Submit accounting evidence"}]},{"id":"euler-cpu-arrays","title":"Cap And Calculate Euler Job Arrays","route":"/missions/euler-cpu-arrays/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-terms","label":"step 1: Understand an array and its concurrency cap"},{"id":"step-prepare","label":"step 2: Prepare the array practice file"},{"id":"step-identify","label":"step 3: Inspect the cap and log names"},{"id":"step-cap","label":"step 4: Add a small concurrency cap"},{"id":"step-logs","label":"step 5: Use parent and task IDs in logs"},{"id":"step-calculate","label":"step 6: Calculate the concurrent resource total"},{"id":"step-review","label":"step 7: Review the edited file"}]},{"id":"euler-cpu-first-job","title":"Submit And Control A Tiny Euler CPU Job","route":"/missions/euler-cpu-first-job/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-terms","label":"step 1: Know where an Euler job runs"},{"id":"step-connect","label":"step 2: Connect to Euler"},{"id":"step-confirm-share","label":"step 3: Confirm the login node and account"},{"id":"step-create-script","label":"step 4: Create and inspect the job script"},{"id":"step-submit","label":"step 5: Submit once and record the job ID"},{"id":"step-queue","label":"step 6: Inspect the queue"},{"id":"step-accounting","label":"step 7: Verify completion with sacct"},{"id":"step-efficiency","label":"step 8: Inspect seff"},{"id":"step-output","label":"step 9: Verify the environment and output markers"},{"id":"step-submit-receipt","label":"step 10: Check and submit the mission"}]},{"id":"euler-gpu-review","title":"Review A One-GPU Euler Plan","route":"/missions/euler-gpu-review/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-terms","label":"step 1: Understand what a GPU request reserves"},{"id":"step-prepare","label":"step 2: Prepare the GPU practice file"},{"id":"step-identify","label":"step 3: Identify the unsafe request"},{"id":"step-model","label":"step 4: Choose one GPU model"},{"id":"step-resources","label":"step 5: Set the lab starter profile"},{"id":"step-logs","label":"step 6: Add output and error logs"},{"id":"step-review","label":"step 7: Review without submitting"}]},{"id":"euler-python-environment","title":"Create A Small Python Environment On Euler","route":"/missions/euler-python-environment/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-terms","label":"step 1: Separate laptop and Euler software"},{"id":"step-connect","label":"step 2: Connect to Euler"},{"id":"step-module","label":"step 3: Check the Euler Python module"},{"id":"step-inspect-target","label":"step 4: Inspect before creating"},{"id":"step-create","label":"step 5: Create or reuse the environment"},{"id":"step-verify","label":"step 6: Verify the active interpreter"},{"id":"step-batch-script","label":"step 7: Put setup inside the Slurm script"},{"id":"step-complete","label":"step 8: Confirm the safe marker"}]},{"id":"euler-storage-reproducibility","title":"Place Euler Data And Freeze Run Inputs","route":"/missions/euler-storage-reproducibility/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-terms","label":"step 1: Know the Euler storage areas"},{"id":"step-revision","label":"step 2: Record the code revision"},{"id":"step-inputs","label":"step 3: Freeze input identity"},{"id":"step-scratch","label":"step 4: Use scratch only for replaceable work"},{"id":"step-outputs","label":"step 5: Name durable outputs and ownership"},{"id":"step-environment","label":"step 6: Record the environment"},{"id":"step-logs","label":"step 7: Keep identifiable logs"},{"id":"step-answer","label":"step 8: Complete the run plan"}]},{"id":"git-manual-pr","title":"Complete A Manual Pull Request Loop","route":"/missions/git-manual-pr/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-prepare","label":"step 1: Open the practice folder"},{"id":"step-baseline","label":"step 2: Inspect before editing"},{"id":"step-editor","label":"step 3: Open the same folder in your editor"},{"id":"step-edit","label":"step 4: Write a reminder your colleague can use"},{"id":"step-unstaged-diff","label":"step 5: Read your change as a reviewer"},{"id":"step-stage","label":"step 6: What will this commit contain?"},{"id":"step-commit","label":"step 7: Record the version you chose"},{"id":"step-publish","label":"step 8: Push and open a draft pull request"},{"id":"step-final-review","label":"step 9: Review what GitHub received"}]},{"id":"git-tools-auth","title":"Configure Git Identity And GitHub Access","route":"/missions/git-tools-auth/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-terms","label":"step 1: Know what Git and GitHub do"},{"id":"step-prepare","label":"step 2: Prepare the Git practice folder"},{"id":"step-versions","label":"step 3: Check Git and GitHub CLI"},{"id":"step-authenticate-check","label":"step 4: Check the GitHub account"},{"id":"step-authenticate","label":"step 5: Sign in only when needed"},{"id":"step-inspect-identity","label":"step 6: Inspect your commit identity"},{"id":"step-set-identity","label":"step 7: Set identity only if needed"},{"id":"step-education-email","label":"step 8: Students: verify your ETH email for GitHub Education"},{"id":"step-education-application","label":"step 9: Students: apply for GitHub Education"},{"id":"step-repository-state","label":"step 10: Inspect repository, branch, and remote"}]},{"id":"nas-access-storage","title":"Verify Your Approved NAS Workspace","route":"/missions/nas-access-storage/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-terms","label":"the step: Know what the NAS is"},{"id":"step-assignment","label":"the step: Confirm the approved folder"},{"id":"step-network","label":"the step: Connect to the ETH network"},{"id":"step-mount-windows","label":"the step: Map the NAS folder in Windows"},{"id":"step-mount-macos","label":"the step: Connect to the NAS folder in macOS"},{"id":"step-mount-linux","label":"the step: Connect to the NAS folder in Linux"},{"id":"step-boundary","label":"the step: Enter your username folder"},{"id":"step-local-path","label":"the step: Copy the mounted folder path"},{"id":"step-probe","label":"the step: Run the access probe"},{"id":"step-rules","label":"the step: Use NAS for durable shared data"}]},{"id":"python-environment","title":"Create A Reproducible Python Environment","route":"/missions/python-environment/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-terms","label":"the step: Know what the Python environment contains"},{"id":"step-prepare","label":"the step: Prepare the Python practice folder"},{"id":"step-check-conda","label":"the step: Check Conda"},{"id":"step-recover-conda","label":"the step: Recover an existing Conda installation"},{"id":"step-install-miniforge-windows","label":"the step: Install Miniforge on Windows only if needed"},{"id":"step-install-miniforge-macos","label":"the step: Install Miniforge on macOS only if needed"},{"id":"step-install-miniforge-linux","label":"the step: Install Miniforge on Linux only if needed"},{"id":"step-recheck-conda","label":"the step: Reopen and recheck Conda"},{"id":"step-read-definition","label":"the step: Return to the practice folder and read the definition"},{"id":"step-inspect-target","label":"the step: Inspect the environment path"},{"id":"step-ignore","label":"the step: Verify the environment path is ignored"},{"id":"step-create","label":"the step: Create or reuse the project Conda environment"},{"id":"step-recover-channel-terms","label":"the step: Recover only from a Conda channel-terms error"},{"id":"step-activate","label":"the step: Activate the project environment"},{"id":"step-verify-python","label":"the step: Verify the active interpreter"},{"id":"step-python-extension","label":"the step: Install the Python extension if you use VS Code"},{"id":"step-editor","label":"the step: Use the same interpreter in your editor"}]},{"id":"python-reproducible-change","title":"Make And Verify A Reproducible Python Change","route":"/missions/python-reproducible-change/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-prepare","label":"step 1: Open the Python practice project"},{"id":"step-baseline","label":"step 2: Run the baseline test"},{"id":"step-understand","label":"step 3: Explain the missing behavior"},{"id":"step-red-test","label":"step 4: Add and run the regression test"},{"id":"step-fix","label":"step 5: Correct the implementation"},{"id":"step-green-test","label":"step 6: Run the complete tests"},{"id":"step-review","label":"step 7: Review the reproducible change"}]},{"id":"supervisor-offboarding","title":"Plan Handover And Offboarding","route":"/missions/supervisor-offboarding/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-inventory","label":"step 1: Inventory project dependencies"},{"id":"step-ownership","label":"step 2: Transfer ownership"},{"id":"step-verify","label":"step 3: Verify the handover"},{"id":"step-active-work","label":"step 4: Close active compute and temporary storage"},{"id":"step-credentials","label":"step 5: Rotate shared credentials"},{"id":"step-revoke","label":"step 6: Remove access after verification"},{"id":"step-record","label":"step 7: Record completion"}]},{"id":"supervisor-onboarding","title":"Assign Lessons And A Safe Project Environment","route":"/missions/supervisor-onboarding/","anchors":[{"id":"lesson-help","label":"help"},{"id":"lesson-practice","label":"practice"},{"id":"lesson-check","label":"check and submit"},{"id":"learning-challenge","label":"explanation"},{"id":"step-responsibilities","label":"step 1: Define the person's work"},{"id":"step-owners","label":"step 2: Name decision owners"},{"id":"step-least-privilege","label":"step 3: Limit scope and duration"},{"id":"step-locations","label":"step 4: Document working locations"},{"id":"step-provision","label":"step 5: Record operational approvals separately"},{"id":"step-review","label":"step 6: Review the onboarding packet"}]}];
+const navigationReferences = ["/assessment/","/assessment/completion-record/","/assessment/rubric/","/assessment/template-spec/","/core/","/core/accounts-and-security/","/core/command-line-basics/","/core/data-and-ai-safety/","/core/environments-overview/","/core/incidents-and-help/","/experienced/","/glossary/","/handbook/","/handbook/tracks/code-contributor/","/handbook/tracks/data-steward/","/handbook/tracks/euler-cpu/","/handbook/tracks/euler-gpu/","/handbook/tracks/supervisor-staff/","/help/","/help/ai-agents/","/help/change-computer/","/labs/","/labs/data-placement/","/labs/euler-first-job/","/labs/euler-gpu-review/","/labs/euler-job-arrays/","/labs/euler-resource-optimization/","/labs/first-safe-pr/","/labs/incident-scenarios/","/labs/manual-vs-agent/","/labs/project-handover/","/labs/reproducible-python/","/maintainers/","/maintainers/automated-validation/","/maintainers/browser-product/","/maintainers/content-ownership/","/maintainers/freshness/","/maintainers/passport-architecture/","/maintainers/passport-deployment/","/maintainers/pilot-checklist/","/maintainers/release-process/","/maintainers/teaching-access-sync/","/policy/","/policy/data-and-ai/","/policy/euler-share/","/policy/lab-it/","/reference/","/reference/ai/","/reference/ai/agents-and-interfaces/","/reference/ai/cost-context-and-failures/","/reference/ai/lab-context/","/reference/ai/vscode-copilot-student/","/reference/ai/zed-openrouter/","/reference/euler/","/reference/euler/access-and-ssh/","/reference/euler/claude-code/","/reference/euler/euler-tunnel/","/reference/euler/github-code-sync/","/reference/euler/paraview/","/reference/euler/python-environments/","/reference/euler/slurm/","/reference/euler/storage/","/reference/euler/troubleshooting/","/reference/guides/git_workflow/","/reference/guides/homebrew/","/reference/guides/hpc_euler/","/reference/guides/nas_ideal/","/reference/guides/obsidian/","/reference/guides/overleaf/","/reference/guides/project_management/","/reference/guides/python_setup/","/reference/guides/remote/","/reference/guides/vscode/","/workbook/"];
+
+(() => {
+  const here = new URL(location.href);
+  const lessons = new Map(navigationLessons.map(item => [item.id, item]));
+  const references = new Set(navigationReferences);
+  const setupLessons = new Set(["git-tools-auth", "python-environment", "euler-access-ssh"]);
+  const activeLesson = navigationLessons.find(item => item.route === here.pathname);
+  let origin = null;
+  if (references.has(here.pathname)) {
+    const lesson = lessons.get(here.searchParams.get("from"));
+    const at = here.searchParams.get("at");
+    const anchor = lesson?.anchors.find(item => item.id === at);
+    const setup = here.searchParams.get("setup");
+    if (lesson && anchor && here.searchParams.getAll("from").length === 1 && here.searchParams.getAll("at").length === 1
+      && here.searchParams.getAll("setup").length <= 1
+      && (!setup || (setup === "computer" && setupLessons.has(lesson.id)))) {
+      origin = { lesson, anchor, setup };
+      const back = document.querySelector("[data-reference-return]");
+      if (back) {
+        const destination = new URL(lesson.route, location.origin);
+        if (setup) destination.searchParams.set("setup", setup);
+        destination.hash = anchor.id;
+        const link = back.querySelector("a");
+        link.href = destination.pathname + destination.search + destination.hash;
+        link.textContent = `Return to lesson — ${anchor.label.split(":")[0]}`;
+        link.setAttribute("aria-label", `Return to ${lesson.title}, ${anchor.label}`);
+        back.hidden = false;
+      }
+      const recommendations = document.querySelector("[data-reference-explore]");
+      if (recommendations) recommendations.hidden = true;
+    }
+  }
+  // URL context is per visit/tab; do not borrow an origin from local storage.
+  // Generate only known same-origin lesson/anchor destinations, never a URL
+  // supplied by the visitor. The existing assignment gate remains authoritative.
+  for (const link of document.querySelectorAll("a[href]")) {
+    // Emergency help leaves the exercise; it must not suggest returning to it.
+    if (link.classList.contains("danger")) continue;
+    const target = new URL(link.href, location.href);
+    if (target.origin !== location.origin || !references.has(target.pathname)) continue;
+    let context = origin;
+    if (activeLesson) {
+      const step = link.closest("[data-recipe-step]");
+      const anchor = activeLesson.anchors.find(item => item.id === step?.id)
+        || activeLesson.anchors.find(item => item.id === link.closest("#lesson-help, #learning-challenge, #lesson-understand")?.id)
+        || activeLesson.anchors.find(item => item.id === "lesson-practice");
+      context = { lesson: activeLesson, anchor, setup: setupLessons.has(activeLesson.id) && here.searchParams.get("setup") === "computer" ? "computer" : null };
+    }
+    if (!context) continue;
+    target.searchParams.set("from", context.lesson.id);
+    target.searchParams.set("at", context.anchor.id);
+    if (context.setup) target.searchParams.set("setup", "computer");
+    else target.searchParams.delete("setup");
+    link.href = target.pathname + target.search + target.hash;
+  }
+  if (activeLesson && here.hash) {
+    const anchor = activeLesson.anchors.find(item => `#${item.id}` === here.hash);
+    const target = anchor && document.getElementById(anchor.id);
+    if (target) {
+      if (target.tagName === "DETAILS") target.open = true;
+      for (let parent = target.parentElement; parent; parent = parent.parentElement) {
+        if (parent.tagName === "DETAILS") parent.open = true;
+      }
+      target.setAttribute("tabindex", "-1");
+      target.focus({ preventScroll: true });
+    }
+  }
+})();
+})();</script><script type="module">document.addEventListener(`keydown`,e=>{let t=e.target;!(t instanceof HTMLElement)||!t.matches(`.markdown-body pre[tabindex="0"]`)||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey||t.scrollWidth<=t.clientWidth||![`ArrowLeft`,`ArrowRight`].includes(e.key)||(e.preventDefault(),t.scrollLeft+=e.key===`ArrowRight`?40:-40)});var e={idle:`Copy`,success:`Copied`,failure:`Select text`},t=new Set([`bash`,`sh`,`zsh`,`powershell`,`pwsh`]);for(let n of document.querySelectorAll(`pre`)){if(n.closest(`.command-frame`))continue;let r=n.querySelector(`code`);if(!r)continue;let i=document.createElement(`div`);i.className=`command-frame`;let a=document.createElement(`div`);a.className=`command-toolbar`;let o=Array.from(r.classList).find(e=>e.startsWith(`language-`))?.replace(`language-`,``)||`text`;if(!t.has(o.toLowerCase()))continue;let s=(r.textContent||``).split(`
+`).filter(e=>!/^\s*#(?:\s|$)/.test(e)).map(e=>e.replace(/^\s*\$\s+/,``).replace(/^\s*PS\s+[^>\r\n]+>\s*/,``)).join(`
+`).trim();if(!s)continue;let c=document.createElement(`span`);c.textContent=o;let l=document.createElement(`button`);l.type=`button`,l.className=`copy-command`,l.textContent=e.idle,l.setAttribute(`aria-label`,`Copy ${o} commands without prompts or explanatory comments`),l.dataset.copyValue=s,l.addEventListener(`click`,async()=>{try{await navigator.clipboard.writeText(s),l.textContent=e.success,setTimeout(()=>l.textContent=e.idle,1800)}catch{l.textContent=e.failure}}),a.append(c,l),n.parentNode?.insertBefore(i,n),i.append(a,n)}</script></body></html><script>(function(){const missionId = "git-tools-auth";
+const contextEndpoint = "/__passport/v1/context";
+const stateEndpoint = "/__passport/v1/state";
+const basePath = "/";
+const missionIndex = [{"id":"ai-agent-baseline","title":"Use A Safe Agent Loop After The Manual Baseline","route":"/missions/ai-agent-baseline/","machine":"local"},{"id":"ai-tool-configuration","title":"Set Up One AI Coding Tool Safely","route":"/missions/ai-tool-configuration/","machine":"local"},{"id":"blade-access-storage","title":"Use Blade For Graphical Work Without Losing Data","route":"/missions/blade-access-storage/","machine":"blade"},{"id":"core-accounts-secrets","title":"Protect Accounts And Secrets","route":"/missions/core-accounts-secrets/","machine":"browser"},{"id":"core-incidents-ai-responsibility","title":"Respond To Incidents And Own Automated Work","route":"/missions/core-incidents-ai-responsibility/","machine":"browser"},{"id":"core-orientation","title":"Start And Resume Your Passport","route":"/missions/core-orientation/","machine":"browser"},{"id":"core-systems-data","title":"Map Systems And Research Data","route":"/missions/core-systems-data/","machine":"browser"},{"id":"data-collaboration","title":"Design Safe Shared Data Collaboration","route":"/missions/data-collaboration/","machine":"browser"},{"id":"data-handover","title":"Create A Recoverable Project Handover","route":"/missions/data-handover/","machine":"browser"},{"id":"data-placement","title":"Place Research Data Intentionally","route":"/missions/data-placement/","machine":"browser"},{"id":"euler-access-ssh","title":"Establish Safe Euler SSH Access","route":"/missions/euler-access-ssh/","machine":"local"},{"id":"euler-cpu-accounting","title":"Measure And Right-Size An Euler Job","route":"/missions/euler-cpu-accounting/","machine":"euler"},{"id":"euler-cpu-arrays","title":"Cap And Calculate Euler Job Arrays","route":"/missions/euler-cpu-arrays/","machine":"local"},{"id":"euler-cpu-first-job","title":"Submit And Control A Tiny Euler CPU Job","route":"/missions/euler-cpu-first-job/","machine":"euler"},{"id":"euler-gpu-review","title":"Review A One-GPU Euler Plan","route":"/missions/euler-gpu-review/","machine":"local"},{"id":"euler-python-environment","title":"Create A Small Python Environment On Euler","route":"/missions/euler-python-environment/","machine":"euler"},{"id":"euler-storage-reproducibility","title":"Place Euler Data And Freeze Run Inputs","route":"/missions/euler-storage-reproducibility/","machine":"browser"},{"id":"git-manual-pr","title":"Complete A Manual Pull Request Loop","route":"/missions/git-manual-pr/","machine":"local"},{"id":"git-tools-auth","title":"Configure Git Identity And GitHub Access","route":"/missions/git-tools-auth/","machine":"local"},{"id":"nas-access-storage","title":"Verify Your Approved NAS Workspace","route":"/missions/nas-access-storage/","machine":"nas"},{"id":"python-environment","title":"Create A Reproducible Python Environment","route":"/missions/python-environment/","machine":"local"},{"id":"python-reproducible-change","title":"Make And Verify A Reproducible Python Change","route":"/missions/python-reproducible-change/","machine":"local"},{"id":"supervisor-offboarding","title":"Plan Handover And Offboarding","route":"/missions/supervisor-offboarding/","machine":"browser"},{"id":"supervisor-onboarding","title":"Assign Lessons And A Safe Project Environment","route":"/missions/supervisor-onboarding/","machine":"browser"}];
+
+  const rememberMission = async () => {
+    try {
+      const response = await fetch(contextEndpoint, { credentials: "same-origin", headers: { Accept: "application/json" } });
+      if (!response.ok) return;
+      const context = await response.json();
+      const route = context?.repository?.passport?.missions;
+      const state = context?.local_state;
+      if (!Array.isArray(route) || !route.includes(missionId) || !state) return;
+      const authority = document.querySelector("[data-authority-note]");
+      if (authority) {
+        authority.querySelector("[data-authority-title]").textContent = "Your local passport";
+        authority.querySelector("[data-authority-copy]").textContent = "Draft answers stay on this computer. Only generated submission records are published.";
+        const link = authority.querySelector("[data-authority-link]");
+        link.href = `${String(basePath || "/").replace(/\/$/, "")}/passport/`;
+        link.textContent = "Return to my progress";
+      }
+      const index = new Map(missionIndex.map((item) => [item.id, item]));
+      if (route.some((id) => !index.has(id))) return;
+      const current = route.indexOf(missionId);
+      const position = document.querySelector("[data-mission-position]");
+      if (position) position.textContent = `${String(current + 1).padStart(2, "0")} / ${String(route.length).padStart(2, "0")}`;
+      const workHere = document.querySelector("[data-work-here]");
+      if (workHere) {
+        const platform = context.computer?.platform || context.repository.passport.platform;
+        const localLocation = platform === "windows"
+          ? "On your Windows computer"
+          : platform === "macos"
+            ? "On your Mac"
+            : "On your Linux computer";
+        const mission = index.get(missionId);
+        const location = mission?.machine === "euler" ? "On your computer first, then on the remote Euler computer"
+          : mission?.machine === "blade" ? "Inside the remote Blade Windows desktop shown on your computer"
+          : mission?.machine === "nas" ? `${localLocation}, inside the approved shared project folder`
+          : mission?.machine === "browser" ? "On this web page"
+          : localLocation;
+        workHere.textContent = location;
+      }
+      const base = String(basePath || "/").replace(/\/$/, "");
+      const setFooter = (selector, item, fallback) => {
+        const anchor = document.querySelector(selector);
+        if (!anchor) return;
+        if (!item) {
+          if (fallback) { anchor.hidden = false; anchor.href = `${base}/passport/`; anchor.querySelector("span").textContent = "Course status"; anchor.querySelector("strong").textContent = "Return to my progress"; }
+          else anchor.hidden = true;
+          return;
+        }
+        anchor.hidden = false; anchor.href = `${base}${item.route}`; anchor.querySelector("strong").textContent = item.title;
+      };
+      setFooter("[data-previous-mission]", index.get(route[current - 1]), false);
+      setFooter("[data-next-mission]", index.get(route[current + 1]), true);
+      if (new URL(location.href).searchParams.get("setup") === "computer") {
+        document.querySelector("[data-mission-footer]").hidden = true;
+        document.querySelector(".mission-contract").hidden = true;
+        if (authority) authority.querySelector("[data-authority-copy]").textContent = "Computer setup only. Completed assessments and draft answers stay unchanged.";
+        return;
+      }
+      if (state.last_opened_mission === missionId) return;
+      await fetch(stateEndpoint, { method: "PUT", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...state, last_opened_mission: missionId }) });
+    } catch {}
+  };
+  rememberMission();
+})();</script>

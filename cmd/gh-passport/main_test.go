@@ -129,3 +129,19 @@ func TestResumeRejectsRouteChangesBeforeStarting(t *testing.T) {
 		}
 	}
 }
+
+func TestSupportedCurriculaAndDefaultReporting(t *testing.T) {
+	for _, value := range []string{"2.1.2", "3.0.0"} {
+		if !supportedCurriculum(value) {
+			t.Fatal(value)
+		}
+	}
+	for _, value := range []string{"", "9.9.9", "3.0.0-preview"} {
+		if supportedCurriculum(value) {
+			t.Fatal(value)
+		}
+	}
+	if localCurriculum(t.TempDir()) != curriculumVersion {
+		t.Fatal("unexpected default")
+	}
+}

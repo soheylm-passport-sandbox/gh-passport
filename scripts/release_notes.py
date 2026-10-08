@@ -25,17 +25,21 @@ def main() -> int:
     curriculum = source.get("curriculum_version")
     if source.get("schema_version") != 1 or not isinstance(curriculum, str) or not CURRICULUM.fullmatch(curriculum):
         parser.error("SOURCE.json has no valid curriculum version")
+    versions = source.get("compatible_curriculum_versions", [curriculum])
+    if not isinstance(versions, list) or not 1 <= len(versions) <= 8 or len(set(versions)) != len(versions) or curriculum not in versions or any(not isinstance(v,str) or not CURRICULUM.fullmatch(v) for v in versions):
+        parser.error("invalid supported curricula")
     metadata = {
         "schema_version": 1,
         "release_version": args.tag,
-        "compatible_curriculum_versions": [curriculum],
+        "compatible_curriculum_versions": versions,
     }
     encoded = base64.urlsafe_b64encode(
         json.dumps(metadata, separators=(",", ":"), sort_keys=True).encode("utf-8")
     ).decode("ascii").rstrip("=")
+    compatibility_line = f"Compatible curriculum: `{curriculum}`" if len(versions)==1 else "Compatible curricula: " + ", ".join("`"+v+"`" for v in versions)
     notes = (
         "Cross-platform IDEAL Lab IT Passport launcher.\n\n"
-        f"Compatible curriculum: `{curriculum}`. Existing local progress is preserved.\n\n"
+        f"{compatibility_line}. Existing local progress is preserved.\n\n"
         "Downloads are verified against the SHA-256 digest published by GitHub.\n\n"
         f"<!-- ideal-passport-release:v1 {encoded} -->\n"
     )
