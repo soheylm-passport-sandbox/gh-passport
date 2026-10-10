@@ -258,54 +258,59 @@ func TestResumeDoesNotTreatParentRepositoryAsThePassport(t *testing.T) {
 }
 
 func TestResumeLegacyPassportAfterNewCourseCutover(t *testing.T) {
-	r, base, original := resumeFixture(t)
-	original = bytes.ReplaceAll(original, []byte("1.2.0"), []byte("2.1.2"))
-	forkWork := filepath.Join(base, "fork-update")
-	resumeGit(t, base, "clone", r.fork, forkWork)
-	if err := os.WriteFile(filepath.Join(forkWork, "passport.json"), original, 0600); err != nil {
-		t.Fatal(err)
-	}
-	old, err := os.ReadFile(filepath.Join(forkWork, "passport-curriculum.json"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	old = bytes.ReplaceAll(old, []byte("1.2.0"), []byte("2.1.2"))
-	if err := os.WriteFile(filepath.Join(forkWork, "passport-curriculum.json"), old, 0600); err != nil {
-		t.Fatal(err)
-	}
-	resumeGit(t, forkWork, "add", ".")
-	resumeGit(t, forkWork, "commit", "-m", "test: legacy route")
-	resumeGit(t, forkWork, "push", "origin", "HEAD:onboarding/student")
-	upstreamWork := filepath.Join(base, "upstream-update")
-	resumeGit(t, base, "clone", r.upstream, upstreamWork)
-	if err := os.MkdirAll(filepath.Join(upstreamWork, "compatibility/2.1.2"), 0700); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(upstreamWork, "compatibility/2.1.2/passport-curriculum.json"), old, 0600); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(upstreamWork, "passport-curriculum.json"), bytes.ReplaceAll(old, []byte("2.1.2"), []byte("3.0.0")), 0600); err != nil {
-		t.Fatal(err)
-	}
-	resumeGit(t, upstreamWork, "add", ".")
-	resumeGit(t, upstreamWork, "commit", "-m", "test: new course")
-	resumeGit(t, upstreamWork, "push", "origin", "main")
-	dir := filepath.Join(base, "returning", ".transport")
-	for _, state := range []string{"open", "closed"} {
-		r.recordState = state
-		if _, err := run(Options{ResumeOnly: true, Directory: dir, Output: &strings.Builder{}}, r); err != nil {
-			t.Fatal(err)
-		}
-		actual, err := os.ReadFile(filepath.Join(dir, "passport.json"))
-		if err != nil || !bytes.Equal(actual, original) {
-			t.Fatal("legacy route was rewritten")
-		}
-	}
-	for _, call := range r.calls {
-		for _, bad := range []string{"git reset", "git clean", "gh repo fork", "gh pr create", "git push", "git commit"} {
-			if strings.HasPrefix(call, bad) {
-				t.Fatalf("resume mutated: %s", call)
+	for _, versions := range []struct{ old, current string }{{"2.1.2", "3.0.0"}, {"2.1.2", "4.0.0"}, {"3.0.0", "4.0.0"}} {
+		t.Run(versions.old+"-to-"+versions.current, func(t *testing.T) {
+
+			r, base, original := resumeFixture(t)
+			original = bytes.ReplaceAll(original, []byte("1.2.0"), []byte(versions.old))
+			forkWork := filepath.Join(base, "fork-update")
+			resumeGit(t, base, "clone", r.fork, forkWork)
+			if err := os.WriteFile(filepath.Join(forkWork, "passport.json"), original, 0600); err != nil {
+				t.Fatal(err)
 			}
-		}
+			old, err := os.ReadFile(filepath.Join(forkWork, "passport-curriculum.json"))
+			if err != nil {
+				t.Fatal(err)
+			}
+			old = bytes.ReplaceAll(old, []byte("1.2.0"), []byte(versions.old))
+			if err := os.WriteFile(filepath.Join(forkWork, "passport-curriculum.json"), old, 0600); err != nil {
+				t.Fatal(err)
+			}
+			resumeGit(t, forkWork, "add", ".")
+			resumeGit(t, forkWork, "commit", "-m", "test: legacy route")
+			resumeGit(t, forkWork, "push", "origin", "HEAD:onboarding/student")
+			upstreamWork := filepath.Join(base, "upstream-update")
+			resumeGit(t, base, "clone", r.upstream, upstreamWork)
+			if err := os.MkdirAll(filepath.Join(upstreamWork, "compatibility", versions.old), 0700); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(filepath.Join(upstreamWork, "compatibility", versions.old, "passport-curriculum.json"), old, 0600); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(filepath.Join(upstreamWork, "passport-curriculum.json"), bytes.ReplaceAll(old, []byte(versions.old), []byte(versions.current)), 0600); err != nil {
+				t.Fatal(err)
+			}
+			resumeGit(t, upstreamWork, "add", ".")
+			resumeGit(t, upstreamWork, "commit", "-m", "test: new course")
+			resumeGit(t, upstreamWork, "push", "origin", "main")
+			dir := filepath.Join(base, "returning", ".transport")
+			for _, state := range []string{"open", "closed"} {
+				r.recordState = state
+				if _, err := run(Options{ResumeOnly: true, Directory: dir, Output: &strings.Builder{}}, r); err != nil {
+					t.Fatal(err)
+				}
+				actual, err := os.ReadFile(filepath.Join(dir, "passport.json"))
+				if err != nil || !bytes.Equal(actual, original) {
+					t.Fatal("legacy route was rewritten")
+				}
+			}
+			for _, call := range r.calls {
+				for _, bad := range []string{"git reset", "git clean", "gh repo fork", "gh pr create", "git push", "git commit"} {
+					if strings.HasPrefix(call, bad) {
+						t.Fatalf("resume mutated: %s", call)
+					}
+				}
+			}
+		})
 	}
 }

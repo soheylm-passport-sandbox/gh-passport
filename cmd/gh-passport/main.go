@@ -23,12 +23,13 @@ import (
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/localstate"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/passportrepo"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/starter"
+	"github.com/soheylm-passport-sandbox/gh-passport/internal/webdist"
 )
 
 var (
 	version           = "0.1.0-dev"
 	controllerAppID   = deployment.ControllerAppID
-	curriculumVersion = "3.0.0"
+	curriculumVersion = "4.0.0"
 )
 
 type doctorCheck struct {
@@ -312,7 +313,10 @@ func signalUpdateReady() error {
 	return nil
 }
 
-func supportedCurriculum(value string) bool { return value == "2.1.2" || value == "3.0.0" }
+func supportedCurriculum(value string) bool {
+	_, err := webdist.Bundle(value)
+	return err == nil
+}
 
 func localCurriculum(root string) string {
 	repository, err := passportrepo.Find(root, passportrepo.ExecRunner{})
