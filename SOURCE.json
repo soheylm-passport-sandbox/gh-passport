@@ -1,15 +1,16 @@
 {
   "compatible_curriculum_versions": [
     "2.1.2",
-    "3.0.0"
+    "3.0.0",
+    "4.0.0"
   ],
-  "curriculum_version": "3.0.0",
+  "curriculum_version": "4.0.0",
   "deployment": {
     "controller_app_id": 4827197,
     "deployment_id": "semester-2026-sandbox",
     "exercise_repository": "soheylm-passport-sandbox/passport-exercises",
-    "extension_install_command": "gh extension install soheylm-passport-sandbox/gh-passport --force --pin v0.6.1",
-    "extension_release": "v0.6.1",
+    "extension_install_command": "gh extension install soheylm-passport-sandbox/gh-passport --force --pin v0.7.0",
+    "extension_release": "v0.7.0",
     "extension_repository": "soheylm-passport-sandbox/gh-passport",
     "handbook_ref": "main",
     "handbook_repository": "IDEALLab/onboarding-IT",
@@ -17,7 +18,7 @@
     "support_assignee": "SoheylM"
   },
   "schema_version": 1,
-  "source_commit": "a2d4d47991edb60b989760676b65c9e7ff54cce6",
+  "source_commit": "bf1156905609ec1244526d0e9cdfb4859b8d1844",
   "source_exact": true,
   "source_repository": "IDEALLab/onboarding-IT"
 }

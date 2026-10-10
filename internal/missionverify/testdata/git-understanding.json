@@ -1,0 +1,752 @@
+{
+  "schema_version": 1,
+  "mission": {
+    "id": "git-manual-pr",
+    "title": "Complete A Manual Pull Request Loop",
+    "version": 7,
+    "verification": {
+      "local_verifier": "git_practice",
+      "remote_assessor": "git_practice",
+      "pass_percent": 80,
+      "critical_must_pass": true,
+      "requires_live_confirmation": false,
+      "receipt_checks": [
+        "practice_branch",
+        "bounded_diff",
+        "conventional_commit",
+        "draft_pr"
+      ]
+    },
+    "submission": {
+      "path": "submissions/git-manual-pr.json",
+      "public_fields": [
+        "answers",
+        "receipts",
+        "artifacts",
+        "attestation"
+      ],
+      "artifact_paths": [
+        "workspace/manual_task/project-note.md"
+      ]
+    },
+    "activity": {
+      "questions": [
+        {
+          "id": "commit_snapshot",
+          "type": "single",
+          "prompt": "You stage a note, then save another correction without staging again. You commit. Which version is recorded?",
+          "options": [
+            {
+              "id": "saved",
+              "label": "The latest saved version, including the correction."
+            },
+            {
+              "id": "staged",
+              "label": "The version you staged, without the later correction."
+            },
+            {
+              "id": "remote",
+              "label": "The version currently on GitHub."
+            }
+          ],
+          "answer": [
+            "staged"
+          ],
+          "critical": true,
+          "feedback": "A commit records the staged version. To include a later saved correction, stage the note again and inspect git diff --cached before committing."
+        },
+        {
+          "id": "share_commit",
+          "type": "single",
+          "prompt": "Your draft PR is open. You make another commit on the same practice branch, but have not pushed. What does its Files changed page show?",
+          "options": [
+            {
+              "id": "latest",
+              "label": "The new local commit, because the PR is already open."
+            },
+            {
+              "id": "merged",
+              "label": "The new commit merged into main."
+            },
+            {
+              "id": "published",
+              "label": "The previously pushed change; the new commit is still on your computer."
+            }
+          ],
+          "answer": [
+            "published"
+          ],
+          "critical": true,
+          "feedback": "An open PR compares the GitHub branch with main. Push the same practice branch to share your new commit, then inspect the updated PR diff. Neither committing nor pushing merges it."
+        },
+        {
+          "id": "review_correction",
+          "type": "single",
+          "prompt": "Someone reviewing your draft PR spots an unclear sentence. You agree and save a correction in the same practice folder. How do you update that PR?",
+          "options": [
+            {
+              "id": "amend",
+              "label": "Review and stage the correction, commit and push the same branch; inspect the updated draft PR."
+            },
+            {
+              "id": "new_pr",
+              "label": "Open another PR; the first one cannot receive later changes."
+            },
+            {
+              "id": "merge",
+              "label": "Merge the draft PR first, then correct main."
+            }
+          ],
+          "answer": [
+            "amend"
+          ],
+          "critical": true,
+          "feedback": "A PR follows its source branch. Review and commit the correction on the same practice branch, then push and inspect the updated diff. Keep this exercise PR open in draft; do not merge it."
+        }
+      ]
+    }
+  },
+  "cases": [
+    {
+      "id": "saved-latest-amend",
+      "answers": {
+        "commit_snapshot": [
+          "saved"
+        ],
+        "share_commit": [
+          "latest"
+        ],
+        "review_correction": [
+          "amend"
+        ]
+      },
+      "score": 33,
+      "passed": false
+    },
+    {
+      "id": "saved-latest-new_pr",
+      "answers": {
+        "commit_snapshot": [
+          "saved"
+        ],
+        "share_commit": [
+          "latest"
+        ],
+        "review_correction": [
+          "new_pr"
+        ]
+      },
+      "score": 0,
+      "passed": false
+    },
+    {
+      "id": "saved-latest-merge",
+      "answers": {
+        "commit_snapshot": [
+          "saved"
+        ],
+        "share_commit": [
+          "latest"
+        ],
+        "review_correction": [
+          "merge"
+        ]
+      },
+      "score": 0,
+      "passed": false
+    },
+    {
+      "id": "saved-merged-amend",
+      "answers": {
+        "commit_snapshot": [
+          "saved"
+        ],
+        "share_commit": [
+          "merged"
+        ],
+        "review_correction": [
+          "amend"
+        ]
+      },
+      "score": 33,
+      "passed": false
+    },
+    {
+      "id": "saved-merged-new_pr",
+      "answers": {
+        "commit_snapshot": [
+          "saved"
+        ],
+        "share_commit": [
+          "merged"
+        ],
+        "review_correction": [
+          "new_pr"
+        ]
+      },
+      "score": 0,
+      "passed": false
+    },
+    {
+      "id": "saved-merged-merge",
+      "answers": {
+        "commit_snapshot": [
+          "saved"
+        ],
+        "share_commit": [
+          "merged"
+        ],
+        "review_correction": [
+          "merge"
+        ]
+      },
+      "score": 0,
+      "passed": false
+    },
+    {
+      "id": "saved-published-amend",
+      "answers": {
+        "commit_snapshot": [
+          "saved"
+        ],
+        "share_commit": [
+          "published"
+        ],
+        "review_correction": [
+          "amend"
+        ]
+      },
+      "score": 67,
+      "passed": false
+    },
+    {
+      "id": "saved-published-new_pr",
+      "answers": {
+        "commit_snapshot": [
+          "saved"
+        ],
+        "share_commit": [
+          "published"
+        ],
+        "review_correction": [
+          "new_pr"
+        ]
+      },
+      "score": 33,
+      "passed": false
+    },
+    {
+      "id": "saved-published-merge",
+      "answers": {
+        "commit_snapshot": [
+          "saved"
+        ],
+        "share_commit": [
+          "published"
+        ],
+        "review_correction": [
+          "merge"
+        ]
+      },
+      "score": 33,
+      "passed": false
+    },
+    {
+      "id": "staged-latest-amend",
+      "answers": {
+        "commit_snapshot": [
+          "staged"
+        ],
+        "share_commit": [
+          "latest"
+        ],
+        "review_correction": [
+          "amend"
+        ]
+      },
+      "score": 67,
+      "passed": false
+    },
+    {
+      "id": "staged-latest-new_pr",
+      "answers": {
+        "commit_snapshot": [
+          "staged"
+        ],
+        "share_commit": [
+          "latest"
+        ],
+        "review_correction": [
+          "new_pr"
+        ]
+      },
+      "score": 33,
+      "passed": false
+    },
+    {
+      "id": "staged-latest-merge",
+      "answers": {
+        "commit_snapshot": [
+          "staged"
+        ],
+        "share_commit": [
+          "latest"
+        ],
+        "review_correction": [
+          "merge"
+        ]
+      },
+      "score": 33,
+      "passed": false
+    },
+    {
+      "id": "staged-merged-amend",
+      "answers": {
+        "commit_snapshot": [
+          "staged"
+        ],
+        "share_commit": [
+          "merged"
+        ],
+        "review_correction": [
+          "amend"
+        ]
+      },
+      "score": 67,
+      "passed": false
+    },
+    {
+      "id": "staged-merged-new_pr",
+      "answers": {
+        "commit_snapshot": [
+          "staged"
+        ],
+        "share_commit": [
+          "merged"
+        ],
+        "review_correction": [
+          "new_pr"
+        ]
+      },
+      "score": 33,
+      "passed": false
+    },
+    {
+      "id": "staged-merged-merge",
+      "answers": {
+        "commit_snapshot": [
+          "staged"
+        ],
+        "share_commit": [
+          "merged"
+        ],
+        "review_correction": [
+          "merge"
+        ]
+      },
+      "score": 33,
+      "passed": false
+    },
+    {
+      "id": "staged-published-amend",
+      "answers": {
+        "commit_snapshot": [
+          "staged"
+        ],
+        "share_commit": [
+          "published"
+        ],
+        "review_correction": [
+          "amend"
+        ]
+      },
+      "score": 100,
+      "passed": true
+    },
+    {
+      "id": "staged-published-new_pr",
+      "answers": {
+        "commit_snapshot": [
+          "staged"
+        ],
+        "share_commit": [
+          "published"
+        ],
+        "review_correction": [
+          "new_pr"
+        ]
+      },
+      "score": 67,
+      "passed": false
+    },
+    {
+      "id": "staged-published-merge",
+      "answers": {
+        "commit_snapshot": [
+          "staged"
+        ],
+        "share_commit": [
+          "published"
+        ],
+        "review_correction": [
+          "merge"
+        ]
+      },
+      "score": 67,
+      "passed": false
+    },
+    {
+      "id": "remote-latest-amend",
+      "answers": {
+        "commit_snapshot": [
+          "remote"
+        ],
+        "share_commit": [
+          "latest"
+        ],
+        "review_correction": [
+          "amend"
+        ]
+      },
+      "score": 33,
+      "passed": false
+    },
+    {
+      "id": "remote-latest-new_pr",
+      "answers": {
+        "commit_snapshot": [
+          "remote"
+        ],
+        "share_commit": [
+          "latest"
+        ],
+        "review_correction": [
+          "new_pr"
+        ]
+      },
+      "score": 0,
+      "passed": false
+    },
+    {
+      "id": "remote-latest-merge",
+      "answers": {
+        "commit_snapshot": [
+          "remote"
+        ],
+        "share_commit": [
+          "latest"
+        ],
+        "review_correction": [
+          "merge"
+        ]
+      },
+      "score": 0,
+      "passed": false
+    },
+    {
+      "id": "remote-merged-amend",
+      "answers": {
+        "commit_snapshot": [
+          "remote"
+        ],
+        "share_commit": [
+          "merged"
+        ],
+        "review_correction": [
+          "amend"
+        ]
+      },
+      "score": 33,
+      "passed": false
+    },
+    {
+      "id": "remote-merged-new_pr",
+      "answers": {
+        "commit_snapshot": [
+          "remote"
+        ],
+        "share_commit": [
+          "merged"
+        ],
+        "review_correction": [
+          "new_pr"
+        ]
+      },
+      "score": 0,
+      "passed": false
+    },
+    {
+      "id": "remote-merged-merge",
+      "answers": {
+        "commit_snapshot": [
+          "remote"
+        ],
+        "share_commit": [
+          "merged"
+        ],
+        "review_correction": [
+          "merge"
+        ]
+      },
+      "score": 0,
+      "passed": false
+    },
+    {
+      "id": "remote-published-amend",
+      "answers": {
+        "commit_snapshot": [
+          "remote"
+        ],
+        "share_commit": [
+          "published"
+        ],
+        "review_correction": [
+          "amend"
+        ]
+      },
+      "score": 67,
+      "passed": false
+    },
+    {
+      "id": "remote-published-new_pr",
+      "answers": {
+        "commit_snapshot": [
+          "remote"
+        ],
+        "share_commit": [
+          "published"
+        ],
+        "review_correction": [
+          "new_pr"
+        ]
+      },
+      "score": 33,
+      "passed": false
+    },
+    {
+      "id": "remote-published-merge",
+      "answers": {
+        "commit_snapshot": [
+          "remote"
+        ],
+        "share_commit": [
+          "published"
+        ],
+        "review_correction": [
+          "merge"
+        ]
+      },
+      "score": 33,
+      "passed": false
+    },
+    {
+      "id": "missing-commit_snapshot",
+      "answers": {
+        "share_commit": [
+          "published"
+        ],
+        "review_correction": [
+          "amend"
+        ]
+      },
+      "score": 67,
+      "passed": false
+    },
+    {
+      "id": "missing-share_commit",
+      "answers": {
+        "commit_snapshot": [
+          "staged"
+        ],
+        "review_correction": [
+          "amend"
+        ]
+      },
+      "score": 67,
+      "passed": false
+    },
+    {
+      "id": "missing-review_correction",
+      "answers": {
+        "commit_snapshot": [
+          "staged"
+        ],
+        "share_commit": [
+          "published"
+        ]
+      },
+      "score": 67,
+      "passed": false
+    },
+    {
+      "id": "duplicate-commit_snapshot",
+      "answers": {
+        "commit_snapshot": [
+          "staged",
+          "staged"
+        ],
+        "share_commit": [
+          "published"
+        ],
+        "review_correction": [
+          "amend"
+        ]
+      },
+      "score": 67,
+      "passed": false
+    },
+    {
+      "id": "extra-commit_snapshot",
+      "answers": {
+        "commit_snapshot": [
+          "staged",
+          "not_a_choice"
+        ],
+        "share_commit": [
+          "published"
+        ],
+        "review_correction": [
+          "amend"
+        ]
+      },
+      "score": 67,
+      "passed": false
+    },
+    {
+      "id": "unknown_option-commit_snapshot",
+      "answers": {
+        "commit_snapshot": [
+          "not_a_choice"
+        ],
+        "share_commit": [
+          "published"
+        ],
+        "review_correction": [
+          "amend"
+        ]
+      },
+      "score": 67,
+      "passed": false
+    },
+    {
+      "id": "duplicate-share_commit",
+      "answers": {
+        "commit_snapshot": [
+          "staged"
+        ],
+        "share_commit": [
+          "published",
+          "published"
+        ],
+        "review_correction": [
+          "amend"
+        ]
+      },
+      "score": 67,
+      "passed": false
+    },
+    {
+      "id": "extra-share_commit",
+      "answers": {
+        "commit_snapshot": [
+          "staged"
+        ],
+        "share_commit": [
+          "published",
+          "not_a_choice"
+        ],
+        "review_correction": [
+          "amend"
+        ]
+      },
+      "score": 67,
+      "passed": false
+    },
+    {
+      "id": "unknown_option-share_commit",
+      "answers": {
+        "commit_snapshot": [
+          "staged"
+        ],
+        "share_commit": [
+          "not_a_choice"
+        ],
+        "review_correction": [
+          "amend"
+        ]
+      },
+      "score": 67,
+      "passed": false
+    },
+    {
+      "id": "duplicate-review_correction",
+      "answers": {
+        "commit_snapshot": [
+          "staged"
+        ],
+        "share_commit": [
+          "published"
+        ],
+        "review_correction": [
+          "amend",
+          "amend"
+        ]
+      },
+      "score": 67,
+      "passed": false
+    },
+    {
+      "id": "extra-review_correction",
+      "answers": {
+        "commit_snapshot": [
+          "staged"
+        ],
+        "share_commit": [
+          "published"
+        ],
+        "review_correction": [
+          "amend",
+          "not_a_choice"
+        ]
+      },
+      "score": 67,
+      "passed": false
+    },
+    {
+      "id": "unknown_option-review_correction",
+      "answers": {
+        "commit_snapshot": [
+          "staged"
+        ],
+        "share_commit": [
+          "published"
+        ],
+        "review_correction": [
+          "not_a_choice"
+        ]
+      },
+      "score": 67,
+      "passed": false
+    },
+    {
+      "id": "unknown_field",
+      "answers": {
+        "commit_snapshot": [
+          "staged"
+        ],
+        "share_commit": [
+          "published"
+        ],
+        "review_correction": [
+          "amend"
+        ],
+        "legacy_id": [
+          "correct"
+        ]
+      },
+      "score": 100,
+      "passed": false,
+      "invalid": true
+    }
+  ]
+}

@@ -131,7 +131,7 @@ func TestResumeRejectsRouteChangesBeforeStarting(t *testing.T) {
 }
 
 func TestSupportedCurriculaAndDefaultReporting(t *testing.T) {
-	for _, value := range []string{"2.1.2", "3.0.0"} {
+	for _, value := range []string{"2.1.2", "3.0.0", "4.0.0"} {
 		if !supportedCurriculum(value) {
 			t.Fatal(value)
 		}

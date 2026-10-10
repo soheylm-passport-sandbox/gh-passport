@@ -6,7 +6,7 @@ import (
 )
 
 func TestBundleVersionIsExplicit(t *testing.T) {
-	for _, v := range []string{"2.1.2", "3.0.0"} {
+	for _, v := range []string{"2.1.2", "3.0.0", "4.0.0"} {
 		assets, err := Bundle(v)
 		if err != nil {
 			t.Fatal(err)

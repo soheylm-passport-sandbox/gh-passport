@@ -200,13 +200,13 @@ func run(options Options, runner commandRunner) (Result, error) {
 		var previous struct {
 			CurriculumVersion string `json:"curriculum_version"`
 		}
-		if json.Unmarshal(raw, &previous) == nil && previous.CurriculumVersion == "2.1.2" && catalogValue.CurriculumVersion == "3.0.0" {
-			legacy, err := runner.Run(ctx, directory, "git", "show", "upstream/main:compatibility/2.1.2/passport-curriculum.json")
+		if json.Unmarshal(raw, &previous) == nil && (previous.CurriculumVersion == "2.1.2" || previous.CurriculumVersion == "3.0.0") && previous.CurriculumVersion != catalogValue.CurriculumVersion {
+			legacy, err := runner.Run(ctx, directory, "git", "show", "upstream/main:compatibility/"+previous.CurriculumVersion+"/passport-curriculum.json")
 			if err != nil {
 				return Result{}, errors.New("the official legacy catalogue is unavailable; no route was changed")
 			}
 			catalogValue, err = decodeCatalog(legacy)
-			if err != nil || catalogValue.CurriculumVersion != "2.1.2" {
+			if err != nil || catalogValue.CurriculumVersion != previous.CurriculumVersion {
 				return Result{}, errors.New("invalid legacy catalogue; no route was changed")
 			}
 		}
