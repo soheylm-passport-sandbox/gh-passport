@@ -19,6 +19,7 @@ import (
 
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/deployment"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/passportrepo"
+	"github.com/soheylm-passport-sandbox/gh-passport/internal/webdist"
 )
 
 const sourceRepository = deployment.ExerciseRepository
@@ -200,7 +201,10 @@ func run(options Options, runner commandRunner) (Result, error) {
 		var previous struct {
 			CurriculumVersion string `json:"curriculum_version"`
 		}
-		if json.Unmarshal(raw, &previous) == nil && (previous.CurriculumVersion == "2.1.2" || previous.CurriculumVersion == "3.0.0") && previous.CurriculumVersion != catalogValue.CurriculumVersion {
+		if json.Unmarshal(raw, &previous) == nil && previous.CurriculumVersion != "" && previous.CurriculumVersion != catalogValue.CurriculumVersion {
+			if _, err := webdist.Bundle(previous.CurriculumVersion); err != nil {
+				return Result{}, errors.New("unsupported installed curriculum; no route or progress was changed")
+			}
 			legacy, err := runner.Run(ctx, directory, "git", "show", "upstream/main:compatibility/"+previous.CurriculumVersion+"/passport-curriculum.json")
 			if err != nil {
 				return Result{}, errors.New("the official legacy catalogue is unavailable; no route was changed")

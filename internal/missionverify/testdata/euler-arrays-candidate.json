@@ -1,0 +1,1423 @@
+{
+  "inactive_candidate": false,
+  "synthetic_instructor_material": true,
+  "mission": {
+    "id": "euler-cpu-arrays",
+    "title": "Cap And Calculate Euler Job Arrays",
+    "track": "euler_cpu",
+    "requires": [
+      "euler-cpu-accounting"
+    ],
+    "platforms": [
+      "windows",
+      "macos",
+      "linux"
+    ],
+    "estimated_minutes": 30,
+    "risk": "shared_compute",
+    "live_resource": "none",
+    "version": 4,
+    "activity": {
+      "kind": "repository_task",
+      "machine": "local",
+      "shells": [
+        "powershell",
+        "zsh",
+        "bash"
+      ],
+      "action": "Correct the fictional Slurm array practice file, add a concurrency cap, and make every task log name unique.",
+      "expected_result": "The checker accepts ten tasks with a concurrency cap of one and unique logs; no command submits the practice file to Euler.",
+      "questions": [
+        {
+          "id": "combined_peak",
+          "type": "single",
+          "critical": true,
+          "prompt": "The proposed array has 12 tasks, cap 3, 2 CPUs per task and 3 GiB per CPU. Another job holds 2 CPUs and 5 GiB. What is the maximum combined demand?",
+          "options": [
+            {
+              "id": "combined",
+              "label": "8 CPUs and 23 GiB."
+            },
+            {
+              "id": "all_tasks",
+              "label": "26 CPUs and 77 GiB."
+            },
+            {
+              "id": "array_only",
+              "label": "6 CPUs and 18 GiB."
+            },
+            {
+              "id": "per_task",
+              "label": "8 CPUs and 14 GiB."
+            }
+          ],
+          "answer": [
+            "combined"
+          ],
+          "feedback": "Count at most 3 array tasks: 3 x 2 = 6 CPUs and 3 x 2 x 3 = 18 GiB. Add the other job: 8 CPUs and 23 GiB. The range does not make all 12 tasks run together."
+        },
+        {
+          "id": "budget_cap",
+          "type": "single",
+          "critical": true,
+          "prompt": "An array has 12 tasks, 2 CPUs per task and 3 GiB per CPU. Another job holds 2 CPUs and 5 GiB. Under a fictional combined budget of 10 CPUs and 20 GiB, what is the largest cap that fits both limits?",
+          "options": [
+            {
+              "id": "cap_two",
+              "label": "Cap 2: 6 CPUs and 17 GiB combined."
+            },
+            {
+              "id": "cap_three",
+              "label": "Cap 3: 8 CPUs and 23 GiB combined."
+            },
+            {
+              "id": "cap_four",
+              "label": "Cap 4: 10 CPUs and 29 GiB combined."
+            },
+            {
+              "id": "contradiction",
+              "label": "Cap 3: 8 CPUs and 17 GiB combined."
+            }
+          ],
+          "answer": [
+            "cap_two"
+          ],
+          "feedback": "Each array task needs 2 CPUs and 6 GiB. After the other job, 8 CPUs and 15 GiB remain in the fictional budget. Cap 2 fits (6 CPUs, 17 GiB combined); cap 3 exceeds memory (23 GiB). Check both limits, not only CPU."
+        },
+        {
+          "id": "node_memory",
+          "type": "single",
+          "critical": true,
+          "prompt": "A 12-task array is capped at 3. Each task uses one node, 2 CPUs and --mem=3G instead of --mem-per-cpu=3G. Another job holds 2 CPUs and 5 GiB. What is the combined peak request?",
+          "options": [
+            {
+              "id": "node_total",
+              "label": "The combined request becomes 8 CPUs and 14 GiB, within the fictional 10 CPU / 20 GiB budget."
+            },
+            {
+              "id": "unchanged",
+              "label": "It stays 8 CPUs and 23 GiB because memory is always per CPU."
+            },
+            {
+              "id": "omit_job",
+              "label": "It becomes 6 CPUs and 9 GiB; the array cap includes the other job."
+            }
+          ],
+          "answer": [
+            "node_total"
+          ],
+          "feedback": "--mem requests memory per node. With one node per array task here, 3 tasks request 3 x 3 = 9 GiB, plus the other job: 14 GiB. CPU stays 3 x 2 + 2 = 8. This is a planning comparison, not evidence that 3 GiB would be sufficient for a real program."
+        }
+      ],
+      "recipe": {
+        "intro": "The supplied file is deliberately unsafe. Edit it locally and never submit it to Euler.",
+        "steps": [
+          {
+            "id": "terms",
+            "title": "Understand an array and its concurrency cap",
+            "instruction": "Read the range and cap distinction above. This is local review only; no array is submitted.",
+            "machine": "browser",
+            "platforms": [
+              "all"
+            ],
+            "links": [],
+            "commands": [],
+            "expected": "You can distinguish total task count from the maximum running at once.",
+            "on_success": "Open the deliberately unsafe local practice file.",
+            "on_failure": "Do not submit a real array until you can calculate its simultaneous resource total."
+          },
+          {
+            "id": "prepare",
+            "title": "Prepare the array practice file",
+            "instruction": "Press Prepare practice folder, enter it, and open workspace/slurm/array_job.slurm.txt.",
+            "machine": "local",
+            "platforms": [
+              "all"
+            ],
+            "links": [],
+            "commands": [],
+            "expected": "The unsafe practice file is open in the separate practice repository.",
+            "on_success": "Inspect it without submitting.",
+            "on_failure": "Do not create your own replacement script or use Euler for this exercise."
+          },
+          {
+            "id": "identify",
+            "title": "Inspect the cap and log names",
+            "instruction": "Read the array and two log directives in the unsafe local file. Which setting bounds simultaneous demand? Which filename placeholders identify the parent and index? Compare your reasoning with the repair steps afterwards; do not submit this file.",
+            "machine": "local",
+            "platforms": [
+              "all"
+            ],
+            "links": [],
+            "commands": [],
+            "expected": "You can explain the missing concurrency cap and why parent/index labels make array logs easier to trace.",
+            "on_success": "Edit only the required directives.",
+            "on_failure": "Review the array and log-name explanation before editing."
+          },
+          {
+            "id": "cap",
+            "title": "Add a small concurrency cap",
+            "instruction": "Replace the unsafe array directive with the exact line below. It creates ten tasks, numbered 0 through 9, and allows at most one to run at a time.",
+            "machine": "local",
+            "platforms": [
+              "all"
+            ],
+            "links": [],
+            "commands": [
+              {
+                "platform": "all",
+                "shell": "bash",
+                "mode": "edit",
+                "command": "#SBATCH --array=0-9%1",
+                "disclosure": "Show the required cap-one repair"
+              }
+            ],
+            "expected": "The directive is exactly --array=0-9%1.",
+            "on_success": "Make the logs unique.",
+            "on_failure": "Do not use an uncapped range or a zero cap."
+          },
+          {
+            "id": "logs",
+            "title": "Use parent and task IDs in logs",
+            "instruction": "Replace both log directives with the two exact lines below. %A is the parent job ID and %a is the array task index.",
+            "machine": "local",
+            "platforms": [
+              "all"
+            ],
+            "links": [],
+            "commands": [
+              {
+                "platform": "all",
+                "shell": "bash",
+                "mode": "edit",
+                "command": "#SBATCH --output=logs/%x_%A_%a.out\n#SBATCH --error=logs/%x_%A_%a.err",
+                "disclosure": "Show the required parent/index log lines"
+              }
+            ],
+            "expected": "Each array task has a distinct output and error path.",
+            "on_success": "Inspect the local diff.",
+            "on_failure": "Correct both settings before pressing Check my work."
+          },
+          {
+            "id": "calculate",
+            "title": "Plan a different array on paper",
+            "instruction": "Plan a different array on paper: 12 tasks, cap 3, 2 CPUs per task and 3 GiB per CPU. Another job holds 2 CPUs and 5 GiB. The fictional combined budget is 10 CPUs and 20 GiB. Assume one node and one Slurm task per array task, with allocated CPUs matching the request.",
+            "machine": "browser",
+            "platforms": [
+              "all"
+            ],
+            "links": [],
+            "commands": [],
+            "expected": "Compare peak requested CPUs and system memory with both fictional limits. This is not your Euler entitlement. Keep the practice file at cap one; no job is submitted.",
+            "on_success": "Answer the three planning questions after reviewing the local file. For the memory-option comparison, replace the proposal's --mem-per-cpu=3G with --mem=3G; do not add both.",
+            "on_failure": "If a calculation does not fit, reduce concurrency on paper. Do not change CPU or memory estimates just to fit a budget: a real program needs measured evidence first."
+          },
+          {
+            "id": "review",
+            "title": "Review the edited file",
+            "instruction": "Confirm that only the fictional practice file changed and that no command submitted it.",
+            "machine": "local",
+            "platforms": [
+              "all"
+            ],
+            "links": [],
+            "commands": [
+              {
+                "platform": "windows",
+                "shell": "powershell",
+                "command": "git diff -- workspace/slurm/array_job.slurm.txt"
+              },
+              {
+                "platform": "macos",
+                "shell": "zsh",
+                "command": "git diff -- workspace/slurm/array_job.slurm.txt"
+              },
+              {
+                "platform": "linux",
+                "shell": "bash",
+                "command": "git diff -- workspace/slurm/array_job.slurm.txt"
+              }
+            ],
+            "expected": "The diff changes only the array cap and the two log names.",
+            "on_success": "Run Check my work.",
+            "on_failure": "Remove every unrelated change before continuing."
+          }
+        ]
+      }
+    },
+    "verification": {
+      "local_verifier": "slurm_script",
+      "remote_assessor": "slurm_array_v2",
+      "pass_percent": 100,
+      "critical_must_pass": true,
+      "requires_live_confirmation": false,
+      "receipt_checks": [
+        "bounded_file",
+        "account",
+        "array_exact",
+        "output_unique",
+        "error_unique",
+        "safe_resources"
+      ]
+    },
+    "submission": {
+      "path": "submissions/euler-cpu-arrays.json",
+      "public_fields": [
+        "answers",
+        "receipts",
+        "artifacts",
+        "attestation"
+      ],
+      "artifact_paths": [
+        "workspace/slurm/array_job.slurm.txt"
+      ]
+    },
+    "review_policy": "automatic",
+    "source_links": [
+      "../../../docs/labs/euler-job-arrays.md",
+      "../../../docs/reference/euler/slurm.md"
+    ]
+  },
+  "scenario": {
+    "total_tasks": 12,
+    "cap": 3,
+    "cpus_per_task": 2,
+    "memory_gib": 3,
+    "memory_mode": "per_cpu",
+    "other_jobs": [
+      {
+        "cpus": 2,
+        "memory_gib": 5
+      }
+    ],
+    "budget": {
+      "cpus": 10,
+      "memory_gib": 20
+    }
+  },
+  "cases": [
+    {
+      "id": "choices_00",
+      "answers": {
+        "combined_peak": [
+          "combined"
+        ],
+        "budget_cap": [
+          "cap_two"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": true,
+      "remote_pass": true,
+      "score": 100
+    },
+    {
+      "id": "choices_01",
+      "answers": {
+        "combined_peak": [
+          "combined"
+        ],
+        "budget_cap": [
+          "cap_two"
+        ],
+        "node_memory": [
+          "unchanged"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 67
+    },
+    {
+      "id": "choices_02",
+      "answers": {
+        "combined_peak": [
+          "combined"
+        ],
+        "budget_cap": [
+          "cap_two"
+        ],
+        "node_memory": [
+          "omit_job"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 67
+    },
+    {
+      "id": "choices_03",
+      "answers": {
+        "combined_peak": [
+          "combined"
+        ],
+        "budget_cap": [
+          "cap_three"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 67
+    },
+    {
+      "id": "choices_04",
+      "answers": {
+        "combined_peak": [
+          "combined"
+        ],
+        "budget_cap": [
+          "cap_three"
+        ],
+        "node_memory": [
+          "unchanged"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 33
+    },
+    {
+      "id": "choices_05",
+      "answers": {
+        "combined_peak": [
+          "combined"
+        ],
+        "budget_cap": [
+          "cap_three"
+        ],
+        "node_memory": [
+          "omit_job"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 33
+    },
+    {
+      "id": "choices_06",
+      "answers": {
+        "combined_peak": [
+          "combined"
+        ],
+        "budget_cap": [
+          "cap_four"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 67
+    },
+    {
+      "id": "choices_07",
+      "answers": {
+        "combined_peak": [
+          "combined"
+        ],
+        "budget_cap": [
+          "cap_four"
+        ],
+        "node_memory": [
+          "unchanged"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 33
+    },
+    {
+      "id": "choices_08",
+      "answers": {
+        "combined_peak": [
+          "combined"
+        ],
+        "budget_cap": [
+          "cap_four"
+        ],
+        "node_memory": [
+          "omit_job"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 33
+    },
+    {
+      "id": "choices_09",
+      "answers": {
+        "combined_peak": [
+          "combined"
+        ],
+        "budget_cap": [
+          "contradiction"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 67
+    },
+    {
+      "id": "choices_10",
+      "answers": {
+        "combined_peak": [
+          "combined"
+        ],
+        "budget_cap": [
+          "contradiction"
+        ],
+        "node_memory": [
+          "unchanged"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 33
+    },
+    {
+      "id": "choices_11",
+      "answers": {
+        "combined_peak": [
+          "combined"
+        ],
+        "budget_cap": [
+          "contradiction"
+        ],
+        "node_memory": [
+          "omit_job"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 33
+    },
+    {
+      "id": "choices_12",
+      "answers": {
+        "combined_peak": [
+          "all_tasks"
+        ],
+        "budget_cap": [
+          "cap_two"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 67
+    },
+    {
+      "id": "choices_13",
+      "answers": {
+        "combined_peak": [
+          "all_tasks"
+        ],
+        "budget_cap": [
+          "cap_two"
+        ],
+        "node_memory": [
+          "unchanged"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 33
+    },
+    {
+      "id": "choices_14",
+      "answers": {
+        "combined_peak": [
+          "all_tasks"
+        ],
+        "budget_cap": [
+          "cap_two"
+        ],
+        "node_memory": [
+          "omit_job"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 33
+    },
+    {
+      "id": "choices_15",
+      "answers": {
+        "combined_peak": [
+          "all_tasks"
+        ],
+        "budget_cap": [
+          "cap_three"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 33
+    },
+    {
+      "id": "choices_16",
+      "answers": {
+        "combined_peak": [
+          "all_tasks"
+        ],
+        "budget_cap": [
+          "cap_three"
+        ],
+        "node_memory": [
+          "unchanged"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 0
+    },
+    {
+      "id": "choices_17",
+      "answers": {
+        "combined_peak": [
+          "all_tasks"
+        ],
+        "budget_cap": [
+          "cap_three"
+        ],
+        "node_memory": [
+          "omit_job"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 0
+    },
+    {
+      "id": "choices_18",
+      "answers": {
+        "combined_peak": [
+          "all_tasks"
+        ],
+        "budget_cap": [
+          "cap_four"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 33
+    },
+    {
+      "id": "choices_19",
+      "answers": {
+        "combined_peak": [
+          "all_tasks"
+        ],
+        "budget_cap": [
+          "cap_four"
+        ],
+        "node_memory": [
+          "unchanged"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 0
+    },
+    {
+      "id": "choices_20",
+      "answers": {
+        "combined_peak": [
+          "all_tasks"
+        ],
+        "budget_cap": [
+          "cap_four"
+        ],
+        "node_memory": [
+          "omit_job"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 0
+    },
+    {
+      "id": "choices_21",
+      "answers": {
+        "combined_peak": [
+          "all_tasks"
+        ],
+        "budget_cap": [
+          "contradiction"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 33
+    },
+    {
+      "id": "choices_22",
+      "answers": {
+        "combined_peak": [
+          "all_tasks"
+        ],
+        "budget_cap": [
+          "contradiction"
+        ],
+        "node_memory": [
+          "unchanged"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 0
+    },
+    {
+      "id": "choices_23",
+      "answers": {
+        "combined_peak": [
+          "all_tasks"
+        ],
+        "budget_cap": [
+          "contradiction"
+        ],
+        "node_memory": [
+          "omit_job"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 0
+    },
+    {
+      "id": "choices_24",
+      "answers": {
+        "combined_peak": [
+          "array_only"
+        ],
+        "budget_cap": [
+          "cap_two"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 67
+    },
+    {
+      "id": "choices_25",
+      "answers": {
+        "combined_peak": [
+          "array_only"
+        ],
+        "budget_cap": [
+          "cap_two"
+        ],
+        "node_memory": [
+          "unchanged"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 33
+    },
+    {
+      "id": "choices_26",
+      "answers": {
+        "combined_peak": [
+          "array_only"
+        ],
+        "budget_cap": [
+          "cap_two"
+        ],
+        "node_memory": [
+          "omit_job"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 33
+    },
+    {
+      "id": "choices_27",
+      "answers": {
+        "combined_peak": [
+          "array_only"
+        ],
+        "budget_cap": [
+          "cap_three"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 33
+    },
+    {
+      "id": "choices_28",
+      "answers": {
+        "combined_peak": [
+          "array_only"
+        ],
+        "budget_cap": [
+          "cap_three"
+        ],
+        "node_memory": [
+          "unchanged"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 0
+    },
+    {
+      "id": "choices_29",
+      "answers": {
+        "combined_peak": [
+          "array_only"
+        ],
+        "budget_cap": [
+          "cap_three"
+        ],
+        "node_memory": [
+          "omit_job"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 0
+    },
+    {
+      "id": "choices_30",
+      "answers": {
+        "combined_peak": [
+          "array_only"
+        ],
+        "budget_cap": [
+          "cap_four"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 33
+    },
+    {
+      "id": "choices_31",
+      "answers": {
+        "combined_peak": [
+          "array_only"
+        ],
+        "budget_cap": [
+          "cap_four"
+        ],
+        "node_memory": [
+          "unchanged"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 0
+    },
+    {
+      "id": "choices_32",
+      "answers": {
+        "combined_peak": [
+          "array_only"
+        ],
+        "budget_cap": [
+          "cap_four"
+        ],
+        "node_memory": [
+          "omit_job"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 0
+    },
+    {
+      "id": "choices_33",
+      "answers": {
+        "combined_peak": [
+          "array_only"
+        ],
+        "budget_cap": [
+          "contradiction"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 33
+    },
+    {
+      "id": "choices_34",
+      "answers": {
+        "combined_peak": [
+          "array_only"
+        ],
+        "budget_cap": [
+          "contradiction"
+        ],
+        "node_memory": [
+          "unchanged"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 0
+    },
+    {
+      "id": "choices_35",
+      "answers": {
+        "combined_peak": [
+          "array_only"
+        ],
+        "budget_cap": [
+          "contradiction"
+        ],
+        "node_memory": [
+          "omit_job"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 0
+    },
+    {
+      "id": "choices_36",
+      "answers": {
+        "combined_peak": [
+          "per_task"
+        ],
+        "budget_cap": [
+          "cap_two"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 67
+    },
+    {
+      "id": "choices_37",
+      "answers": {
+        "combined_peak": [
+          "per_task"
+        ],
+        "budget_cap": [
+          "cap_two"
+        ],
+        "node_memory": [
+          "unchanged"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 33
+    },
+    {
+      "id": "choices_38",
+      "answers": {
+        "combined_peak": [
+          "per_task"
+        ],
+        "budget_cap": [
+          "cap_two"
+        ],
+        "node_memory": [
+          "omit_job"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 33
+    },
+    {
+      "id": "choices_39",
+      "answers": {
+        "combined_peak": [
+          "per_task"
+        ],
+        "budget_cap": [
+          "cap_three"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 33
+    },
+    {
+      "id": "choices_40",
+      "answers": {
+        "combined_peak": [
+          "per_task"
+        ],
+        "budget_cap": [
+          "cap_three"
+        ],
+        "node_memory": [
+          "unchanged"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 0
+    },
+    {
+      "id": "choices_41",
+      "answers": {
+        "combined_peak": [
+          "per_task"
+        ],
+        "budget_cap": [
+          "cap_three"
+        ],
+        "node_memory": [
+          "omit_job"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 0
+    },
+    {
+      "id": "choices_42",
+      "answers": {
+        "combined_peak": [
+          "per_task"
+        ],
+        "budget_cap": [
+          "cap_four"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 33
+    },
+    {
+      "id": "choices_43",
+      "answers": {
+        "combined_peak": [
+          "per_task"
+        ],
+        "budget_cap": [
+          "cap_four"
+        ],
+        "node_memory": [
+          "unchanged"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 0
+    },
+    {
+      "id": "choices_44",
+      "answers": {
+        "combined_peak": [
+          "per_task"
+        ],
+        "budget_cap": [
+          "cap_four"
+        ],
+        "node_memory": [
+          "omit_job"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 0
+    },
+    {
+      "id": "choices_45",
+      "answers": {
+        "combined_peak": [
+          "per_task"
+        ],
+        "budget_cap": [
+          "contradiction"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 33
+    },
+    {
+      "id": "choices_46",
+      "answers": {
+        "combined_peak": [
+          "per_task"
+        ],
+        "budget_cap": [
+          "contradiction"
+        ],
+        "node_memory": [
+          "unchanged"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 0
+    },
+    {
+      "id": "choices_47",
+      "answers": {
+        "combined_peak": [
+          "per_task"
+        ],
+        "budget_cap": [
+          "contradiction"
+        ],
+        "node_memory": [
+          "omit_job"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 0
+    },
+    {
+      "id": "missing_combined_peak",
+      "answers": {
+        "budget_cap": [
+          "cap_two"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 67
+    },
+    {
+      "id": "duplicate_combined_peak",
+      "answers": {
+        "combined_peak": [
+          "combined",
+          "combined"
+        ],
+        "budget_cap": [
+          "cap_two"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 67,
+      "legacy_remote_pass": true
+    },
+    {
+      "id": "extra_combined_peak",
+      "answers": {
+        "combined_peak": [
+          "combined",
+          "unknown"
+        ],
+        "budget_cap": [
+          "cap_two"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 67
+    },
+    {
+      "id": "missing_budget_cap",
+      "answers": {
+        "combined_peak": [
+          "combined"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 67
+    },
+    {
+      "id": "duplicate_budget_cap",
+      "answers": {
+        "combined_peak": [
+          "combined"
+        ],
+        "budget_cap": [
+          "cap_two",
+          "cap_two"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 67,
+      "legacy_remote_pass": true
+    },
+    {
+      "id": "extra_budget_cap",
+      "answers": {
+        "combined_peak": [
+          "combined"
+        ],
+        "budget_cap": [
+          "cap_two",
+          "unknown"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 67
+    },
+    {
+      "id": "missing_node_memory",
+      "answers": {
+        "combined_peak": [
+          "combined"
+        ],
+        "budget_cap": [
+          "cap_two"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 67
+    },
+    {
+      "id": "duplicate_node_memory",
+      "answers": {
+        "combined_peak": [
+          "combined"
+        ],
+        "budget_cap": [
+          "cap_two"
+        ],
+        "node_memory": [
+          "node_total",
+          "node_total"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 67,
+      "legacy_remote_pass": true
+    },
+    {
+      "id": "extra_node_memory",
+      "answers": {
+        "combined_peak": [
+          "combined"
+        ],
+        "budget_cap": [
+          "cap_two"
+        ],
+        "node_memory": [
+          "node_total",
+          "unknown"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "score": 67
+    },
+    {
+      "id": "unknown_field",
+      "answers": {
+        "combined_peak": [
+          "combined"
+        ],
+        "budget_cap": [
+          "cap_two"
+        ],
+        "node_memory": [
+          "node_total"
+        ],
+        "unexpected": [
+          "yes"
+        ]
+      },
+      "local_pass": false,
+      "remote_pass": false,
+      "invalid": true
+    },
+    {
+      "id": "corrected_retry",
+      "answers": {
+        "combined_peak": [
+          "combined"
+        ],
+        "budget_cap": [
+          "cap_two"
+        ],
+        "node_memory": [
+          "node_total"
+        ]
+      },
+      "local_pass": true,
+      "remote_pass": true,
+      "score": 100
+    }
+  ],
+  "script_cases": [
+    {
+      "id": "exact_repair",
+      "text": "#!/usr/bin/env bash\n# SYNTHETIC CHECKER FIXTURE - DO NOT SUBMIT OR EXECUTE\n#SBATCH --account=es_fuge\n#SBATCH --array=0-9%1\n#SBATCH --time=00:10:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem-per-cpu=1G\n#SBATCH --output=logs/%x_%A_%a.out\n#SBATCH --error=logs/%x_%A_%a.err\n",
+      "local_pass": true,
+      "remote_pass": true
+    },
+    {
+      "id": "crlf",
+      "text": "#!/usr/bin/env bash\r\n# SYNTHETIC CHECKER FIXTURE - DO NOT SUBMIT OR EXECUTE\r\n#SBATCH --account=es_fuge\r\n#SBATCH --array=0-9%1\r\n#SBATCH --time=00:10:00\r\n#SBATCH --cpus-per-task=1\r\n#SBATCH --mem-per-cpu=1G\r\n#SBATCH --output=logs/%x_%A_%a.out\r\n#SBATCH --error=logs/%x_%A_%a.err\r\n",
+      "local_pass": true,
+      "remote_pass": true
+    },
+    {
+      "id": "memory_case",
+      "text": "#!/usr/bin/env bash\n# SYNTHETIC CHECKER FIXTURE - DO NOT SUBMIT OR EXECUTE\n#SBATCH --account=es_fuge\n#SBATCH --array=0-9%1\n#SBATCH --time=00:10:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem-per-cpu=1g\n#SBATCH --output=logs/%x_%A_%a.out\n#SBATCH --error=logs/%x_%A_%a.err\n",
+      "local_pass": true,
+      "remote_pass": true
+    },
+    {
+      "id": "uncapped",
+      "text": "#!/usr/bin/env bash\n# SYNTHETIC CHECKER FIXTURE - DO NOT SUBMIT OR EXECUTE\n#SBATCH --account=es_fuge\n#SBATCH --array=0-9\n#SBATCH --time=00:10:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem-per-cpu=1G\n#SBATCH --output=logs/%x_%A_%a.out\n#SBATCH --error=logs/%x_%A_%a.err\n",
+      "local_pass": false,
+      "remote_pass": false
+    },
+    {
+      "id": "zero_cap",
+      "text": "#!/usr/bin/env bash\n# SYNTHETIC CHECKER FIXTURE - DO NOT SUBMIT OR EXECUTE\n#SBATCH --account=es_fuge\n#SBATCH --array=0-9%0\n#SBATCH --time=00:10:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem-per-cpu=1G\n#SBATCH --output=logs/%x_%A_%a.out\n#SBATCH --error=logs/%x_%A_%a.err\n",
+      "local_pass": false,
+      "remote_pass": false
+    },
+    {
+      "id": "different_cap",
+      "text": "#!/usr/bin/env bash\n# SYNTHETIC CHECKER FIXTURE - DO NOT SUBMIT OR EXECUTE\n#SBATCH --account=es_fuge\n#SBATCH --array=0-9%2\n#SBATCH --time=00:10:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem-per-cpu=1G\n#SBATCH --output=logs/%x_%A_%a.out\n#SBATCH --error=logs/%x_%A_%a.err\n",
+      "local_pass": false,
+      "remote_pass": false
+    },
+    {
+      "id": "different_range",
+      "text": "#!/usr/bin/env bash\n# SYNTHETIC CHECKER FIXTURE - DO NOT SUBMIT OR EXECUTE\n#SBATCH --account=es_fuge\n#SBATCH --array=0-99%1\n#SBATCH --time=00:10:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem-per-cpu=1G\n#SBATCH --output=logs/%x_%A_%a.out\n#SBATCH --error=logs/%x_%A_%a.err\n",
+      "local_pass": false,
+      "remote_pass": false
+    },
+    {
+      "id": "wrong_account",
+      "text": "#!/usr/bin/env bash\n# SYNTHETIC CHECKER FIXTURE - DO NOT SUBMIT OR EXECUTE\n#SBATCH --account=public\n#SBATCH --array=0-9%1\n#SBATCH --time=00:10:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem-per-cpu=1G\n#SBATCH --output=logs/%x_%A_%a.out\n#SBATCH --error=logs/%x_%A_%a.err\n",
+      "local_pass": false,
+      "remote_pass": false
+    },
+    {
+      "id": "changed_cpu",
+      "text": "#!/usr/bin/env bash\n# SYNTHETIC CHECKER FIXTURE - DO NOT SUBMIT OR EXECUTE\n#SBATCH --account=es_fuge\n#SBATCH --array=0-9%1\n#SBATCH --time=00:10:00\n#SBATCH --cpus-per-task=2\n#SBATCH --mem-per-cpu=1G\n#SBATCH --output=logs/%x_%A_%a.out\n#SBATCH --error=logs/%x_%A_%a.err\n",
+      "local_pass": false,
+      "remote_pass": false
+    },
+    {
+      "id": "changed_memory",
+      "text": "#!/usr/bin/env bash\n# SYNTHETIC CHECKER FIXTURE - DO NOT SUBMIT OR EXECUTE\n#SBATCH --account=es_fuge\n#SBATCH --array=0-9%1\n#SBATCH --time=00:10:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem-per-cpu=2G\n#SBATCH --output=logs/%x_%A_%a.out\n#SBATCH --error=logs/%x_%A_%a.err\n",
+      "local_pass": false,
+      "remote_pass": false
+    },
+    {
+      "id": "changed_time",
+      "text": "#!/usr/bin/env bash\n# SYNTHETIC CHECKER FIXTURE - DO NOT SUBMIT OR EXECUTE\n#SBATCH --account=es_fuge\n#SBATCH --array=0-9%1\n#SBATCH --time=00:20:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem-per-cpu=1G\n#SBATCH --output=logs/%x_%A_%a.out\n#SBATCH --error=logs/%x_%A_%a.err\n",
+      "local_pass": false,
+      "remote_pass": false
+    },
+    {
+      "id": "output_index_missing",
+      "text": "#!/usr/bin/env bash\n# SYNTHETIC CHECKER FIXTURE - DO NOT SUBMIT OR EXECUTE\n#SBATCH --account=es_fuge\n#SBATCH --array=0-9%1\n#SBATCH --time=00:10:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem-per-cpu=1G\n#SBATCH --output=logs/%x_%A.out\n#SBATCH --error=logs/%x_%A_%a.err\n",
+      "local_pass": false,
+      "remote_pass": false
+    },
+    {
+      "id": "error_parent_missing",
+      "text": "#!/usr/bin/env bash\n# SYNTHETIC CHECKER FIXTURE - DO NOT SUBMIT OR EXECUTE\n#SBATCH --account=es_fuge\n#SBATCH --array=0-9%1\n#SBATCH --time=00:10:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem-per-cpu=1G\n#SBATCH --output=logs/%x_%A_%a.out\n#SBATCH --error=logs/%x_%a.err\n",
+      "local_pass": false,
+      "remote_pass": false
+    },
+    {
+      "id": "missing_file",
+      "text": null,
+      "local_pass": false,
+      "remote_pass": false
+    },
+    {
+      "id": "local_size_boundary",
+      "text": "#!/usr/bin/env bash\n# SYNTHETIC CHECKER FIXTURE - DO NOT SUBMIT OR EXECUTE\n#SBATCH --account=es_fuge\n#SBATCH --array=0-9%1\n#SBATCH --time=00:10:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem-per-cpu=1G\n#SBATCH --output=logs/%x_%A_%a.out\n#SBATCH --error=logs/%x_%A_%a.err\n",
+      "local_pass": true,
+      "remote_pass": true,
+      "padding_bytes": 99999
+    },
+    {
+      "id": "local_size_rejected",
+      "text": "#!/usr/bin/env bash\n# SYNTHETIC CHECKER FIXTURE - DO NOT SUBMIT OR EXECUTE\n#SBATCH --account=es_fuge\n#SBATCH --array=0-9%1\n#SBATCH --time=00:10:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem-per-cpu=1G\n#SBATCH --output=logs/%x_%A_%a.out\n#SBATCH --error=logs/%x_%A_%a.err\n",
+      "local_pass": false,
+      "remote_pass": false,
+      "padding_bytes": 100000,
+      "legacy_remote_pass": true
+    },
+    {
+      "id": "conflicting_memory_flags",
+      "text": "#!/usr/bin/env bash\n# SYNTHETIC CHECKER FIXTURE - DO NOT SUBMIT OR EXECUTE\n#SBATCH --account=es_fuge\n#SBATCH --array=0-9%1\n#SBATCH --time=00:10:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem-per-cpu=1G\n#SBATCH --output=logs/%x_%A_%a.out\n#SBATCH --error=logs/%x_%A_%a.err\n#SBATCH --mem=3G\n",
+      "local_pass": true,
+      "remote_pass": true,
+      "known_limitation": "both checkers ignore conflicting extra flags; not a valid scheduler model"
+    },
+    {
+      "id": "directives_after_command",
+      "text": "#!/usr/bin/env bash\necho synthetic-only\n#!/usr/bin/env bash\n# SYNTHETIC CHECKER FIXTURE - DO NOT SUBMIT OR EXECUTE\n#SBATCH --account=es_fuge\n#SBATCH --array=0-9%1\n#SBATCH --time=00:10:00\n#SBATCH --cpus-per-task=1\n#SBATCH --mem-per-cpu=1G\n#SBATCH --output=logs/%x_%A_%a.out\n#SBATCH --error=logs/%x_%A_%a.err\n",
+      "local_pass": true,
+      "remote_pass": true,
+      "known_limitation": "both checkers scan directives after first command, unlike Slurm"
+    }
+  ],
+  "diagnostic_only": true,
+  "curriculum_version": "5.0.0"
+}
