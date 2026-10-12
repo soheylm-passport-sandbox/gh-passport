@@ -2,6 +2,7 @@ package localserver
 
 import (
 	"encoding/json"
+	"github.com/soheylm-passport-sandbox/gh-passport/internal/handover"
 	"io"
 	"net/http"
 	"runtime"
@@ -26,7 +27,11 @@ func (server *Server) computerContext() ComputerContext {
 		platform = "macos"
 	}
 	value := ComputerContext{Platform: platform, OriginalPlatform: server.repository.Passport.Platform, SetupMissions: []string{}}
-	for _, candidate := range computerSetupMissions {
+	candidates := append([]string(nil), computerSetupMissions...)
+	if server.repository.Passport.CurriculumVersion == "6.0.0" {
+		candidates = append(candidates, "data-handover")
+	}
+	for _, candidate := range candidates {
 		for _, assigned := range server.repository.Passport.Missions {
 			if candidate == assigned {
 				value.SetupMissions = append(value.SetupMissions, candidate)
@@ -75,6 +80,8 @@ func (server *Server) recheckComputer(response http.ResponseWriter, request *htt
 		checks = server.verifyPythonEnvironment()
 	case "euler-access-ssh":
 		checks = server.verifySSHConfig()
+	case "data-handover":
+		checks = map[string]bool{"fixture_inventory": handover.ValidateProject(server.handoverRoot()) == nil}
 	}
 	passed := len(checks) > 0
 	for _, ok := range checks {

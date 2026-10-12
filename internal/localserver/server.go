@@ -26,6 +26,7 @@ import (
 
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/agentverify"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/githubstatus"
+	"github.com/soheylm-passport-sandbox/gh-passport/internal/handover"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/launcherupdate"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/localstate"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/missionverify"
@@ -177,6 +178,7 @@ func (server *Server) handler() http.Handler {
 	mux.HandleFunc("POST /__passport/v2/verify", server.withSession(server.verifyMission))
 	mux.HandleFunc("POST /__passport/v2/submit", server.withSession(server.submitMission))
 	mux.HandleFunc("POST /__passport/v2/setup", server.withSession(server.completeSetup))
+	mux.HandleFunc("POST /__passport/v2/handover", server.withSession(server.prepareHandover))
 	mux.HandleFunc("POST /__passport/v2/practice", server.withSession(server.preparePractice))
 	mux.HandleFunc("POST /__passport/v2/computer-check", server.withSession(server.recheckComputer))
 	mux.Handle("/", server.staticHandler())
@@ -827,12 +829,37 @@ func samePendingSubmissions(left, right map[string]localstate.PendingSubmission)
 	return true
 }
 
-func (server *Server) preparePractice(response http.ResponseWriter, _ *http.Request) {
+func (server *Server) preparePractice(response http.ResponseWriter, request *http.Request) {
+	server.preparePracticeMode(response, request, false)
+}
+
+func (server *Server) preparePracticeMode(response http.ResponseWriter, request *http.Request, prepareHandover bool) {
 	server.mu.Lock()
 	defer server.mu.Unlock()
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
 	root := server.practiceRoot()
+	if prepareHandover {
+		computerOnly := request.URL.Query().Get("setup") == "computer"
+		assigned := false
+		for _, id := range server.repository.Passport.Missions {
+			assigned = assigned || id == "data-handover"
+		}
+		if server.repository.Passport.CurriculumVersion != "6.0.0" || !assigned || (!computerOnly && server.activeMissionID() != "data-handover") {
+			server.writeError(response, http.StatusConflict, "mission_not_current")
+			return
+		}
+		if server.pendingMissionID() != "" {
+			server.writeError(response, http.StatusConflict, "mission_submission_pending")
+			return
+		}
+		catalog, err := missionverify.LoadCatalog(server.repository.Root)
+		mission, ok := catalog.Missions["data-handover"]
+		if err != nil || catalog.CurriculumVersion != "6.0.0" || !ok || mission.Verification.LocalVerifier != "handover_packet_v2" {
+			server.writeError(response, http.StatusConflict, "mission_catalog_unavailable")
+			return
+		}
+	}
 	origin := "https://github.com/" + server.repository.Owner + "/" + server.repository.Name + ".git"
 	if info, err := os.Lstat(root); errors.Is(err, os.ErrNotExist) {
 		if _, err := server.runner.Run(ctx, "", "git", "clone", origin, root); err != nil {
@@ -862,6 +889,21 @@ func (server *Server) preparePractice(response http.ResponseWriter, _ *http.Requ
 	}
 	if err != nil {
 		server.writeError(response, http.StatusConflict, "practice_branch_failed")
+		return
+	}
+	if prepareHandover {
+		if err := handover.Prepare(ctx, server.handoverRoot()); err != nil {
+			server.writeError(response, http.StatusConflict, "handover_project_not_safe")
+			return
+		}
+		if err := handover.PrepareWorksheet(root); err != nil {
+			server.writeError(response, http.StatusConflict, "handover_worksheet_not_safe")
+			return
+		}
+		server.writeJSON(response, http.StatusOK, map[string]any{"status": "ready", "path": root, "branch": branch, "handover": map[string]any{
+			"project_path": server.handoverRoot(), "reprise_path": filepath.Join(filepath.Dir(server.handoverRoot()), "handover-reprise"), "revision": handover.Contract.Revision, "expected_result": handover.Contract.ExpectedResult,
+			"files": []string{"verify.py", "inputs/measurements.csv", "environment.json"},
+		}})
 		return
 	}
 	server.writeJSON(response, http.StatusOK, map[string]string{"status": "ready", "path": root, "branch": branch})
@@ -1026,6 +1068,23 @@ func (server *Server) localReceipt(mission missionverify.Mission, input map[stri
 		checks = server.verifySlurmArray()
 	case "gpu_script":
 		checks = server.verifyGPUScript()
+	case "handover_packet_v2":
+		raw, readErr := handover.ReadDocument(server.practiceRoot())
+		messages := []string{}
+		if readErr != nil {
+			messages = append(messages, "The fictional handover document is missing or unsafe; keep it at workspace/handover/project-handover.md.")
+		} else {
+			messages = handover.Assess(raw, handover.Contract.Revision, time.Now().UTC())
+		}
+		inventory := handover.ValidateProject(server.handoverRoot()) == nil
+		feedback := ""
+		if len(messages) > 0 {
+			feedback = messages[0]
+		}
+		if !inventory {
+			feedback += " Press Prepare practice folder to obtain the unchanged fictional inventory; preserve any altered project and ask for help."
+		}
+		return server.validateReceiptChecks(mission, map[string]any{"verifier": verifier, "passed": len(messages) == 0 && inventory, "checks": map[string]bool{"document_consistency": len(messages) == 0, "fixture_inventory": inventory}, "feedback": strings.TrimSpace(feedback)})
 	case "handover_document":
 		checks = server.verifyHandover()
 	default:
