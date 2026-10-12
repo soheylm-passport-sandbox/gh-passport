@@ -1,0 +1,24 @@
+{
+  "expected_result": "measurements=3 total=12",
+  "files": {
+    ".gitignore": ".venv/\nscratch/\n__pycache__/\n",
+    "environment.json": "{\"python_minimum\": \"3.9\", \"external_packages\": [], \"scope\": \"fictional local fixture only\"}\n",
+    "inputs/measurements.csv": "label,value\nsynthetic-a,2\nsynthetic-b,4\nsynthetic-c,6\n",
+    "verify.py": "\"\"\"Fictional teaching fixture: count and sum three synthetic measurements.\"\"\"\nimport csv\nfrom pathlib import Path\n\nwith Path('inputs/measurements.csv').open(newline='', encoding='utf-8') as stream:\n    rows = list(csv.DictReader(stream))\nprint('measurements={} total={}'.format(len(rows), sum(int(row['value']) for row in rows)))\n"
+  },
+  "git_config": "[core]\n\trepositoryformatversion = 0\n\tfilemode = false\n\tbare = false\n\tlogallrefupdates = false\n\tautocrlf = false\n",
+  "id": "synthetic-handover-v1",
+  "max_document_bytes": 40000,
+  "objects": {
+    "395d65a38ebb3b65f826ca26e4eff8dd83af1ccc": "YmxvYiA1NABsYWJlbCx2YWx1ZQpzeW50aGV0aWMtYSwyCnN5bnRoZXRpYy1iLDQKc3ludGhldGljLWMsNgo=",
+    "3b577eb165c99b3338f3b29e5bc48fa2c525af19": "YmxvYiAyOQAudmVudi8Kc2NyYXRjaC8KX19weWNhY2hlX18vCg==",
+    "4e45a59f4a09d7c069d8af34b5d724f7c7c513cf": "Y29tbWl0IDIyNAB0cmVlIDkxNzdmNWFmYzA4MDUyNGIxZTRlMjU2ZWEzYzBjN2NiZWEwMjc0NmIKYXV0aG9yIFN5bnRoZXRpYyBNYWludGFpbmVyIDxzeW50aGV0aWNAZXhhbXBsZS5pbnZhbGlkPiA5NDY2ODQ4MDAgKzAwMDAKY29tbWl0dGVyIFN5bnRoZXRpYyBNYWludGFpbmVyIDxzeW50aGV0aWNAZXhhbXBsZS5pbnZhbGlkPiA5NDY2ODQ4MDAgKzAwMDAKClN5bnRoZXRpYyBoYW5kb3ZlciBmaXh0dXJlIHYxCg==",
+    "8550836013febc281be85c6b92913dfbb2088112": "dHJlZSA0NAAxMDA2NDQgbWVhc3VyZW1lbnRzLmNzdgA5XWWjjrs7Zfgmyibk7/jdg68czA==",
+    "9177f5afc080524b1e4e256ea3c0c7cbea02746b": "dHJlZSAxNTIAMTAwNjQ0IC5naXRpZ25vcmUAO1d+sWXJmzM487KeW8SPosUlrxkxMDA2NDQgZW52aXJvbm1lbnQuanNvbgD1uUX/6Sg6MGFGLCR5gE9rcYao0jQwMDAwIGlucHV0cwCFUINgE/68KBvoXGuSkT37sgiBEjEwMDY0NCB2ZXJpZnkucHkA3kkNfGPWzQF7YKrU/Zdg6gxpMwI=",
+    "de490d7c63d6cd017b60aad4fd9760ea0c693302": "YmxvYiAzMzAAIiIiRmljdGlvbmFsIHRlYWNoaW5nIGZpeHR1cmU6IGNvdW50IGFuZCBzdW0gdGhyZWUgc3ludGhldGljIG1lYXN1cmVtZW50cy4iIiIKaW1wb3J0IGNzdgpmcm9tIHBhdGhsaWIgaW1wb3J0IFBhdGgKCndpdGggUGF0aCgnaW5wdXRzL21lYXN1cmVtZW50cy5jc3YnKS5vcGVuKG5ld2xpbmU9JycsIGVuY29kaW5nPSd1dGYtOCcpIGFzIHN0cmVhbToKICAgIHJvd3MgPSBsaXN0KGNzdi5EaWN0UmVhZGVyKHN0cmVhbSkpCnByaW50KCdtZWFzdXJlbWVudHM9e30gdG90YWw9e30nLmZvcm1hdChsZW4ocm93cyksIHN1bShpbnQocm93Wyd2YWx1ZSddKSBmb3Igcm93IGluIHJvd3MpKSkK",
+    "f5b945ffe9283a3061462c2479804f6b7186a8d2": "YmxvYiA5MgB7InB5dGhvbl9taW5pbXVtIjogIjMuOSIsICJleHRlcm5hbF9wYWNrYWdlcyI6IFtdLCAic2NvcGUiOiAiZmljdGlvbmFsIGxvY2FsIGZpeHR1cmUgb25seSJ9Cg=="
+  },
+  "revision": "4e45a59f4a09d7c069d8af34b5d724f7c7c513cf",
+  "schema_version": 1,
+  "tree": "9177f5afc080524b1e4e256ea3c0c7cbea02746b"
+}

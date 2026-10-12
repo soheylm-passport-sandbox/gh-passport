@@ -19,7 +19,7 @@ import (
 func TestHandoverReceiptFollowsLessonContract(t *testing.T) {
 	_, source, _, _ := runtime.Caller(0)
 	root := filepath.Clean(filepath.Join(filepath.Dir(source), "../../../.."))
-	missionPath := filepath.Join(root, "curriculum/missions/data-handover/mission.json")
+	missionPath := filepath.Join(root, "curriculum/compatibility/5.0.0.json")
 	templatePath := filepath.Join(root, "platform/passport-template/fixtures/data_steward/workspace/handover/project-handover.md")
 	missionJSON, missionErr := os.ReadFile(missionPath)
 	template, templateErr := os.ReadFile(templatePath)
@@ -29,6 +29,13 @@ func TestHandoverReceiptFollowsLessonContract(t *testing.T) {
 	if missionErr != nil || templateErr != nil {
 		t.Fatalf("read handover source: mission=%v template=%v", missionErr, templateErr)
 	}
+	var snapshot struct {
+		Missions map[string]struct{ Metadata json.RawMessage }
+	}
+	if err := json.Unmarshal(missionJSON, &snapshot); err != nil {
+		t.Fatal(err)
+	}
+	missionJSON = snapshot.Missions["data-handover"].Metadata
 	var mission missionverify.Mission
 	var lesson struct {
 		Activity struct {
