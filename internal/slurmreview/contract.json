@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "max_bytes": 100000,
+  "profiles": {
+    "gpu": {
+      "path": "workspace/slurm/gpu_job.slurm.txt",
+      "allowed": [
+        "--job-name",
+        "--account",
+        "--cpus-per-task",
+        "--mem-per-cpu",
+        "--time",
+        "--output",
+        "--error",
+        "--nodes",
+        "--ntasks",
+        "--gpus"
+      ],
+      "messages": {
+        "bounded_file": "Keep workspace/slurm/gpu_job.slurm.txt as a regular UTF-8 practice file smaller than 100000 bytes; do not execute it.",
+        "header_layout": "Put every #SBATCH directive before the first shell command; use one unquoted long option and one literal value per line (for example #SBATCH --time=00:10:00).",
+        "unique_directives": "Keep each #SBATCH option only once. Inspect both repeated lines and keep the intended value; do not rely on their order.",
+        "supported_options": "Use only the options shown in this fictional exercise, plus optional --nodes=1 and --ntasks=1. Remove extra resource options or short aliases; this bounded review is not a general Slurm validator.",
+        "single_allocation": "Use at most one node and one Slurm task per job: omit --nodes/--ntasks or set each to exactly 1. The array cap limits array jobs, not the number of Slurm tasks inside each job.",
+        "account": "Use --account=es_fuge in the fictional review file.",
+        "gpu_model": "Request exactly one explicit supported GPU: rtx_4090:1, rtx_3090:1 or pro_6000:1; special hardware still needs a separate compatibility review.",
+        "no_partition": "Remove the forced --partition from the practice request.",
+        "cpu_limit": "Use ASCII digits for --cpus-per-task, with a value from 1 to 16; remove signs such as +.",
+        "memory_limit": "Use a positive integer G value for --mem-per-cpu, with CPUs times GiB at most 64; remove --mem. System RAM is separate from GPU memory.",
+        "time_limit": "Use a positive HH:MM:SS time, at most 04:00:00, with minutes and seconds below 60.",
+        "output_log": "Include both %x and %j in --output so the fictional log identifies its job.",
+        "error_log": "Include both %x and %j in --error so the fictional error log identifies its job."
+      }
+    },
+    "array": {
+      "path": "workspace/slurm/array_job.slurm.txt",
+      "allowed": [
+        "--job-name",
+        "--account",
+        "--cpus-per-task",
+        "--mem-per-cpu",
+        "--time",
+        "--output",
+        "--error",
+        "--nodes",
+        "--ntasks",
+        "--array"
+      ],
+      "messages": {
+        "bounded_file": "Keep workspace/slurm/array_job.slurm.txt as a regular UTF-8 practice file smaller than 100000 bytes; do not execute it.",
+        "header_layout": "Put every #SBATCH directive before the first shell command; use one unquoted long option and one literal value per line (for example #SBATCH --time=00:10:00).",
+        "unique_directives": "Keep each #SBATCH option only once. Inspect both repeated lines and keep the intended value; do not rely on their order.",
+        "supported_options": "Use only the options shown in this fictional exercise, plus optional --nodes=1 and --ntasks=1. Remove extra resource options or short aliases; this bounded review is not a general Slurm validator.",
+        "single_allocation": "Use at most one node and one Slurm task per job: omit --nodes/--ntasks or set each to exactly 1. The array cap limits array jobs, not the number of Slurm tasks inside each job.",
+        "account": "Keep the fictional array on --account=es_fuge.",
+        "array_exact": "Use exactly --array=0-9%1 for this exercise.",
+        "output_unique": "Include both %A and %a in --output so each array job has its own log.",
+        "error_unique": "Include both %A and %a in --error so each array job has its own error log.",
+        "safe_resources": "Keep --time=00:10:00, --cpus-per-task=1 and --mem-per-cpu=1G for the guided file repair."
+      }
+    }
+  }
+}

@@ -25,6 +25,8 @@ func Bundle(version string) (fs.FS, error) {
 	case "7.0.0":
 		return fs.Sub(Assets, "legacy/7.0.0")
 	case "8.0.0":
+		return fs.Sub(Assets, "legacy/8.0.0")
+	case "9.0.0":
 		return fs.Sub(Assets, "bundle")
 	default:
 		return nil, errors.New("unsupported lesson bundle")
