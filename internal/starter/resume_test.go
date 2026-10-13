@@ -258,7 +258,7 @@ func TestResumeDoesNotTreatParentRepositoryAsThePassport(t *testing.T) {
 }
 
 func TestResumeLegacyPassportAfterNewCourseCutover(t *testing.T) {
-	for _, versions := range []struct{ old, current string }{{"2.1.2", "3.0.0"}, {"2.1.2", "4.0.0"}, {"3.0.0", "4.0.0"}, {"2.1.2", "5.0.0"}, {"3.0.0", "5.0.0"}, {"4.0.0", "5.0.0"}, {"2.1.2", "6.0.0"}, {"3.0.0", "6.0.0"}, {"4.0.0", "6.0.0"}, {"5.0.0", "6.0.0"}} {
+	for _, versions := range []struct{ old, current string }{{"2.1.2", "3.0.0"}, {"2.1.2", "4.0.0"}, {"3.0.0", "4.0.0"}, {"2.1.2", "5.0.0"}, {"3.0.0", "5.0.0"}, {"4.0.0", "5.0.0"}, {"2.1.2", "6.0.0"}, {"3.0.0", "6.0.0"}, {"4.0.0", "6.0.0"}, {"5.0.0", "6.0.0"}, {"2.1.2", "7.0.0"}, {"3.0.0", "7.0.0"}, {"4.0.0", "7.0.0"}, {"5.0.0", "7.0.0"}, {"6.0.0", "7.0.0"}} {
 		t.Run(versions.old+"-to-"+versions.current, func(t *testing.T) {
 
 			r, base, original := resumeFixture(t)

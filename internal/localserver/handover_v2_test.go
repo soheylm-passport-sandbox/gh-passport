@@ -267,51 +267,70 @@ func TestHandoverLocalBundleServedByRealServer(t *testing.T) {
 }
 
 func TestHandoverComputerPreparationPreservesCompletedProgress(t *testing.T) {
-	server, _ := handoverServer(t)
-	server.official = &githubstatus.Official{Status: githubstatus.ControllerStatus{HeadSHA: server.repository.HeadSHA, Stage: "complete"}}
-	state := server.defaultState()
-	state.MissionDrafts = map[string]map[string][]string{"data-handover": {"recover_inputs": {"approved_copy"}}}
-	if err := server.store.Save(state); err != nil {
-		t.Fatal(err)
-	}
-	before, _ := server.store.Load()
-	beforeRaw, _ := json.Marshal(before)
-	if res := request(server, http.MethodPost, "/__passport/v2/handover", nil, true, true); res.Code != 409 {
-		t.Fatal("completed assessment mutation allowed")
-	}
-	if res := request(server, http.MethodPost, "/__passport/v2/handover?setup=computer", nil, true, true); res.Code != 200 {
-		t.Fatal(res.Body.String())
-	}
-	after, _ := server.store.Load()
-	afterRaw, _ := json.Marshal(after)
-	if string(beforeRaw) != string(afterRaw) {
-		t.Fatal("computer preparation changed state")
-	}
-	res := request(server, http.MethodPost, "/__passport/v2/computer-check", []byte(`{"mission":"data-handover"}`), true, true)
-	if res.Code != 200 {
-		t.Fatal(res.Body.String())
-	}
-	var result struct {
-		AssessmentChanged bool `json:"assessment_changed"`
-		Passed            bool
-		Checks            map[string]bool
-	}
-	json.Unmarshal(res.Body.Bytes(), &result)
-	if result.AssessmentChanged || !result.Passed || !result.Checks["fixture_inventory"] {
-		t.Fatal(result)
-	}
-	if server.official.Status.Stage != "complete" {
-		t.Fatal("completion changed")
-	}
-	server.repository.HeadSHA = strings.Repeat("b", 40)
-	server.repository.RemoteHeadSHA = server.repository.HeadSHA
-	server.markPendingSubmission("data-handover")
-	if res := request(server, http.MethodPost, "/__passport/v2/handover?setup=computer", nil, true, true); res.Code != 409 {
-		t.Fatal("pending preparation allowed")
-	}
-	server, _ = handoverServer(t)
-	server.repository.Passport.Missions = []string{"core-orientation"}
-	if res := request(server, http.MethodPost, "/__passport/v2/handover?setup=computer", nil, true, true); res.Code != 409 {
-		t.Fatal("unassigned preparation allowed")
+	for _, version := range []string{"6.0.0", "7.0.0"} {
+		t.Run(version, func(t *testing.T) {
+			server, _ := handoverServer(t)
+			server.repository.Passport.CurriculumVersion = version
+			raw, err := os.ReadFile(filepath.Join(server.repository.Root, "passport-curriculum.json"))
+			if err != nil {
+				t.Fatal(err)
+			}
+			var catalog missionverify.Catalog
+			if err := json.Unmarshal(raw, &catalog); err != nil {
+				t.Fatal(err)
+			}
+			catalog.CurriculumVersion = version
+			raw, _ = json.Marshal(catalog)
+			if err := os.WriteFile(filepath.Join(server.repository.Root, "passport-curriculum.json"), raw, 0600); err != nil {
+				t.Fatal(err)
+			}
+			server.official = &githubstatus.Official{Status: githubstatus.ControllerStatus{HeadSHA: server.repository.HeadSHA, Stage: "complete"}}
+			state := server.defaultState()
+			state.MissionDrafts = map[string]map[string][]string{"data-handover": {"recover_inputs": {"approved_copy"}}}
+			if err := server.store.Save(state); err != nil {
+				t.Fatal(err)
+			}
+			before, _ := server.store.Load()
+			beforeRaw, _ := json.Marshal(before)
+			if res := request(server, http.MethodPost, "/__passport/v2/handover", nil, true, true); res.Code != 409 {
+				t.Fatal("completed assessment mutation allowed")
+			}
+			if res := request(server, http.MethodPost, "/__passport/v2/handover?setup=computer", nil, true, true); res.Code != 200 {
+				t.Fatal(res.Body.String())
+			}
+			after, _ := server.store.Load()
+			afterRaw, _ := json.Marshal(after)
+			if string(beforeRaw) != string(afterRaw) {
+				t.Fatal("computer preparation changed state")
+			}
+			res := request(server, http.MethodPost, "/__passport/v2/computer-check", []byte(`{"mission":"data-handover"}`), true, true)
+			if res.Code != 200 {
+				t.Fatal(res.Body.String())
+			}
+			var result struct {
+				AssessmentChanged bool `json:"assessment_changed"`
+				Passed            bool
+				Checks            map[string]bool
+			}
+			json.Unmarshal(res.Body.Bytes(), &result)
+			if result.AssessmentChanged || !result.Passed || !result.Checks["fixture_inventory"] {
+				t.Fatal(result)
+			}
+			if server.official.Status.Stage != "complete" {
+				t.Fatal("completion changed")
+			}
+			server.repository.HeadSHA = strings.Repeat("b", 40)
+			server.repository.RemoteHeadSHA = server.repository.HeadSHA
+			server.markPendingSubmission("data-handover")
+			if res := request(server, http.MethodPost, "/__passport/v2/handover?setup=computer", nil, true, true); res.Code != 409 {
+				t.Fatal("pending preparation allowed")
+			}
+			server, _ = handoverServer(t)
+			server.repository.Passport.Missions = []string{"core-orientation"}
+			if res := request(server, http.MethodPost, "/__passport/v2/handover?setup=computer", nil, true, true); res.Code != 409 {
+				t.Fatal("unassigned preparation allowed")
+			}
+
+		})
 	}
 }
