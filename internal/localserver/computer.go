@@ -28,7 +28,7 @@ func (server *Server) computerContext() ComputerContext {
 	}
 	value := ComputerContext{Platform: platform, OriginalPlatform: server.repository.Passport.Platform, SetupMissions: []string{}}
 	candidates := append([]string(nil), computerSetupMissions...)
-	if server.repository.Passport.CurriculumVersion == "6.0.0" || server.repository.Passport.CurriculumVersion == "7.0.0" {
+	if server.repository.Passport.CurriculumVersion == "6.0.0" || server.repository.Passport.CurriculumVersion == "7.0.0" || server.repository.Passport.CurriculumVersion == "8.0.0" {
 		candidates = append(candidates, "data-handover")
 	}
 	for _, candidate := range candidates {
