@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 )
 
@@ -98,9 +99,13 @@ func TestAgentCandidateGitBoundaries(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				write(filepath.Join(task, file), string(raw))
+				// The source checkout may use CRLF on Windows. This owned
+				// synthetic fixture represents the original LF contract;
+				// never normalize a learner file or relax its canary check.
+				write(filepath.Join(task, file), strings.ReplaceAll(string(raw), "\r\n", "\n"))
 			}
 			git(root, "init")
+			git(root, "config", "core.autocrlf", "false")
 			git(root, "add", ".")
 			git(root, "-c", "user.name=Passport Example", "-c", "user.email=example@invalid.test", "-c", "core.hooksPath="+os.DevNull, "commit", "-m", "docs(training): fictional baseline")
 			raw, err := os.ReadFile(filepath.Join(source, "tools/passport-cli/internal/localserver/testdata/agent-cases.json"))
