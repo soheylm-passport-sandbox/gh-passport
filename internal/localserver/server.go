@@ -845,7 +845,7 @@ func (server *Server) preparePracticeMode(response http.ResponseWriter, request 
 		for _, id := range server.repository.Passport.Missions {
 			assigned = assigned || id == "data-handover"
 		}
-		if server.repository.Passport.CurriculumVersion != "6.0.0" || !assigned || (!computerOnly && server.activeMissionID() != "data-handover") {
+		if (server.repository.Passport.CurriculumVersion != "6.0.0" && server.repository.Passport.CurriculumVersion != "7.0.0") || !assigned || (!computerOnly && server.activeMissionID() != "data-handover") {
 			server.writeError(response, http.StatusConflict, "mission_not_current")
 			return
 		}
@@ -855,7 +855,7 @@ func (server *Server) preparePracticeMode(response http.ResponseWriter, request 
 		}
 		catalog, err := missionverify.LoadCatalog(server.repository.Root)
 		mission, ok := catalog.Missions["data-handover"]
-		if err != nil || catalog.CurriculumVersion != "6.0.0" || !ok || mission.Verification.LocalVerifier != "handover_packet_v2" {
+		if err != nil || catalog.CurriculumVersion != server.repository.Passport.CurriculumVersion || !ok || mission.Verification.LocalVerifier != "handover_packet_v2" {
 			server.writeError(response, http.StatusConflict, "mission_catalog_unavailable")
 			return
 		}
