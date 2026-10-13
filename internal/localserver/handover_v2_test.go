@@ -267,7 +267,7 @@ func TestHandoverLocalBundleServedByRealServer(t *testing.T) {
 }
 
 func TestHandoverComputerPreparationPreservesCompletedProgress(t *testing.T) {
-	for _, version := range []string{"6.0.0", "7.0.0"} {
+	for _, version := range []string{"6.0.0", "7.0.0", "8.0.0"} {
 		t.Run(version, func(t *testing.T) {
 			server, _ := handoverServer(t)
 			server.repository.Passport.CurriculumVersion = version

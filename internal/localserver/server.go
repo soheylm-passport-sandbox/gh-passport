@@ -26,6 +26,7 @@ import (
 
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/agentverify"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/githubstatus"
+	"github.com/soheylm-passport-sandbox/gh-passport/internal/gpureview"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/handover"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/launcherupdate"
 	"github.com/soheylm-passport-sandbox/gh-passport/internal/localstate"
@@ -845,7 +846,7 @@ func (server *Server) preparePracticeMode(response http.ResponseWriter, request 
 		for _, id := range server.repository.Passport.Missions {
 			assigned = assigned || id == "data-handover"
 		}
-		if (server.repository.Passport.CurriculumVersion != "6.0.0" && server.repository.Passport.CurriculumVersion != "7.0.0") || !assigned || (!computerOnly && server.activeMissionID() != "data-handover") {
+		if (server.repository.Passport.CurriculumVersion != "6.0.0" && server.repository.Passport.CurriculumVersion != "7.0.0" && server.repository.Passport.CurriculumVersion != "8.0.0") || !assigned || (!computerOnly && server.activeMissionID() != "data-handover") {
 			server.writeError(response, http.StatusConflict, "mission_not_current")
 			return
 		}
@@ -1066,6 +1067,14 @@ func (server *Server) localReceipt(mission missionverify.Mission, input map[stri
 		checks = server.verifyAgentProject()
 	case "slurm_script":
 		checks = server.verifySlurmArray()
+	case "gpu_script_v2":
+		checks = gpureview.CheckFile(server.practiceRoot())
+		feedback := gpureview.Feedback(checks)
+		receipt := map[string]any{"verifier": verifier, "passed": feedback == "", "checks": checks}
+		if feedback != "" {
+			receipt["feedback"] = feedback
+		}
+		return server.validateReceiptChecks(mission, receipt)
 	case "gpu_script":
 		checks = server.verifyGPUScript()
 	case "handover_packet_v2":

@@ -29,7 +29,7 @@ import (
 var (
 	version           = "0.1.0-dev"
 	controllerAppID   = deployment.ControllerAppID
-	curriculumVersion = "6.0.0"
+	curriculumVersion = "8.0.0"
 )
 
 type doctorCheck struct {
