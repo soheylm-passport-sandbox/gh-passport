@@ -60,8 +60,9 @@ jobs:
           VERSION: ${{ github.ref_name }}
         run: |
           set -euo pipefail
+          CURRICULUM=$(python3 -c 'import json,re; v=json.load(open("SOURCE.json"))["curriculum_version"]; assert re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+",v); print(v)')
           go build -trimpath \
-            -ldflags "-s -w -X main.version=$VERSION" \
+            -ldflags "-s -w -X main.version=$VERSION -X main.curriculumVersion=$CURRICULUM" \
             -o "${{ matrix.asset }}" ./cmd/gh-passport
       - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4
         with:
@@ -86,6 +87,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          chmod +x dist/gh-passport-linux-amd64
+          python3 scripts/verify_release_default.py --binary dist/gh-passport-linux-amd64 --tag "${{ github.ref_name }}"
           (cd dist && sha256sum gh-passport-* > SHA256SUMS)
           python scripts/release_notes.py \
             --tag "${{ github.ref_name }}" \
