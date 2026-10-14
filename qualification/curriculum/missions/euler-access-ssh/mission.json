@@ -1,0 +1,459 @@
+{
+  "activity": {
+    "action": "Test your direct Euler login, keep a working dedicated key or create one without overwriting anything, then configure and test the euler SSH alias.",
+    "expected_result": "The final command prints config-ok without asking for your ETH password. Your private key stays on your computer and IdentityFile does not end in .pub.",
+    "kind": "guided_local",
+    "machine": "local",
+    "questions": [
+      {
+        "answer": [
+          "correct"
+        ],
+        "critical": true,
+        "feedback": "The private key path without .pub.",
+        "id": "identity_file",
+        "options": [
+          {
+            "id": "correct",
+            "label": "The private key path without .pub."
+          },
+          {
+            "id": "wrong_a",
+            "label": "The public key ending in .pub."
+          },
+          {
+            "id": "wrong_b",
+            "label": "The known_hosts file."
+          }
+        ],
+        "prompt": "Which file must IdentityFile reference?",
+        "type": "single"
+      },
+      {
+        "answer": [
+          "correct"
+        ],
+        "critical": true,
+        "feedback": "Stop, back it up, inspect it, and avoid overwriting.",
+        "id": "repair_rule",
+        "options": [
+          {
+            "id": "correct",
+            "label": "Stop, back it up, inspect it, and avoid overwriting."
+          },
+          {
+            "id": "wrong_a",
+            "label": "Delete the entire .ssh directory."
+          },
+          {
+            "id": "wrong_b",
+            "label": "Disable key-only authentication."
+          }
+        ],
+        "prompt": "What is the safe default when a target key or config already exists?",
+        "type": "single"
+      }
+    ],
+    "recipe": {
+      "intro": "Work from your computer until a step names Euler. Keep a working key, diagnose a failed pair and create only after the absent-key marker.",
+      "steps": [
+        {
+          "commands": [],
+          "expected": "This computer has a working network path for the direct Euler login test.",
+          "id": "network",
+          "instruction": "Confirm that this computer has working internet access. Euler SSH normally connects directly to euler.ethz.ch. ETH VPN, or Virtual Private Network, is the official secure connection for reaching ETH-only services from outside the campus network. If the address times out on a restricted network, try the campus network or ETH VPN before changing any SSH file.",
+          "links": [
+            {
+              "label": "Open the ETH VPN instructions",
+              "url": "https://unlimited.ethz.ch/en/help/network/vpn"
+            }
+          ],
+          "machine": "local",
+          "on_failure": "Try the campus network or ETH VPN; do not change SSH keys to solve a timeout.",
+          "on_success": "Continue to the password-login test.",
+          "platforms": [
+            "all"
+          ],
+          "title": "Check the network or VPN"
+        },
+        {
+          "commands": [
+            {
+              "command": "& {\n  $EulerUser = Read-Host \"Short ETH username\"\n  if ($EulerUser -notmatch \"^[A-Za-z0-9._-]+$\") { throw \"STOP: invalid ETH username\" }\n  ssh -F none -o PubkeyAuthentication=no -o PasswordAuthentication=yes -o KbdInteractiveAuthentication=yes -o PreferredAuthentications=keyboard-interactive,password \"$EulerUser@euler.ethz.ch\" \"echo password-login-ok\"\n}",
+              "platform": "windows",
+              "shell": "powershell"
+            },
+            {
+              "command": "(\nprintf 'Short ETH username: '; read -r eth_user\ncase \"$eth_user\" in ''|*[^ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._-]*) printf 'STOP: invalid ETH username\\n' >&2; exit 1;; esac\nssh -F none -o PubkeyAuthentication=no -o PasswordAuthentication=yes -o KbdInteractiveAuthentication=yes -o PreferredAuthentications=keyboard-interactive,password \"$eth_user@euler.ethz.ch\" 'echo password-login-ok'\n)",
+              "platform": "macos",
+              "shell": "zsh"
+            },
+            {
+              "command": "(\nprintf 'Short ETH username: '; read -r eth_user\ncase \"$eth_user\" in ''|*[^ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._-]*) printf 'STOP: invalid ETH username\\n' >&2; exit 1;; esac\nssh -F none -o PubkeyAuthentication=no -o PasswordAuthentication=yes -o KbdInteractiveAuthentication=yes -o PreferredAuthentications=keyboard-interactive,password \"$eth_user@euler.ethz.ch\" 'echo password-login-ok'\n)",
+              "platform": "linux",
+              "shell": "bash"
+            }
+          ],
+          "expected": "After the ETH password, Euler prints password-login-ok.",
+          "id": "password-login",
+          "instruction": "Enter the short ETH username, not an email address. A host fingerprint is a short identifier for the remote computer's SSH key. On a first connection, compare the displayed fingerprint with ETH's published host keys before accepting it. This test ignores your user SSH config and disables public-key authentication so it really tests the ETH password.",
+          "links": [
+            {
+              "label": "Check ETH Euler host keys",
+              "url": "https://docs.hpc.ethz.ch/connections/host-keys/"
+            }
+          ],
+          "machine": "local",
+          "on_failure": "Stop and solve account, password, VPN, or host-key access first. Do not generate a key yet.",
+          "on_success": "Continue to read-only inspection.",
+          "platforms": [
+            "all"
+          ],
+          "title": "Test password login"
+        },
+        {
+          "commands": [
+            {
+              "command": "& {\n  $SshDir = Join-Path $env:USERPROFILE \".ssh\"\n  Get-ChildItem -LiteralPath $SshDir -Force -ErrorAction SilentlyContinue\n  $Config = Join-Path $SshDir \"config\"\n  if (Test-Path -LiteralPath $Config) {\n    $i = 0\n    Get-Content -LiteralPath $Config | ForEach-Object { $i++; \"{0,3}: {1}\" -f $i, $_ }\n    ssh -G euler | Out-Null\n    if ($LASTEXITCODE -ne 0) { throw \"STOP: OpenSSH cannot parse the current config; no file was changed\" }\n    Write-Host \"existing-config-parses\"\n  } else {\n    Write-Host \"No user SSH config yet.\"\n  }\n}",
+              "platform": "windows",
+              "shell": "powershell"
+            },
+            {
+              "command": "(\nssh_dir=\"$HOME/.ssh\"\nls -la \"$ssh_dir\" 2>/dev/null || printf 'No .ssh directory yet.\\n'\nconfig=\"$ssh_dir/config\"\nif [ -f \"$config\" ]; then\n  nl -ba \"$config\"\n  ssh -G euler >/dev/null || {\n    printf 'STOP: OpenSSH cannot parse the current config; no file was changed\\n' >&2\n    exit 1\n  }\n  printf 'existing-config-parses\\n'\nelse\n  printf 'No user SSH config yet.\\n'\nfi\n)",
+              "platform": "macos",
+              "shell": "zsh"
+            },
+            {
+              "command": "(\nssh_dir=\"$HOME/.ssh\"\nls -la \"$ssh_dir\" 2>/dev/null || printf 'No .ssh directory yet.\\n'\nconfig=\"$ssh_dir/config\"\nif [ -f \"$config\" ]; then\n  nl -ba \"$config\"\n  ssh -G euler >/dev/null || {\n    printf 'STOP: OpenSSH cannot parse the current config; no file was changed\\n' >&2\n    exit 1\n  }\n  printf 'existing-config-parses\\n'\nelse\n  printf 'No user SSH config yet.\\n'\nfi\n)",
+              "platform": "linux",
+              "shell": "bash"
+            }
+          ],
+          "expected": "You know which SSH files exist. An existing config also prints existing-config-parses.",
+          "id": "inspect",
+          "instruction": "OpenSSH is the ssh command-line program on your computer. Its .ssh folder contains keys and an optional config file. List that folder, print the numbered config if it exists, and ask OpenSSH to parse the current euler alias. This step is read-only. Do not edit or delete anything.",
+          "links": [],
+          "machine": "local",
+          "on_failure": "Stop if OpenSSH names a bad line. Use the SSH troubleshooting page to correct only that line; do not append another Host block or replace the file.",
+          "on_success": "Test existing key-only access.",
+          "platforms": [
+            "all"
+          ],
+          "title": "Inspect existing SSH files without changing them"
+        },
+        {
+          "commands": [
+            {
+              "command": "& {\n  $EulerUser = Read-Host \"Short ETH username\"\n  if ($EulerUser -notmatch \"^[A-Za-z0-9._-]+$\") { throw \"STOP: invalid ETH username\" }\n\n  $Resolved = @(ssh -G euler 2>$null)\n  if ($LASTEXITCODE -ne 0) { throw \"STOP: existing SSH config is invalid\" }\n  $ResolvedHostMatch = $Resolved | Select-String '^hostname\\s+' | Select-Object -First 1\n  $ResolvedUserMatch = $Resolved | Select-String '^user\\s+' | Select-Object -First 1\n  $ResolvedHost = if ($ResolvedHostMatch) { ($ResolvedHostMatch.Line -split '\\s+', 2)[1] } else { \"\" }\n  $ResolvedUser = if ($ResolvedUserMatch) { ($ResolvedUserMatch.Line -split '\\s+', 2)[1] } else { \"\" }\n  $PublicIdentity = @($Resolved | Select-String '^identityfile\\s+.*\\.pub\\s*$')\n  if ($ResolvedHost -eq \"euler.ethz.ch\" -and $ResolvedUser -eq $EulerUser) {\n    if ($PublicIdentity.Count -gt 0) { throw \"STOP: the existing euler alias points IdentityFile at a .pub file\" }\n    ssh -o Port=22 -o ProxyCommand=none -o ProxyJump=none -o ForwardAgent=no -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no euler \"echo existing-alias-ok\"\n    if ($LASTEXITCODE -eq 0) { return }\n  }\n\n  $KeyPath = Join-Path $env:USERPROFILE \".ssh\\id_ed25519_euler\"\n  $PrivateExists = Test-Path -LiteralPath $KeyPath\n  $PublicExists = Test-Path -LiteralPath \"$KeyPath.pub\"\n  if ($PrivateExists -xor $PublicExists) { throw \"STOP: the standard key pair is incomplete; do not overwrite either file\" }\n  if (-not $PrivateExists) { Write-Host \"no-standard-key\"; return }\n  ssh -F none -i $KeyPath -o IdentitiesOnly=yes -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no \"$EulerUser@euler.ethz.ch\" \"echo standard-key-ok\"\n}",
+              "platform": "windows",
+              "shell": "powershell"
+            },
+            {
+              "command": "(\nprintf 'Short ETH username: '; read -r eth_user\ncase \"$eth_user\" in ''|*[^ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._-]*) printf 'STOP: invalid ETH username\\n' >&2; exit 1;; esac\n\nresolved=\"$(ssh -G euler 2>/dev/null)\" || {\n  printf 'STOP: existing SSH config is invalid\\n' >&2\n  exit 1\n}\nresolved_host=\"$(printf '%s\\n' \"$resolved\" | awk '$1 == \"hostname\" { print $2; exit }')\"\nresolved_user=\"$(printf '%s\\n' \"$resolved\" | awk '$1 == \"user\" { print $2; exit }')\"\nif [ \"$resolved_host\" = \"euler.ethz.ch\" ] && [ \"$resolved_user\" = \"$eth_user\" ]; then\n  if printf '%s\\n' \"$resolved\" | awk '$1 == \"identityfile\" && $2 ~ /[.]pub$/ { found=1 } END { exit !found }'; then\n    printf 'STOP: the existing euler alias points IdentityFile at a .pub file\\n' >&2\n    exit 1\n  fi\n  if ssh -o Port=22 -o ProxyCommand=none -o ProxyJump=none -o ForwardAgent=no -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no euler 'echo existing-alias-ok'; then\n    exit 0\n  fi\nfi\n\nkey=\"$HOME/.ssh/id_ed25519_euler\"\nprivate_exists=0; public_exists=0\n[ -f \"$key\" ] && private_exists=1\n[ -f \"$key.pub\" ] && public_exists=1\nif [ \"$private_exists\" -ne \"$public_exists\" ]; then\n  printf 'STOP: the standard key pair is incomplete; do not overwrite either file\\n' >&2\n  exit 1\nfi\nif [ \"$private_exists\" -eq 0 ]; then\n  printf 'no-standard-key\\n'\n  exit 0\nfi\nssh -F none -i \"$key\" -o IdentitiesOnly=yes -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no \"$eth_user@euler.ethz.ch\" 'echo standard-key-ok'\n)",
+              "platform": "macos",
+              "shell": "zsh"
+            },
+            {
+              "command": "(\nprintf 'Short ETH username: '; read -r eth_user\ncase \"$eth_user\" in ''|*[^ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._-]*) printf 'STOP: invalid ETH username\\n' >&2; exit 1;; esac\n\nresolved=\"$(ssh -G euler 2>/dev/null)\" || {\n  printf 'STOP: existing SSH config is invalid\\n' >&2\n  exit 1\n}\nresolved_host=\"$(printf '%s\\n' \"$resolved\" | awk '$1 == \"hostname\" { print $2; exit }')\"\nresolved_user=\"$(printf '%s\\n' \"$resolved\" | awk '$1 == \"user\" { print $2; exit }')\"\nif [ \"$resolved_host\" = \"euler.ethz.ch\" ] && [ \"$resolved_user\" = \"$eth_user\" ]; then\n  if printf '%s\\n' \"$resolved\" | awk '$1 == \"identityfile\" && $2 ~ /[.]pub$/ { found=1 } END { exit !found }'; then\n    printf 'STOP: the existing euler alias points IdentityFile at a .pub file\\n' >&2\n    exit 1\n  fi\n  if ssh -o Port=22 -o ProxyCommand=none -o ProxyJump=none -o ForwardAgent=no -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no euler 'echo existing-alias-ok'; then\n    exit 0\n  fi\nfi\n\nkey=\"$HOME/.ssh/id_ed25519_euler\"\nprivate_exists=0; public_exists=0\n[ -f \"$key\" ] && private_exists=1\n[ -f \"$key.pub\" ] && public_exists=1\nif [ \"$private_exists\" -ne \"$public_exists\" ]; then\n  printf 'STOP: the standard key pair is incomplete; do not overwrite either file\\n' >&2\n  exit 1\nfi\nif [ \"$private_exists\" -eq 0 ]; then\n  printf 'no-standard-key\\n'\n  exit 0\nfi\nssh -F none -i \"$key\" -o IdentitiesOnly=yes -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no \"$eth_user@euler.ethz.ch\" 'echo standard-key-ok'\n)",
+              "platform": "linux",
+              "shell": "bash"
+            }
+          ],
+          "expected": "The final marker is existing-alias-ok, standard-key-ok, or no-standard-key.",
+          "id": "existing-key-test",
+          "instruction": "First test an existing euler alias when it resolves to this Euler account. ProxyCommand and ProxyJump are settings that can reroute SSH through another connection; this test disables them and connects directly to euler.ethz.ch on the standard SSH port 22. If no suitable alias is available, test id_ed25519_euler, the standard key filename used by this guide, while ignoring user config. Keyboard-interactive login is another password-like login method. Every connection in this step disables both ETH-password and keyboard-interactive fallback, so success proves that a key worked.",
+          "links": [],
+          "machine": "local",
+          "on_failure": "If the standard id_ed25519_euler pair exists but neither key-only test succeeds, use the next diagnostic step. If OpenSSH reports a .pub IdentityFile, correct that config line first.",
+          "on_success": "After existing-alias-ok, skip key generation and installation and continue at the alias step, which preserves the working identity. After standard-key-ok, also skip to the alias step. After no-standard-key, continue to key generation.",
+          "platforms": [
+            "all"
+          ],
+          "title": "Keep working key-only access"
+        },
+        {
+          "commands": [
+            {
+              "command": "& {\n  $KeyPath = Join-Path $env:USERPROFILE \".ssh\\id_ed25519_euler\"\n  $PrivateFingerprint = ssh-keygen -lf $KeyPath\n  if ($LASTEXITCODE -ne 0) { throw \"STOP: private key could not be inspected\" }\n  $PublicFingerprint = ssh-keygen -lf \"$KeyPath.pub\"\n  if ($LASTEXITCODE -ne 0) { throw \"STOP: public key could not be inspected\" }\n  $PrivateFingerprint\n  $PublicFingerprint\n  if (($PrivateFingerprint -split '\\s+')[1] -ne ($PublicFingerprint -split '\\s+')[1]) { throw \"STOP: private and public keys do not match\" }\n  Write-Host \"key-pair-matches\"\n}",
+              "disclosure": "Show the existing-key diagnostic",
+              "platform": "windows",
+              "shell": "powershell"
+            },
+            {
+              "command": "(\nkey=\"$HOME/.ssh/id_ed25519_euler\"\nprivate_fingerprint=\"$(ssh-keygen -lf \"$key\")\" || { printf 'STOP: private key could not be inspected\\n' >&2; exit 1; }\npublic_fingerprint=\"$(ssh-keygen -lf \"$key.pub\")\" || { printf 'STOP: public key could not be inspected\\n' >&2; exit 1; }\nprintf '%s\\n%s\\n' \"$private_fingerprint\" \"$public_fingerprint\"\n[ \"$(printf '%s\\n' \"$private_fingerprint\" | awk '{print $2}')\" = \"$(printf '%s\\n' \"$public_fingerprint\" | awk '{print $2}')\" ] || { printf 'STOP: private and public keys do not match\\n' >&2; exit 1; }\nprintf 'key-pair-matches\\n'\n)",
+              "disclosure": "Show the existing-key diagnostic",
+              "platform": "macos",
+              "shell": "zsh"
+            },
+            {
+              "command": "(\nkey=\"$HOME/.ssh/id_ed25519_euler\"\nprivate_fingerprint=\"$(ssh-keygen -lf \"$key\")\" || { printf 'STOP: private key could not be inspected\\n' >&2; exit 1; }\npublic_fingerprint=\"$(ssh-keygen -lf \"$key.pub\")\" || { printf 'STOP: public key could not be inspected\\n' >&2; exit 1; }\nprintf '%s\\n%s\\n' \"$private_fingerprint\" \"$public_fingerprint\"\n[ \"$(printf '%s\\n' \"$private_fingerprint\" | awk '{print $2}')\" = \"$(printf '%s\\n' \"$public_fingerprint\" | awk '{print $2}')\" ] || { printf 'STOP: private and public keys do not match\\n' >&2; exit 1; }\nprintf 'key-pair-matches\\n'\n)",
+              "disclosure": "Show the existing-key diagnostic",
+              "platform": "linux",
+              "shell": "bash"
+            }
+          ],
+          "expected": "Both fingerprint lines contain the same SHA256 value and the final line is key-pair-matches.",
+          "id": "failed-key-stop",
+          "instruction": "Run this only when id_ed25519_euler exists but its key-only test did not print standard-key-ok. Compare the private- and public-key fingerprints. This reads the key pair but does not change it. Open the diagnostic only for this failed existing-pair case. Stop if the pair differs; do not regenerate or overwrite either file.",
+          "links": [
+            {
+              "label": "Open Euler SSH troubleshooting",
+              "url": "../../../docs/reference/euler/troubleshooting.md"
+            }
+          ],
+          "machine": "local",
+          "on_failure": "Stop and use the SSH help path. Never overwrite either key file or point IdentityFile at a .pub file.",
+          "on_success": "Keep this pair, skip key generation, and continue to Install only the public key.",
+          "platforms": [
+            "all"
+          ],
+          "title": "Diagnose an existing key pair without replacing it"
+        },
+        {
+          "commands": [
+            {
+              "command": "& {\n  $SshDir = Join-Path $env:USERPROFILE \".ssh\"\n  $KeyPath = Join-Path $SshDir \"id_ed25519_euler\"\n  New-Item -ItemType Directory -Force $SshDir | Out-Null\n  if ((Test-Path -LiteralPath $KeyPath) -or (Test-Path -LiteralPath \"$KeyPath.pub\")) { throw \"STOP: standard key or public key already exists; nothing was overwritten\" }\n  ssh-keygen -t ed25519 -a 100 -f $KeyPath -C \"$env:USERNAME@euler\"\n  if ($LASTEXITCODE -ne 0) { throw \"STOP: ssh-keygen failed\" }\n  icacls $KeyPath /inheritance:r\n  icacls $KeyPath /grant:r \"${env:USERNAME}:(R)\"\n}",
+              "disclosure": "Show key creation only after no-standard-key",
+              "platform": "windows",
+              "shell": "powershell"
+            },
+            {
+              "command": "(\nkey=\"$HOME/.ssh/id_ed25519_euler\"\nmkdir -p \"$HOME/.ssh\" && chmod 700 \"$HOME/.ssh\"\nif [ -e \"$key\" ] || [ -e \"$key.pub\" ]; then printf 'STOP: standard key or public key already exists; nothing was overwritten\\n' >&2; exit 1; fi\nssh-keygen -t ed25519 -a 100 -f \"$key\" -C \"$USER@euler\"\n)",
+              "disclosure": "Show key creation only after no-standard-key",
+              "platform": "macos",
+              "shell": "zsh"
+            },
+            {
+              "command": "(\nkey=\"$HOME/.ssh/id_ed25519_euler\"\nmkdir -p \"$HOME/.ssh\" && chmod 700 \"$HOME/.ssh\"\nif [ -e \"$key\" ] || [ -e \"$key.pub\" ]; then printf 'STOP: standard key or public key already exists; nothing was overwritten\\n' >&2; exit 1; fi\nssh-keygen -t ed25519 -a 100 -f \"$key\" -C \"$USER@euler\"\n)",
+              "disclosure": "Show key creation only after no-standard-key",
+              "platform": "linux",
+              "shell": "bash"
+            }
+          ],
+          "expected": "Both id_ed25519_euler and id_ed25519_euler.pub are created; the private key has restricted permissions.",
+          "id": "generate",
+          "instruction": "Run this only after no-standard-key. The guard stops if either half of the pair exists. Choose a passphrase when ssh-keygen asks. If either file already exists, use the diagnostic and request help; creating a new key is not a repair for an unexplained existing-pair failure.",
+          "links": [],
+          "machine": "local",
+          "on_failure": "Stop at the first error and keep all pre-existing files unchanged.",
+          "on_success": "Install only the .pub file.",
+          "platforms": [
+            "all"
+          ],
+          "title": "Create the standard dedicated key only when absent"
+        },
+        {
+          "commands": [
+            {
+              "command": "& {\n  $ErrorActionPreference = \"Stop\"\n  $EulerUser = Read-Host \"Short ETH username used in the password test\"\n  if ($EulerUser -notmatch \"^[A-Za-z0-9._-]+$\") { throw \"STOP: invalid ETH username\" }\n  $PublicKey = Join-Path $env:USERPROFILE \".ssh\\id_ed25519_euler.pub\"\n  if (-not (Test-Path -LiteralPath $PublicKey -PathType Leaf)) { throw \"STOP: public key is missing\" }\n  $KeyText = (Get-Content -LiteralPath $PublicKey -Raw -Encoding UTF8).Trim()\n  if ($KeyText -notmatch '^ssh-ed25519 [A-Za-z0-9+/]+={0,2}(?: [^\\r\\n]*)?$') { throw \"STOP: expected one Ed25519 public-key line; keep the files and request help\" }\n  $KeyData = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($KeyText))\n  $Script = @'\nset -eu\nkey=$(printf %s __PUBLIC_KEY_DATA__ | base64 -d)\numask 077\nmkdir -p ~/.ssh\nchmod 700 ~/.ssh\ntouch ~/.ssh/authorized_keys\nchmod 600 ~/.ssh/authorized_keys\nif grep -Fqx -- \"$key\" ~/.ssh/authorized_keys; then\n  :\nelse\n  status=$?\n  [ \"$status\" -eq 1 ] || exit \"$status\"\n  printf \"\\n%s\\n\" \"$key\" >> ~/.ssh/authorized_keys\nfi\ngrep -Fqx -- \"$key\" ~/.ssh/authorized_keys\nprintf \"public-key-installed\\n\"\n'@\n  $Script = $Script.Replace('__PUBLIC_KEY_DATA__', $KeyData).Replace(\"`r\", \"\")\n  $ScriptData = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($Script + \"`n\"))\n  $ScriptData | ssh -F none -o PubkeyAuthentication=no -o PasswordAuthentication=yes -o KbdInteractiveAuthentication=yes -o PreferredAuthentications=keyboard-interactive,password \"$EulerUser@euler.ethz.ch\" \"bash -o pipefail -c 'base64 -d | sh'\"\n  if ($LASTEXITCODE -ne 0) { throw \"STOP: public-key installation failed; keep both key files and request help with the error\" }\n}",
+              "platform": "windows",
+              "shell": "powershell"
+            },
+            {
+              "command": "(\nprintf 'Short ETH username used in the password test: '; read -r eth_user\ncase \"$eth_user\" in ''|*[^ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._-]*) printf 'STOP: invalid ETH username\\n' >&2; exit 1;; esac\npublic_key=\"$HOME/.ssh/id_ed25519_euler.pub\"\ntest -f \"$public_key\" || { printf 'STOP: public key is missing\\n' >&2; exit 1; }\ncat \"$public_key\" | ssh -F none -o PubkeyAuthentication=no -o PasswordAuthentication=yes -o KbdInteractiveAuthentication=yes -o PreferredAuthentications=keyboard-interactive,password \"$eth_user@euler.ethz.ch\" 'set -eu\nkey=\"$(tr -d \"\\r\")\"\n[ -n \"$key\" ] || { printf \"STOP: empty public key\\n\" >&2; exit 1; }\numask 077\nmkdir -p ~/.ssh\nchmod 700 ~/.ssh\ntouch ~/.ssh/authorized_keys\nchmod 600 ~/.ssh/authorized_keys\nif grep -Fqx -- \"$key\" ~/.ssh/authorized_keys; then\n  :\nelse\n  status=$?\n  [ \"$status\" -eq 1 ] || exit \"$status\"\n  printf \"\\n%s\\n\" \"$key\" >> ~/.ssh/authorized_keys\nfi\ngrep -Fqx -- \"$key\" ~/.ssh/authorized_keys\nprintf \"public-key-installed\\n\"'\n)",
+              "platform": "macos",
+              "shell": "zsh"
+            },
+            {
+              "command": "(\nprintf 'Short ETH username used in the password test: '; read -r eth_user\ncase \"$eth_user\" in ''|*[^ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._-]*) printf 'STOP: invalid ETH username\\n' >&2; exit 1;; esac\npublic_key=\"$HOME/.ssh/id_ed25519_euler.pub\"\ntest -f \"$public_key\" || { printf 'STOP: public key is missing\\n' >&2; exit 1; }\ncat \"$public_key\" | ssh -F none -o PubkeyAuthentication=no -o PasswordAuthentication=yes -o KbdInteractiveAuthentication=yes -o PreferredAuthentications=keyboard-interactive,password \"$eth_user@euler.ethz.ch\" 'set -eu\nkey=\"$(tr -d \"\\r\")\"\n[ -n \"$key\" ] || { printf \"STOP: empty public key\\n\" >&2; exit 1; }\numask 077\nmkdir -p ~/.ssh\nchmod 700 ~/.ssh\ntouch ~/.ssh/authorized_keys\nchmod 600 ~/.ssh/authorized_keys\nif grep -Fqx -- \"$key\" ~/.ssh/authorized_keys; then\n  :\nelse\n  status=$?\n  [ \"$status\" -eq 1 ] || exit \"$status\"\n  printf \"\\n%s\\n\" \"$key\" >> ~/.ssh/authorized_keys\nfi\ngrep -Fqx -- \"$key\" ~/.ssh/authorized_keys\nprintf \"public-key-installed\\n\"'\n)",
+              "platform": "linux",
+              "shell": "bash"
+            }
+          ],
+          "expected": "After the ETH password, Euler prints public-key-installed with no error. This confirms the exact public-key line is present; the next key-only test must still pass.",
+          "id": "install-public",
+          "instruction": "Run this on your own computer, not inside an Euler session. Send only id_ed25519_euler.pub through the working password login. Spaces in your Windows profile or key comment are supported; do not rename your profile or move your keys. The command preserves existing authorized_keys entries and avoids adding a duplicate exact line.",
+          "links": [
+            {
+              "label": "Recover a failed Windows public-key installation",
+              "url": "../../../docs/reference/euler/troubleshooting.md#windows-public-key-installation-reports-grep-errors"
+            }
+          ],
+          "machine": "local",
+          "on_failure": "Stop at any error, even if an older command printed public-key-installed. Keep both key files. For grep errors or public-key-installedn from the older Windows command, follow the linked recovery guide; do not delete authorized_keys or regenerate keys.",
+          "on_success": "Run the direct key-only test.",
+          "platforms": [
+            "all"
+          ],
+          "title": "Install only the public key"
+        },
+        {
+          "commands": [
+            {
+              "command": "& {\n  $EulerUser = Read-Host \"Short ETH username\"\n  if ($EulerUser -notmatch \"^[A-Za-z0-9._-]+$\") { throw \"STOP: invalid ETH username\" }\n  $KeyPath = Join-Path $env:USERPROFILE \".ssh\\id_ed25519_euler\"\n  ssh -F none -i $KeyPath -o IdentitiesOnly=yes -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no \"$EulerUser@euler.ethz.ch\" \"echo key-ok\"\n}",
+              "platform": "windows",
+              "shell": "powershell"
+            },
+            {
+              "command": "(\nprintf 'Short ETH username: '; read -r eth_user\ncase \"$eth_user\" in ''|*[^ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._-]*) printf 'STOP: invalid ETH username\\n' >&2; exit 1;; esac\nssh -F none -i \"$HOME/.ssh/id_ed25519_euler\" -o IdentitiesOnly=yes -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no \"$eth_user@euler.ethz.ch\" 'echo key-ok'\n)",
+              "platform": "macos",
+              "shell": "zsh"
+            },
+            {
+              "command": "(\nprintf 'Short ETH username: '; read -r eth_user\ncase \"$eth_user\" in ''|*[^ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._-]*) printf 'STOP: invalid ETH username\\n' >&2; exit 1;; esac\nssh -F none -i \"$HOME/.ssh/id_ed25519_euler\" -o IdentitiesOnly=yes -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no \"$eth_user@euler.ethz.ch\" 'echo key-ok'\n)",
+              "platform": "linux",
+              "shell": "bash"
+            }
+          ],
+          "expected": "Euler prints exactly key-ok without asking for the ETH password.",
+          "id": "direct-key-test",
+          "instruction": "Run the direct test with password and keyboard-interactive authentication disabled. Enter only the local key passphrase if prompted.",
+          "links": [],
+          "machine": "local",
+          "on_failure": "Stop. Do not continue to the alias or euler-tunnel until this exact test passes.",
+          "on_success": "Create the isolated euler alias.",
+          "platforms": [
+            "all"
+          ],
+          "title": "Prove direct key-only access"
+        },
+        {
+          "commands": [
+            {
+              "command": "& {\n  $EulerUser = Read-Host \"Short ETH username\"\n  if ($EulerUser -notmatch \"^[A-Za-z0-9._-]+$\") { throw \"STOP: invalid ETH username\" }\n  $SshDir = Join-Path $env:USERPROFILE \".ssh\"; $Config = Join-Path $SshDir \"config\"; $IncludeDir = Join-Path $SshDir \"passport.d\"; $BackupDir = Join-Path $SshDir \"passport-backups\"; $EulerConfig = Join-Path $IncludeDir \"euler.conf\"; $KeyPath = Join-Path $SshDir \"id_ed25519_euler\"\n  $ConfigExisted = Test-Path -LiteralPath $Config\n  $EulerConfigExisted = Test-Path -LiteralPath $EulerConfig\n  foreach ($Path in @($Config, $EulerConfig)) {\n    if ((Test-Path -LiteralPath $Path) -and ((((Get-Item -LiteralPath $Path).Attributes) -band [IO.FileAttributes]::ReparsePoint) -ne 0)) {\n      throw \"STOP: $Path is a link or reparse point; no file was changed\"\n    }\n  }\n\n  $ResolvedBefore = @(ssh -G euler 2>$null)\n  if ($LASTEXITCODE -ne 0) { throw \"STOP: existing SSH config is invalid; no file was changed\" }\n  $ResolvedHostMatch = $ResolvedBefore | Select-String '^hostname\\s+' | Select-Object -First 1\n  $ResolvedUserMatch = $ResolvedBefore | Select-String '^user\\s+' | Select-Object -First 1\n  $ResolvedHost = if ($ResolvedHostMatch) { ($ResolvedHostMatch.Line -split '\\s+', 2)[1] } else { \"\" }\n  $ResolvedUser = if ($ResolvedUserMatch) { ($ResolvedUserMatch.Line -split '\\s+', 2)[1] } else { \"\" }\n  $ResolvedIdentity = @($ResolvedBefore | ForEach-Object { if ($_ -match '^identityfile\\s+(.+)$') { $Matches[1] } })\n  if (@($ResolvedIdentity | Where-Object { $_ -match '\\.pub$' }).Count -gt 0) { throw \"STOP: existing IdentityFile points at a .pub file\" }\n\n  $UseExisting = $false\n  if ($ResolvedHost -eq \"euler.ethz.ch\" -and $ResolvedUser -eq $EulerUser) {\n    ssh -o Port=22 -o ProxyCommand=none -o ProxyJump=none -o ForwardAgent=no -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no euler \"exit 0\"\n    $UseExisting = $LASTEXITCODE -eq 0\n  }\n\n  $StandardKeyWorks = $false\n  $PrivateExists = Test-Path -LiteralPath $KeyPath\n  $PublicExists = Test-Path -LiteralPath \"$KeyPath.pub\"\n  if (-not $UseExisting -and ($PrivateExists -xor $PublicExists)) { throw \"STOP: standard key pair is incomplete\" }\n  if (-not $UseExisting -and $PrivateExists) {\n    ssh -F none -i $KeyPath -o IdentitiesOnly=yes -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no \"$EulerUser@euler.ethz.ch\" \"exit 0\"\n    $StandardKeyWorks = $LASTEXITCODE -eq 0\n  }\n  if (-not $UseExisting -and -not $StandardKeyWorks) { throw \"STOP: no tested key-only identity is available\" }\n\n  New-Item -ItemType Directory -Force $IncludeDir, $BackupDir -ErrorAction Stop | Out-Null\n  $Stamp = \"$(Get-Date -Format yyyyMMdd-HHmmss-fffffff)-$PID\"\n  $ConfigBackup = Join-Path $BackupDir \"config.$Stamp\"\n  $EulerConfigBackup = Join-Path $BackupDir \"euler.conf.$Stamp\"\n  if ($ConfigExisted) { Copy-Item -LiteralPath $Config -Destination $ConfigBackup -ErrorAction Stop }\n  if ($EulerConfigExisted) { Copy-Item -LiteralPath $EulerConfig -Destination $EulerConfigBackup -ErrorAction Stop }\n\n  $Lines = @(\"Host euler\", \"  HostName euler.ethz.ch\", \"  User $EulerUser\")\n  if ($UseExisting) {\n    if ($ResolvedIdentity.Count -eq 0) { throw \"STOP: working alias has no inspectable identity selection\" }\n    foreach ($Identity in $ResolvedIdentity) {\n      if ($Identity.Contains('\"')) { throw \"STOP: unsupported quote in resolved identity path\" }\n      $Lines += '  IdentityFile \"' + $Identity + '\"'\n    }\n    $ResolvedIdentitiesOnlyMatch = $ResolvedBefore | Select-String '^identitiesonly\\s+' | Select-Object -First 1\n    $ResolvedIdentitiesOnly = if ($ResolvedIdentitiesOnlyMatch) { ($ResolvedIdentitiesOnlyMatch.Line -split '\\s+', 2)[1] } else { \"\" }\n    if ($ResolvedIdentitiesOnly -notin @(\"yes\", \"no\")) { throw \"STOP: invalid resolved IdentitiesOnly value\" }\n    $Lines += \"  IdentitiesOnly $ResolvedIdentitiesOnly\"\n  } else {\n    $Lines += \"  IdentityFile ~/.ssh/id_ed25519_euler\"\n    $Lines += \"  IdentitiesOnly yes\"\n  }\n  $Lines += @(\"  Port 22\", \"  ProxyCommand none\", \"  ProxyJump none\", \"  PreferredAuthentications publickey\", \"  PasswordAuthentication no\", \"  KbdInteractiveAuthentication no\", \"  ForwardAgent no\")\n\n  $EulerTemporary = \"$EulerConfig.passport-new\"\n  $Lines | Set-Content -LiteralPath $EulerTemporary -Encoding ascii\n  ssh -F $EulerTemporary -G euler | Out-Null\n  if ($LASTEXITCODE -ne 0) { Remove-Item -LiteralPath $EulerTemporary -ErrorAction SilentlyContinue; throw \"STOP: generated Euler block is invalid\" }\n\n  $Include = \"Include ~/.ssh/passport.d/*.conf\"; $NewLine = [Environment]::NewLine\n  $Old = if (Test-Path -LiteralPath $Config) { [System.IO.File]::ReadAllText($Config) } else { \"\" }\n  $Broad = '(?m)^[ \\t]*Include[ \\t]+(?:~/.ssh/)?passport\\.d/\\*(?:\\.conf)?[ \\t]*(?:\\r?\\n|$)'\n  $Rest = [System.Text.RegularExpressions.Regex]::Replace($Old, $Broad, \"\").TrimStart([char[]]@([char]13, [char]10))\n  $Updated = if ($Rest) { \"$Include$NewLine$Rest\" } else { \"$Include$NewLine\" }\n  $ConfigTemporary = \"$Config.passport-new\"\n  [System.IO.File]::WriteAllText($ConfigTemporary, $Updated, [System.Text.UTF8Encoding]::new($false))\n  ssh -F $ConfigTemporary -G euler | Out-Null\n  if ($LASTEXITCODE -ne 0) {\n    Remove-Item -LiteralPath $EulerTemporary, $ConfigTemporary -ErrorAction SilentlyContinue\n    throw \"STOP: generated SSH config is invalid; the original files are unchanged\"\n  }\n\n  try {\n    Move-Item -Force -LiteralPath $EulerTemporary -Destination $EulerConfig -ErrorAction Stop\n    Move-Item -Force -LiteralPath $ConfigTemporary -Destination $Config -ErrorAction Stop\n    ssh -G euler | Out-Null\n    if ($LASTEXITCODE -ne 0) { throw \"final Euler alias validation failed\" }\n  } catch {\n    $Failure = $_.Exception.Message\n    $RestoreFailed = $false\n    try {\n      if ($ConfigExisted) { Copy-Item -Force -LiteralPath $ConfigBackup -Destination $Config -ErrorAction Stop }\n      else { Remove-Item -Force -LiteralPath $Config -ErrorAction SilentlyContinue }\n    } catch { $RestoreFailed = $true }\n    try {\n      if ($EulerConfigExisted) { Copy-Item -Force -LiteralPath $EulerConfigBackup -Destination $EulerConfig -ErrorAction Stop }\n      else { Remove-Item -Force -LiteralPath $EulerConfig -ErrorAction SilentlyContinue }\n    } catch { $RestoreFailed = $true }\n    Remove-Item -Force -LiteralPath $EulerTemporary, $ConfigTemporary -ErrorAction SilentlyContinue\n    if ($RestoreFailed) { throw \"STOP: install failed and automatic restore was incomplete. Restore only config.$Stamp and euler.conf.$Stamp from $BackupDir. Cause: $Failure\" }\n    throw \"STOP: install failed; the original SSH files were restored automatically. Cause: $Failure\"\n  }\n}",
+              "platform": "windows",
+              "shell": "powershell"
+            },
+            {
+              "command": "(\n  set -eu\n  printf 'Short ETH username: '; read -r eth_user\n  case \"$eth_user\" in ''|*[^ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._-]*) printf 'STOP: invalid ETH username\\n' >&2; exit 1;; esac\n  ssh_dir=\"$HOME/.ssh\"; config=\"$ssh_dir/config\"; include_dir=\"$ssh_dir/passport.d\"; backup_dir=\"$ssh_dir/passport-backups\"; euler_config=\"$include_dir/euler.conf\"; key=\"$ssh_dir/id_ed25519_euler\"\n  [ ! -L \"$config\" ] || { printf \"STOP: %s is a symbolic link; no file was changed\\n\" \"$config\" >&2; exit 1; }\n  [ ! -L \"$euler_config\" ] || { printf \"STOP: %s is a symbolic link; no file was changed\\n\" \"$euler_config\" >&2; exit 1; }\n  config_existed=0; euler_config_existed=0\n  if [ -e \"$config\" ]; then [ -f \"$config\" ] || { printf \"STOP: %s is not a regular file\\n\" \"$config\" >&2; exit 1; }; config_existed=1; fi\n  if [ -e \"$euler_config\" ]; then [ -f \"$euler_config\" ] || { printf \"STOP: %s is not a regular file\\n\" \"$euler_config\" >&2; exit 1; }; euler_config_existed=1; fi\n\n  resolved_before=\"$(ssh -G euler 2>/dev/null)\" || {\n    printf 'STOP: existing SSH config is invalid; no file was changed\\n' >&2\n    exit 1\n  }\n  resolved_host=\"$(printf '%s\\n' \"$resolved_before\" | awk '$1 == \"hostname\" { print $2; exit }')\"\n  resolved_user=\"$(printf '%s\\n' \"$resolved_before\" | awk '$1 == \"user\" { print $2; exit }')\"\n  if printf '%s\\n' \"$resolved_before\" | awk '$1 == \"identityfile\" && $2 ~ /[.]pub$/ { found=1 } END { exit !found }'; then\n    printf 'STOP: existing IdentityFile points at a .pub file\\n' >&2\n    exit 1\n  fi\n\n  use_existing=0\n  if [ \"$resolved_host\" = \"euler.ethz.ch\" ] && [ \"$resolved_user\" = \"$eth_user\" ]; then\n    if ssh -o Port=22 -o ProxyCommand=none -o ProxyJump=none -o ForwardAgent=no -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no euler 'exit 0'; then\n      use_existing=1\n    fi\n  fi\n\n  private_exists=0; public_exists=0\n  [ -f \"$key\" ] && private_exists=1\n  [ -f \"$key.pub\" ] && public_exists=1\n  if [ \"$use_existing\" -eq 0 ] && [ \"$private_exists\" -ne \"$public_exists\" ]; then printf 'STOP: standard key pair is incomplete\\n' >&2; exit 1; fi\n  standard_key_works=0\n  if [ \"$use_existing\" -eq 0 ] && [ \"$private_exists\" -eq 1 ]; then\n    if ssh -F none -i \"$key\" -o IdentitiesOnly=yes -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no \"$eth_user@euler.ethz.ch\" 'exit 0'; then\n      standard_key_works=1\n    fi\n  fi\n  if [ \"$use_existing\" -eq 0 ] && [ \"$standard_key_works\" -eq 0 ]; then\n    printf 'STOP: no tested key-only identity is available\\n' >&2\n    exit 1\n  fi\n\n  mkdir -p \"$include_dir\" \"$backup_dir\" && chmod 700 \"$ssh_dir\" \"$include_dir\" \"$backup_dir\"\n  stamp=\"$(date +%Y%m%d-%H%M%S)-$$\"\n  config_backup=\"$backup_dir/config.$stamp\"\n  euler_config_backup=\"$backup_dir/euler.conf.$stamp\"\n  [ \"$config_existed\" -eq 0 ] || cp -p \"$config\" \"$config_backup\"\n  [ \"$euler_config_existed\" -eq 0 ] || cp -p \"$euler_config\" \"$euler_config_backup\"\n\n  restore_originals() {\n    restore_status=0\n    if [ \"$config_existed\" -eq 1 ]; then cp -p \"$config_backup\" \"$config\" || restore_status=1; else rm -f \"$config\" || restore_status=1; fi\n    if [ \"$euler_config_existed\" -eq 1 ]; then cp -p \"$euler_config_backup\" \"$euler_config\" || restore_status=1; else rm -f \"$euler_config\" || restore_status=1; fi\n    return \"$restore_status\"\n  }\n\n  euler_temporary=\"$euler_config.passport-new\"\n  {\n    printf 'Host euler\\n  HostName euler.ethz.ch\\n  User %s\\n' \"$eth_user\"\n    if [ \"$use_existing\" -eq 1 ]; then\n      identity_count=0\n      while IFS= read -r identity; do\n        [ -n \"$identity\" ] || continue\n        case \"$identity\" in *'\"'*) printf 'STOP: unsupported quote in resolved identity path\\n' >&2; exit 1;; esac\n        printf '  IdentityFile \"%s\"\\n' \"$identity\"\n        identity_count=$((identity_count + 1))\n      done <<EOF\n$(printf '%s\\n' \"$resolved_before\" | awk '$1 == \"identityfile\" { $1=\"\"; sub(/^[[:space:]]+/, \"\"); print }')\nEOF\n      [ \"$identity_count\" -gt 0 ] || { printf 'STOP: working alias has no inspectable identity selection\\n' >&2; exit 1; }\n      identities_only=\"$(printf '%s\\n' \"$resolved_before\" | awk '$1 == \"identitiesonly\" { print $2; exit }')\"\n      case \"$identities_only\" in yes|no) ;; *) printf 'STOP: invalid resolved IdentitiesOnly value\\n' >&2; exit 1;; esac\n      printf '  IdentitiesOnly %s\\n' \"$identities_only\"\n    else\n      printf '  IdentityFile ~/.ssh/id_ed25519_euler\\n  IdentitiesOnly yes\\n'\n    fi\n    printf '  Port 22\\n  ProxyCommand none\\n  ProxyJump none\\n  PreferredAuthentications publickey\\n  PasswordAuthentication no\\n  KbdInteractiveAuthentication no\\n  ForwardAgent no\\n'\n  } > \"$euler_temporary\"\n  chmod 600 \"$euler_temporary\"\n  ssh -F \"$euler_temporary\" -G euler >/dev/null || {\n    rm -f \"$euler_temporary\"\n    printf 'STOP: generated Euler block is invalid\\n' >&2\n    exit 1\n  }\n\n  include='Include ~/.ssh/passport.d/*.conf'; temporary=\"$config.passport-new\"\n  if [ -f \"$config\" ]; then\n    awk -v include=\"$include\" 'BEGIN { print include } /^[[:space:]]*Include[[:space:]]+(~\\/[.]ssh\\/)?passport[.]d\\/[*]([.]conf)?[[:space:]]*$/ { next } { print }' \"$config\" > \"$temporary\"\n  else\n    printf '%s\\n' \"$include\" > \"$temporary\"\n  fi\n  chmod 600 \"$temporary\"\n  ssh -F \"$temporary\" -G euler >/dev/null || {\n    rm -f \"$euler_temporary\" \"$temporary\"\n    printf 'STOP: generated SSH config is invalid; the original files are unchanged\\n' >&2\n    exit 1\n  }\n\n  if ! mv \"$euler_temporary\" \"$euler_config\" || ! mv \"$temporary\" \"$config\" || ! ssh -G euler >/dev/null; then\n    rm -f \"$euler_temporary\" \"$temporary\"\n    if restore_originals; then\n      printf 'STOP: install failed; the original SSH files were restored automatically\\n' >&2\n    else\n      printf 'STOP: install failed and automatic restore was incomplete. Restore only config.%s and euler.conf.%s from %s\\n' \"$stamp\" \"$stamp\" \"$backup_dir\" >&2\n    fi\n    exit 1\n  fi\n)",
+              "platform": "macos",
+              "shell": "zsh"
+            },
+            {
+              "command": "(\n  set -eu\n  printf 'Short ETH username: '; read -r eth_user\n  case \"$eth_user\" in ''|*[^ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._-]*) printf 'STOP: invalid ETH username\\n' >&2; exit 1;; esac\n  ssh_dir=\"$HOME/.ssh\"; config=\"$ssh_dir/config\"; include_dir=\"$ssh_dir/passport.d\"; backup_dir=\"$ssh_dir/passport-backups\"; euler_config=\"$include_dir/euler.conf\"; key=\"$ssh_dir/id_ed25519_euler\"\n  [ ! -L \"$config\" ] || { printf \"STOP: %s is a symbolic link; no file was changed\\n\" \"$config\" >&2; exit 1; }\n  [ ! -L \"$euler_config\" ] || { printf \"STOP: %s is a symbolic link; no file was changed\\n\" \"$euler_config\" >&2; exit 1; }\n  config_existed=0; euler_config_existed=0\n  if [ -e \"$config\" ]; then [ -f \"$config\" ] || { printf \"STOP: %s is not a regular file\\n\" \"$config\" >&2; exit 1; }; config_existed=1; fi\n  if [ -e \"$euler_config\" ]; then [ -f \"$euler_config\" ] || { printf \"STOP: %s is not a regular file\\n\" \"$euler_config\" >&2; exit 1; }; euler_config_existed=1; fi\n\n  resolved_before=\"$(ssh -G euler 2>/dev/null)\" || {\n    printf 'STOP: existing SSH config is invalid; no file was changed\\n' >&2\n    exit 1\n  }\n  resolved_host=\"$(printf '%s\\n' \"$resolved_before\" | awk '$1 == \"hostname\" { print $2; exit }')\"\n  resolved_user=\"$(printf '%s\\n' \"$resolved_before\" | awk '$1 == \"user\" { print $2; exit }')\"\n  if printf '%s\\n' \"$resolved_before\" | awk '$1 == \"identityfile\" && $2 ~ /[.]pub$/ { found=1 } END { exit !found }'; then\n    printf 'STOP: existing IdentityFile points at a .pub file\\n' >&2\n    exit 1\n  fi\n\n  use_existing=0\n  if [ \"$resolved_host\" = \"euler.ethz.ch\" ] && [ \"$resolved_user\" = \"$eth_user\" ]; then\n    if ssh -o Port=22 -o ProxyCommand=none -o ProxyJump=none -o ForwardAgent=no -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no euler 'exit 0'; then\n      use_existing=1\n    fi\n  fi\n\n  private_exists=0; public_exists=0\n  [ -f \"$key\" ] && private_exists=1\n  [ -f \"$key.pub\" ] && public_exists=1\n  if [ \"$use_existing\" -eq 0 ] && [ \"$private_exists\" -ne \"$public_exists\" ]; then printf 'STOP: standard key pair is incomplete\\n' >&2; exit 1; fi\n  standard_key_works=0\n  if [ \"$use_existing\" -eq 0 ] && [ \"$private_exists\" -eq 1 ]; then\n    if ssh -F none -i \"$key\" -o IdentitiesOnly=yes -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no \"$eth_user@euler.ethz.ch\" 'exit 0'; then\n      standard_key_works=1\n    fi\n  fi\n  if [ \"$use_existing\" -eq 0 ] && [ \"$standard_key_works\" -eq 0 ]; then\n    printf 'STOP: no tested key-only identity is available\\n' >&2\n    exit 1\n  fi\n\n  mkdir -p \"$include_dir\" \"$backup_dir\" && chmod 700 \"$ssh_dir\" \"$include_dir\" \"$backup_dir\"\n  stamp=\"$(date +%Y%m%d-%H%M%S)-$$\"\n  config_backup=\"$backup_dir/config.$stamp\"\n  euler_config_backup=\"$backup_dir/euler.conf.$stamp\"\n  [ \"$config_existed\" -eq 0 ] || cp -p \"$config\" \"$config_backup\"\n  [ \"$euler_config_existed\" -eq 0 ] || cp -p \"$euler_config\" \"$euler_config_backup\"\n\n  restore_originals() {\n    restore_status=0\n    if [ \"$config_existed\" -eq 1 ]; then cp -p \"$config_backup\" \"$config\" || restore_status=1; else rm -f \"$config\" || restore_status=1; fi\n    if [ \"$euler_config_existed\" -eq 1 ]; then cp -p \"$euler_config_backup\" \"$euler_config\" || restore_status=1; else rm -f \"$euler_config\" || restore_status=1; fi\n    return \"$restore_status\"\n  }\n\n  euler_temporary=\"$euler_config.passport-new\"\n  {\n    printf 'Host euler\\n  HostName euler.ethz.ch\\n  User %s\\n' \"$eth_user\"\n    if [ \"$use_existing\" -eq 1 ]; then\n      identity_count=0\n      while IFS= read -r identity; do\n        [ -n \"$identity\" ] || continue\n        case \"$identity\" in *'\"'*) printf 'STOP: unsupported quote in resolved identity path\\n' >&2; exit 1;; esac\n        printf '  IdentityFile \"%s\"\\n' \"$identity\"\n        identity_count=$((identity_count + 1))\n      done <<EOF\n$(printf '%s\\n' \"$resolved_before\" | awk '$1 == \"identityfile\" { $1=\"\"; sub(/^[[:space:]]+/, \"\"); print }')\nEOF\n      [ \"$identity_count\" -gt 0 ] || { printf 'STOP: working alias has no inspectable identity selection\\n' >&2; exit 1; }\n      identities_only=\"$(printf '%s\\n' \"$resolved_before\" | awk '$1 == \"identitiesonly\" { print $2; exit }')\"\n      case \"$identities_only\" in yes|no) ;; *) printf 'STOP: invalid resolved IdentitiesOnly value\\n' >&2; exit 1;; esac\n      printf '  IdentitiesOnly %s\\n' \"$identities_only\"\n    else\n      printf '  IdentityFile ~/.ssh/id_ed25519_euler\\n  IdentitiesOnly yes\\n'\n    fi\n    printf '  Port 22\\n  ProxyCommand none\\n  ProxyJump none\\n  PreferredAuthentications publickey\\n  PasswordAuthentication no\\n  KbdInteractiveAuthentication no\\n  ForwardAgent no\\n'\n  } > \"$euler_temporary\"\n  chmod 600 \"$euler_temporary\"\n  ssh -F \"$euler_temporary\" -G euler >/dev/null || {\n    rm -f \"$euler_temporary\"\n    printf 'STOP: generated Euler block is invalid\\n' >&2\n    exit 1\n  }\n\n  include='Include ~/.ssh/passport.d/*.conf'; temporary=\"$config.passport-new\"\n  if [ -f \"$config\" ]; then\n    awk -v include=\"$include\" 'BEGIN { print include } /^[[:space:]]*Include[[:space:]]+(~\\/[.]ssh\\/)?passport[.]d\\/[*]([.]conf)?[[:space:]]*$/ { next } { print }' \"$config\" > \"$temporary\"\n  else\n    printf '%s\\n' \"$include\" > \"$temporary\"\n  fi\n  chmod 600 \"$temporary\"\n  ssh -F \"$temporary\" -G euler >/dev/null || {\n    rm -f \"$euler_temporary\" \"$temporary\"\n    printf 'STOP: generated SSH config is invalid; the original files are unchanged\\n' >&2\n    exit 1\n  }\n\n  if ! mv \"$euler_temporary\" \"$euler_config\" || ! mv \"$temporary\" \"$config\" || ! ssh -G euler >/dev/null; then\n    rm -f \"$euler_temporary\" \"$temporary\"\n    if restore_originals; then\n      printf 'STOP: install failed; the original SSH files were restored automatically\\n' >&2\n    else\n      printf 'STOP: install failed and automatic restore was incomplete. Restore only config.%s and euler.conf.%s from %s\\n' \"$stamp\" \"$stamp\" \"$backup_dir\" >&2\n    fi\n    exit 1\n  fi\n)",
+              "platform": "linux",
+              "shell": "bash"
+            }
+          ],
+          "expected": "The command finishes without a config error. A working existing identity is retained, or the tested id_ed25519_euler private key is selected. Prior files have timestamped backups, and a failed final install restores them automatically.",
+          "id": "alias",
+          "instruction": "The SSH config stores named connection settings. This helper reads the tested identity, backs up existing files, writes one isolated passport.d/euler.conf and Include entry, then validates resolved settings. It preserves a tested existing key. Backups in passport-backups are not loaded by OpenSSH. It does not change Euler jobs or GitHub authentication. Read the four operations above before running it.",
+          "links": [],
+          "machine": "local",
+          "on_failure": "Do not append another host block. The command restores the original files after an install failure. If it reports an incomplete restore, use only the two timestamped files it names; otherwise open the Passport help link and include the error with private information removed.",
+          "on_success": "Display the resolved settings.",
+          "platforms": [
+            "all"
+          ],
+          "title": "Create or update an isolated euler alias"
+        },
+        {
+          "commands": [
+            {
+              "command": "ssh -G euler | Select-String '^(hostname|port|user|identityfile|identitiesonly|preferredauthentications|passwordauthentication|kbdinteractiveauthentication|proxycommand|proxyjump|forwardagent) '",
+              "platform": "windows",
+              "shell": "powershell"
+            },
+            {
+              "command": "ssh -G euler | grep -E '^(hostname|port|user|identityfile|identitiesonly|preferredauthentications|passwordauthentication|kbdinteractiveauthentication|proxycommand|proxyjump|forwardagent) '",
+              "platform": "macos",
+              "shell": "zsh"
+            },
+            {
+              "command": "ssh -G euler | grep -E '^(hostname|port|user|identityfile|identitiesonly|preferredauthentications|passwordauthentication|kbdinteractiveauthentication|proxycommand|proxyjump|forwardagent) '",
+              "platform": "linux",
+              "shell": "bash"
+            }
+          ],
+          "expected": "hostname is euler.ethz.ch; port is 22; user is the short ETH username; no identityfile ends in .pub; preferredauthentications is publickey; passwordauthentication and kbdinteractiveauthentication are no; forwardagent is no; no proxycommand or proxyjump line is present. A newly generated setup also shows id_ed25519_euler and identitiesonly yes.",
+          "id": "resolved-config",
+          "instruction": "Run ssh -G, which displays resolved settings without connecting. Verify the target computer, port, short ETH username, private-key path, allowed login methods, proxy state, and agent-forwarding setting that OpenSSH will actually use.",
+          "links": [],
+          "machine": "local",
+          "on_failure": "Stop and correct only passport.d/euler.conf. Keep unrelated SSH hosts and backup files unchanged.",
+          "on_success": "Run the final alias test.",
+          "platforms": [
+            "all"
+          ],
+          "title": "Verify the resolved SSH fields"
+        },
+        {
+          "commands": [
+            {
+              "command": "ssh -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no euler \"echo config-ok\"",
+              "platform": "windows",
+              "shell": "powershell"
+            },
+            {
+              "command": "ssh -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no euler \"echo config-ok\"",
+              "platform": "macos",
+              "shell": "zsh"
+            },
+            {
+              "command": "ssh -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no euler \"echo config-ok\"",
+              "platform": "linux",
+              "shell": "bash"
+            }
+          ],
+          "expected": "Euler prints exactly config-ok without asking for the ETH password.",
+          "id": "alias-test",
+          "instruction": "Run the alias with ETH-password and keyboard-interactive fallback disabled. A prompt for the local key passphrase is allowed.",
+          "links": [],
+          "machine": "local",
+          "on_failure": "Stop. Use the resolved fields and direct key-only result to diagnose the alias.",
+          "on_success": "Enter config-ok in the confirmation field and run Check my work.",
+          "platforms": [
+            "all"
+          ],
+          "title": "Prove the alias is key-only"
+        },
+        {
+          "commands": [],
+          "expected": "The direct euler alias already prints config-ok.",
+          "id": "tunnel-gate",
+          "instruction": "Optional, only if you need VS Code on an allocated compute node: open the separate euler-tunnel reference after config-ok. The basic SSH lesson is complete without that extra setup.",
+          "links": [
+            {
+              "label": "Open the euler-tunnel procedure",
+              "url": "../../../docs/reference/euler/euler-tunnel.md"
+            }
+          ],
+          "machine": "local",
+          "on_failure": "Return to the failed SSH step; do not debug the tunnel first.",
+          "on_success": "Proceed to euler-tunnel or finish this mission.",
+          "platforms": [
+            "all"
+          ],
+          "title": "Configure euler-tunnel only after config-ok"
+        }
+      ]
+    },
+    "shells": [
+      "powershell",
+      "zsh",
+      "bash"
+    ]
+  },
+  "review_policy": "automatic",
+  "submission": {
+    "artifact_paths": [],
+    "path": "submissions/euler-access-ssh.json",
+    "public_fields": [
+      "answers",
+      "receipts",
+      "artifacts",
+      "attestation"
+    ]
+  },
+  "title": "Establish Safe Euler SSH Access",
+  "track": "euler_cpu",
+  "verification": {
+    "critical_must_pass": true,
+    "local_verifier": "ssh_config",
+    "pass_percent": 100,
+    "receipt_checks": [
+      "key_only_marker",
+      "hostname",
+      "direct_connection",
+      "short_username",
+      "private_identity_selection",
+      "identity_policy_resolved",
+      "publickey_only",
+      "password_disabled",
+      "interactive_disabled",
+      "forward_agent_disabled"
+    ],
+    "remote_assessor": "ssh_config",
+    "requires_live_confirmation": true
+  }
+}

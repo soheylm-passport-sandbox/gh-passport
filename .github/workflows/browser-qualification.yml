@@ -1,0 +1,44 @@
+name: Frozen public WebKit qualification
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: public-webkit-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  webkit:
+    runs-on: macos-15-intel
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24.20.0'
+      - name: Verify frozen public payload and unchanged synthetic cases
+        run: node qualification/verify.mjs
+      - name: Install locked browser tools
+        working-directory: qualification/web
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.19.0 --activate
+          pnpm install --frozen-lockfile
+          pnpm exec playwright install --with-deps webkit
+      - name: Qualify every WebKit journey on the actual exported pages
+        working-directory: qualification/web
+        run: pnpm exec playwright test --project=webkit --workers=4
+      - name: Preserve synthetic failure diagnostics briefly
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: public-webkit-diagnostics-${{ github.run_id }}
+          path: |
+            qualification/web/test-results
+            qualification/web/playwright-report
+          retention-days: 1
+          if-no-files-found: ignore

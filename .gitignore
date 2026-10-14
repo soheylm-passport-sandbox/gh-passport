@@ -2,3 +2,8 @@
 /gh-passport
 /gh-passport.exe
 *.test
+
+qualification/**/node_modules/
+qualification/**/test-results/
+qualification/**/playwright-report/
+qualification/web/node_modules
