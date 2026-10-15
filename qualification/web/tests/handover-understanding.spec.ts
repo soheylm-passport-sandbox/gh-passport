@@ -1,0 +1,50 @@
+import { expect, test } from '@playwright/test';
+import { fixtureCurriculum } from './fixture-curriculum';
+
+for (const width of [1280,390]) test(`handover preparation and correction preserve the draft at ${width}px`,async({page})=>{
+ test.skip(!['6.0.0','7.0.0','8.0.0','9.0.0'].includes(fixtureCurriculum),'Historical courses retain their original handover contract.');
+ await page.setViewportSize({width,height:900});
+ const mission='data-handover';
+ let state={schema_version:1,passport_id:'synthetic',curriculum_version:fixtureCurriculum,route_digest:'digest',last_opened_mission:mission,expanded_help:[],mission_drafts:{[mission]:{recover_inputs:['approved_copy']}},attempt_counts:{},pending_submissions:{},launch_count:2};
+ const context=()=>({mode:'local',computer:{platform:'linux',setup_missions:['data-handover']},repository:{owner:'student',name:'passport-exercises',branch:'onboarding/student',head_sha:'a'.repeat(40),passport:{schema_version:2,curriculum_version:fixtureCurriculum,github_user:'student',source_repository:'soheylm-passport-sandbox/passport-exercises',fork_repository:'student/passport-exercises',assessment_branch:'onboarding/student',platform:'linux',responsibilities:['data_steward'],missions:[mission],setup_complete:true}},local_state:state,official:{status:{current_mission:mission,head_sha:'a'.repeat(40),stage:'in_progress'}}});
+ await page.route('**/__passport/v1/context',r=>r.fulfill({json:context()}));
+ await page.route('**/__passport/v1/state',async r=>{state=r.request().postDataJSON();await r.fulfill({json:{status:'saved_locally_not_completion'}});});
+ let blocked=false,repaired=false;
+ await page.route('**/__passport/v2/handover',r=>r.fulfill(blocked?{status:409,json:{error:'handover_project_not_safe'}}:{json:{status:'ready',path:"/tmp/Synthetic owner's $ folder/practice",branch:'practice/student',handover:{project_path:"/tmp/Synthetic owner's $ folder/handover-example",reprise_path:"/tmp/Synthetic owner's $ folder/handover-reprise",revision:'4e45a59f4a09d7c069d8af34b5d724f7c7c513cf',expected_result:'measurements=3 total=12',files:['verify.py','inputs/measurements.csv','environment.json']}}}));
+ await page.route('**/__passport/v2/verify',r=>r.fulfill({json:{status:repaired?'ready_to_submit':'needs_work',score_percent:100,critical_passed:true,next_variant:1,feedback:[],receipt:{verifier:'handover_packet_v2',passed:repaired,checks:{document_consistency:repaired,fixture_inventory:true},feedback:repaired?'':'Complete Authorized successor once, on its own line.'}}}));
+ await page.goto(`/missions/${mission}/`);
+ await expect(page.locator('[data-question]')).toHaveCount(3);
+ await expect(page.locator('[data-question="recover_inputs"] input[value="approved_copy"]')).toBeChecked();
+ await page.locator('[data-prepare-practice]').click();
+ await expect(page.locator('[data-handover-inventory]')).toBeVisible();
+ await expect(page.locator('[data-handover-revision]')).toContainText('4e45a59f4a09d7c069d8af34b5d724f7c7c513cf');
+ await expect(page.locator('[data-handover-clone-commands]')).toBeHidden();
+ await page.locator('[data-handover-inventory] summary').press('Enter');
+ await expect(page.locator('[data-handover-clone-commands] code')).toContainText('--no-local');
+ await expect(page.locator('[data-handover-clone-commands] code')).toContainText('--without-pip');
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ for(const [id,value] of [['recover_inputs','approved_copy'],['verify_result','investigate'],['retain_input','temporary_only']])await page.locator(`[data-question="${id}"] input[value="${value}"]`).check();
+ for(const input of await page.locator('.mission-attestation input').all())await input.check();
+ await page.locator('[data-check-work]').click();
+ await expect(page.locator('[data-activity-result]')).toContainText('Complete Authorized successor once');
+ await expect(page.locator('[data-submit-mission]')).toBeDisabled();
+ repaired=true;await page.locator('[data-check-work]').click();await expect(page.locator('[data-submit-mission]')).toBeEnabled();
+ blocked=true;await page.locator('[data-prepare-practice]').click();
+ await expect(page.locator('[data-practice-status]')).toContainText('Preserve that folder');
+ await expect(page.locator('[data-handover-inventory]')).toBeHidden();
+ await expect(page.locator('[data-submit-mission]')).toBeDisabled();
+ expect(state.mission_drafts[mission].recover_inputs).toEqual(['approved_copy']);
+});
+
+test('completed handover can prepare a new computer without a submission',async({page})=>{
+ test.skip(!['6.0.0','7.0.0','8.0.0','9.0.0'].includes(fixtureCurriculum),'New fictional preparation belongs to 6.0.0.');
+ const context={mode:'local',computer:{platform:'linux',setup_missions:['data-handover']},repository:{owner:'student',name:'passport-exercises',branch:'onboarding/student',head_sha:'a'.repeat(40),passport:{schema_version:2,curriculum_version:fixtureCurriculum,github_user:'student',source_repository:'soheylm-passport-sandbox/passport-exercises',fork_repository:'student/passport-exercises',assessment_branch:'onboarding/student',platform:'macos',responsibilities:['data_steward'],missions:['data-handover'],setup_complete:true}},local_state:{schema_version:1,passport_id:'synthetic',curriculum_version:fixtureCurriculum,route_digest:'digest',mission_drafts:{'data-handover':{recover_inputs:['approved_copy']}},attempt_counts:{},pending_submissions:{},launch_count:2},official:{status:{current_mission:null,head_sha:'a'.repeat(40),stage:'complete'}}};
+ const writes:string[]=[];page.on('request',r=>{if(r.method()!=='GET')writes.push(r.url());});
+ await page.route('**/__passport/v1/context',r=>r.fulfill({json:context}));
+ await page.route('**/__passport/v2/handover?setup=computer',r=>r.fulfill({json:{status:'ready',path:'/tmp/practice',branch:'practice/student',handover:{project_path:'/tmp/handover-example',reprise_path:'/tmp/handover-reprise',revision:'4e45a59f4a09d7c069d8af34b5d724f7c7c513cf',expected_result:'measurements=3 total=12',files:['verify.py','inputs/measurements.csv','environment.json']}}}));
+ await page.goto('/computer/');
+ await page.locator('[data-computer-mission="data-handover"] a').click();
+ await page.locator('[data-prepare-practice]').click();await expect(page.locator('[data-handover-inventory]')).toBeVisible();
+ expect(writes).toHaveLength(1);expect(writes[0]).toContain('/__passport/v2/handover?setup=computer');
+ await expect(page.locator('[data-activity-form]')).toBeHidden();
+});

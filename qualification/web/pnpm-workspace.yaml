@@ -1,0 +1,17 @@
+allowBuilds:
+  esbuild: true
+
+# Temporary owner-approved exception; static output does not use the affected
+# shared-cache API. Remove when a patched version is published; reassess before
+# changing Astro or adding server rendering. Rationale:
+# ../agent_wiki/reviews/2026-10-03-passport-concrete-corrections.md
+audit:
+  ignore:
+    - GHSA-ch52-4w7c-c8xp
+
+overrides:
+  devalue: 5.9.3
+  fast-uri: 3.1.8
+  undici: 8.10.2
+  source-map-js: 1.2.2
+  sharp: 0.35.5

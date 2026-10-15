@@ -1,0 +1,343 @@
+{
+  "activity": {
+    "action": "Make one small manual change, review both diffs, create a Conventional Commit, push it, and open a draft pull request.",
+    "expected_result": "The personal practice PR contains only the intended file, a Conventional Commit, and an honest verification record.",
+    "kind": "repository_task",
+    "machine": "local",
+    "questions": [
+      {
+        "answer": [
+          "staged"
+        ],
+        "critical": true,
+        "feedback": "A commit records the staged version. To include a later saved correction, stage the note again and inspect git diff --cached before committing.",
+        "id": "commit_snapshot",
+        "options": [
+          {
+            "id": "saved",
+            "label": "The latest saved version, including the correction."
+          },
+          {
+            "id": "staged",
+            "label": "The version you staged, without the later correction."
+          },
+          {
+            "id": "remote",
+            "label": "The version currently on GitHub."
+          }
+        ],
+        "prompt": "You stage a note, then save another correction without staging again. You commit. Which version is recorded?",
+        "type": "single"
+      },
+      {
+        "answer": [
+          "published"
+        ],
+        "critical": true,
+        "feedback": "An open PR compares the GitHub branch with main. Push the same practice branch to share your new commit, then inspect the updated PR diff. Neither committing nor pushing merges it.",
+        "id": "share_commit",
+        "options": [
+          {
+            "id": "latest",
+            "label": "The new local commit, because the PR is already open."
+          },
+          {
+            "id": "merged",
+            "label": "The new commit merged into main."
+          },
+          {
+            "id": "published",
+            "label": "The previously pushed change; the new commit is still on your computer."
+          }
+        ],
+        "prompt": "Your draft PR is open. You make another commit on the same practice branch, but have not pushed. What does its Files changed page show?",
+        "type": "single"
+      },
+      {
+        "answer": [
+          "amend"
+        ],
+        "critical": true,
+        "feedback": "A PR follows its source branch. Review and commit the correction on the same practice branch, then push and inspect the updated diff. Keep this exercise PR open in draft; do not merge it.",
+        "id": "review_correction",
+        "options": [
+          {
+            "id": "amend",
+            "label": "Review and stage the correction, commit and push the same branch; inspect the updated draft PR."
+          },
+          {
+            "id": "new_pr",
+            "label": "Open another PR; the first one cannot receive later changes."
+          },
+          {
+            "id": "merge",
+            "label": "Merge the draft PR first, then correct main."
+          }
+        ],
+        "prompt": "Someone reviewing your draft PR spots an unclear sentence. You agree and save a correction in the same practice folder. How do you update that PR?",
+        "type": "single"
+      }
+    ],
+    "recipe": {
+      "intro": "Work in the prepared practice folder, using the same terminal throughout. Leave the PR open in draft.",
+      "steps": [
+        {
+          "commands": [],
+          "expected": "Your terminal is in the exact folder shown by preparation, on its practice branch.",
+          "id": "prepare",
+          "instruction": "Click Prepare practice folder. Run its enter-folder command in your terminal, then keep that terminal in this folder.",
+          "links": [],
+          "machine": "local",
+          "on_failure": "Retry the preparation or run gh passport doctor. Do not create another clone.",
+          "on_success": "The prepared copy gives you a practice branch without changing another project. Read its task before choosing any file to edit.",
+          "platforms": [
+            "all"
+          ],
+          "title": "Open the practice folder"
+        },
+        {
+          "commands": [
+            {
+              "command": "git status --short --branch\nGet-Content -LiteralPath workspace/manual_task/README.md\nGet-Content -LiteralPath workspace/manual_task/project-note.md",
+              "platform": "windows",
+              "shell": "powershell"
+            },
+            {
+              "command": "git status --short --branch\nsed -n '1,160p' workspace/manual_task/README.md\nsed -n '1,160p' workspace/manual_task/project-note.md",
+              "platform": "macos",
+              "shell": "zsh"
+            },
+            {
+              "command": "git status --short --branch\nsed -n '1,160p' workspace/manual_task/README.md\nsed -n '1,160p' workspace/manual_task/project-note.md",
+              "platform": "linux",
+              "shell": "bash"
+            }
+          ],
+          "expected": "The branch starts with practice/. No modified file is listed. The task names project-note.md as the file to edit.",
+          "id": "baseline",
+          "instruction": "Run these commands to read the task and note. Stop if the branch differs from the prepared practice branch or unexpected edits appear.",
+          "links": [],
+          "machine": "local",
+          "on_failure": "Stop if the branch is different or changes already exist. Inspect them before editing; do not reset the repository.",
+          "on_success": "You know the starting version and the scope of the change. The task README is an instruction, not a file to modify.",
+          "platforms": [
+            "all"
+          ],
+          "title": "Inspect before editing"
+        },
+        {
+          "commands": [],
+          "expected": "Your editor shows project-note.md inside the prepared practice folder.",
+          "id": "editor",
+          "instruction": "In VS Code, choose File > Open Folder and select the exact practice-folder path shown by the Passport. Open workspace/manual_task/project-note.md. Edit it yourself, without an AI agent.",
+          "links": [
+            {
+              "label": "Download VS Code",
+              "url": "https://code.visualstudio.com/download"
+            }
+          ],
+          "machine": "local",
+          "on_failure": "Compare the editor folder with the preparation path. If needed, install VS Code using the download link. Do not edit the handbook or a research repository.",
+          "on_success": "Your editor and terminal point to the same practice folder, so the file you save is the file Git will inspect.",
+          "platforms": [
+            "all"
+          ],
+          "title": "Open the same folder in your editor"
+        },
+        {
+          "commands": [
+            {
+              "command": "## Verification\n\nThe staged diff must be reviewed before publishing.",
+              "mode": "edit",
+              "platform": "all",
+              "shell": "markdown"
+            }
+          ],
+          "expected": "The saved note has your heading and reminder. No other file has changed.",
+          "id": "edit",
+          "instruction": "In workspace/manual_task/project-note.md, add a ## Verification heading and one short sentence in your own words about reviewing the staged diff before publishing. Include the terms staged diff and review. Save only this file. Put the text in your editor, not the terminal.",
+          "links": [],
+          "machine": "local",
+          "on_failure": "Correct only the mistaken lines in your editor. Do not reset or delete the practice folder.",
+          "on_success": "Saving updates your working file. The next diff lets you decide whether these are the lines you want your colleague to receive.",
+          "platforms": [
+            "all"
+          ],
+          "title": "Write a reminder your colleague can use"
+        },
+        {
+          "commands": [
+            {
+              "command": "git status --short\ngit diff -- workspace/manual_task/project-note.md",
+              "platform": "windows",
+              "shell": "powershell"
+            },
+            {
+              "command": "git status --short\ngit diff -- workspace/manual_task/project-note.md",
+              "platform": "macos",
+              "shell": "zsh"
+            },
+            {
+              "command": "git status --short\ngit diff -- workspace/manual_task/project-note.md",
+              "platform": "linux",
+              "shell": "bash"
+            }
+          ],
+          "expected": "Only workspace/manual_task/project-note.md is modified. Its diff shows your heading and reminder, without unrelated changes or private information.",
+          "id": "unstaged-diff",
+          "instruction": "Read every added (+) and removed (-) line. Is this the change you intended? Fix anything unexpected in the editor before staging.",
+          "links": [],
+          "machine": "local",
+          "on_failure": "Correct unexpected content before staging. If another file changed, understand why before continuing.",
+          "on_success": "A diff compares two versions. Here, git diff compares your saved file with the staged version. Next, select only the named file.",
+          "platforms": [
+            "all"
+          ],
+          "title": "Read your change as a reviewer"
+        },
+        {
+          "commands": [
+            {
+              "command": "git add -- workspace/manual_task/project-note.md\ngit diff --cached --check\ngit diff --cached",
+              "platform": "windows",
+              "shell": "powershell"
+            },
+            {
+              "command": "git add -- workspace/manual_task/project-note.md\ngit diff --cached --check\ngit diff --cached",
+              "platform": "macos",
+              "shell": "zsh"
+            },
+            {
+              "command": "git add -- workspace/manual_task/project-note.md\ngit diff --cached --check\ngit diff --cached",
+              "platform": "linux",
+              "shell": "bash"
+            }
+          ],
+          "expected": "The staged diff contains only the intended note change. The whitespace check prints nothing when it passes.",
+          "id": "stage",
+          "instruction": "Run the block to stage the note, then read the staged diff. Confirm every line before committing. If you edit again, stage and review the newer version.",
+          "links": [
+            {
+              "label": "Optional: exact-file staging explained",
+              "url": "../../../onboarding_IT_guides/git_workflow.md#staging-review"
+            }
+          ],
+          "machine": "local",
+          "on_failure": "For an unintended staged path, use git restore --staged on that path to keep the edit but remove it from the selection. Correct and review again.",
+          "on_success": "git add selects the current saved content. git diff --cached compares that selection with the last commit; --check checks whitespace. The selection is what your next commit will record.",
+          "platforms": [
+            "all"
+          ],
+          "title": "What will this commit contain?"
+        },
+        {
+          "commands": [
+            {
+              "command": "git commit -m \"docs(practice): explain staged diff review\"",
+              "platform": "windows",
+              "shell": "powershell"
+            },
+            {
+              "command": "git commit -m \"docs(practice): explain staged diff review\"",
+              "platform": "macos",
+              "shell": "zsh"
+            },
+            {
+              "command": "git commit -m \"docs(practice): explain staged diff review\"",
+              "platform": "linux",
+              "shell": "bash"
+            }
+          ],
+          "expected": "Git prints a new commit with the subject docs(practice): explain staged diff review.",
+          "id": "commit",
+          "instruction": "Will your colleague see this new commit on GitHub? Think about that, then run the command.",
+          "links": [],
+          "machine": "local",
+          "on_failure": "Read the first Git error and ask for help if needed. Do not force the operation or skip hooks.",
+          "on_success": "The commit is recorded on your computer. It reaches GitHub when you push. The Conventional Commit format is type(scope): summary: docs means documentation, practice names the area, and the summary describes the change.",
+          "platforms": [
+            "all"
+          ],
+          "title": "Record the version you chose"
+        },
+        {
+          "commands": [],
+          "expected": "One open draft PR proposes your practice branch to main. Opening it has not merged your change into main.",
+          "id": "publish",
+          "instruction": "Which command shares your commit, and which asks for review? Run the prepared git push command, then its gh pr create command, one at a time. Keep --draft. Leave the PR open in draft; do not merge it.",
+          "links": [],
+          "machine": "local",
+          "on_failure": "If a PR already exists, inspect it with gh pr status. Do not create a second one or force-push.",
+          "on_success": "Pushing sends your commits to your GitHub branch. A PR compares that branch with main for review. Opening it does not change main. If you later correct the note, review, stage and commit the correction on this same branch, then push again. The existing PR updates; you do not need another PR.",
+          "platforms": [
+            "all"
+          ],
+          "title": "Push and open a draft pull request"
+        },
+        {
+          "commands": [
+            {
+              "command": "gh pr status --repo {{fork_repository}}\ngh pr view {{practice_branch}} --repo {{fork_repository}} --web",
+              "platform": "windows",
+              "shell": "powershell"
+            },
+            {
+              "command": "gh pr status --repo {{fork_repository}}\ngh pr view {{practice_branch}} --repo {{fork_repository}} --web",
+              "platform": "macos",
+              "shell": "zsh"
+            },
+            {
+              "command": "gh pr status --repo {{fork_repository}}\ngh pr view {{practice_branch}} --repo {{fork_repository}} --web",
+              "platform": "linux",
+              "shell": "bash"
+            }
+          ],
+          "expected": "You are the author; your practice branch targets main. Only project-note.md changed, with your reviewed reminder and commit subject. Leave the PR open in draft; do not merge it.",
+          "id": "final-review",
+          "instruction": "Run both commands to open your PR; the local Passport fills in your fork and branch. Do not run gh repo set-default. In Files changed, check that the reminder makes sense and the diff matches your reviewed edit.",
+          "links": [],
+          "machine": "local",
+          "on_failure": "If no PR appears, return to Push and open a draft pull request. Otherwise correct the same branch and push again. Do not configure a default repository, create a second PR, merge, or delete the existing PR.",
+          "on_success": "Compare your saved note, recorded commit and PR diff: they should show the same reminder. You can now use Check my work, then Submit lesson.",
+          "platforms": [
+            "all"
+          ],
+          "title": "Review what GitHub received"
+        }
+      ]
+    },
+    "shells": [
+      "powershell",
+      "zsh",
+      "bash"
+    ]
+  },
+  "review_policy": "exception_only",
+  "submission": {
+    "artifact_paths": [
+      "workspace/manual_task/project-note.md"
+    ],
+    "path": "submissions/git-manual-pr.json",
+    "public_fields": [
+      "answers",
+      "receipts",
+      "artifacts",
+      "attestation"
+    ]
+  },
+  "title": "Complete A Manual Pull Request Loop",
+  "track": "git",
+  "verification": {
+    "critical_must_pass": true,
+    "local_verifier": "git_practice",
+    "pass_percent": 80,
+    "receipt_checks": [
+      "practice_branch",
+      "bounded_diff",
+      "conventional_commit",
+      "draft_pr"
+    ],
+    "remote_assessor": "git_practice",
+    "requires_live_confirmation": false
+  }
+}

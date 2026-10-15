@@ -1,0 +1,28 @@
+{
+  "name": "@ideallab/it-passport-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.19.0",
+  "scripts": {
+    "dev": "astro dev",
+    "generate": "python3 ../scripts/export_web_content.py --output src/generated/content.json",
+    "build": "astro check && astro build",
+    "build:local": "pnpm run generate && pnpm run build",
+    "check": "astro check",
+    "test": "playwright test",
+    "test:browser": "playwright test",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^7.2.9",
+    "marked": "^18.0.11"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.4.0",
+    "typescript": "^6.0.0"
+  }
+}
