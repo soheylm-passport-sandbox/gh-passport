@@ -31,7 +31,7 @@ jobs:
           pnpm exec playwright install --with-deps webkit
       - name: Qualify every WebKit journey on the actual exported pages
         working-directory: qualification/web
-        run: pnpm exec playwright test --project=webkit --workers=4
+        run: pnpm exec playwright test --project=webkit --workers=1
       - name: Preserve synthetic failure diagnostics briefly
         if: failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
