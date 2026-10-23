@@ -482,7 +482,7 @@ test("current Git lesson prepares its practice folder and shows the next command
   releasePractice();
   await expect(page.getByRole("button", { name: "Practice folder ready" })).toBeDisabled();
   await expect(page.getByText("Folder: C:\\Users\\student\\IDEAL-passport\\practice")).toBeVisible();
-  await expect(page.locator("[data-practice-commands] code")).toHaveText('Set-Location -LiteralPath "C:\\Users\\student\\IDEAL-passport\\practice"');
+  await expect(page.locator("[data-practice-commands] code")).toHaveText("Set-Location -LiteralPath 'C:\\Users\\student\\IDEAL-passport\\practice'");
   expect(practiceCalls).toBe(1);
 });
 
@@ -1545,7 +1545,7 @@ for (const viewport of copyViewports) {
     await page.goto("/missions/git-manual-pr/");
     await page.getByRole("button", { name: "Prepare practice folder" }).click();
     await expect(page.getByRole("button", { name: "Practice folder ready" })).toBeDisabled();
-    await checkScrolledCopy(page, page.locator("[data-practice-commands] li"), `cd -- "${practicePath}"`);
+    await checkScrolledCopy(page, page.locator("[data-practice-commands] li"), `cd -- '${practicePath}'`);
     await checkScrolledCopy(page, page.locator("[data-practice-publish-commands] li").last(),
       'gh pr create --repo student/passport-exercises --base main --head practice/student --draft --title "docs(practice): complete manual Git loop" --body "Fictional IDEAL Lab Passport practice. No credentials, private data, or research data."');
     if (viewport.zoom === 1) {
@@ -1714,7 +1714,7 @@ for (const viewport of [{ name: "desktop", width: 1280, height: 900 }, { name: "
     await expect(page.locator('[data-command-guide-platform="linux"]')).toBeVisible();
     await expect(page.locator('[data-command-guide-platform="macos"]')).toBeHidden();
     await page.getByRole("button", { name: "Prepare practice folder" }).click();
-    await expect(page.locator("[data-practice-commands] code")).toHaveText('cd -- "/home/student/IDEAL passport/practice"');
+    await expect(page.locator("[data-practice-commands] code")).toHaveText("cd -- '/home/student/IDEAL passport/practice'");
     await page.getByRole("button", { name: "Check this computer" }).click();
     await expect(page.locator("[data-computer-check-status]")).toContainText("Some computer checks need attention");
     await page.getByRole("button", { name: "Check this computer" }).click();

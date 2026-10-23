@@ -3,7 +3,6 @@
 /gh-passport.exe
 *.test
 
-qualification/**/node_modules/
-qualification/**/test-results/
-qualification/**/playwright-report/
-qualification/web/node_modules
+/qualification/web/node_modules/
+/qualification/web/playwright-report/
+/qualification/web/test-results/
