@@ -1,16 +1,28 @@
 name: Frozen public WebKit qualification
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_call:
   workflow_dispatch:
 permissions:
   contents: read
-concurrency:
-  group: public-webkit-${{ github.ref }}
-  cancel-in-progress: true
 jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Require a public repository before allocating WebKit's Mac runner
+        env:
+          REPOSITORY_VISIBILITY: ${{ github.event.repository.visibility }}
+        run: test "$REPOSITORY_VISIBILITY" = public
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24.20.0'
+      - name: Verify frozen public payload and unchanged synthetic cases
+        run: node qualification/verify.mjs
   webkit:
+    needs: preflight
     runs-on: macos-15-intel
     timeout-minutes: 25
     steps:
@@ -20,13 +32,14 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '24.20.0'
-      - name: Verify frozen public payload and unchanged synthetic cases
+      - name: Verify inputs again on the actual browser runner
         run: node qualification/verify.mjs
       - name: Install locked browser tools
         working-directory: qualification/web
         run: |
           corepack enable
-          corepack prepare pnpm@11.19.0 --activate
+          PNPM_PACKAGE=$(node -p "require('./package.json').packageManager")
+          corepack prepare "$PNPM_PACKAGE" --activate
           pnpm install --frozen-lockfile
           pnpm exec playwright install --with-deps webkit
       - name: Qualify every WebKit journey on the actual exported pages

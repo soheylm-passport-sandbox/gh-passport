@@ -1,0 +1,5 @@
+# These inputs are SHA-256 frozen by the exporter. Preserve their actual bytes
+# when a Windows maintainer uses core.autocrlf=true.
+/internal/webdist/** -text
+/internal/agentverify/contract.json -text
+/qualification/** -text
